@@ -1,0 +1,122 @@
+{
+  "description": "codefix benchmark corpus (M1). partition A = train, B = transfer.",
+  "apps": [
+    {
+      "name": "shop_bola",
+      "kind": "inprocess",
+      "path": "apps/shop_bola",
+      "partition": "A",
+      "framework": "none",
+      "classes": [
+        "BOLA"
+      ]
+    },
+    {
+      "name": "admin_bfla",
+      "kind": "inprocess",
+      "path": "apps/admin_bfla",
+      "partition": "A",
+      "framework": "none",
+      "classes": [
+        "BFLA"
+      ]
+    },
+    {
+      "name": "library_bola",
+      "kind": "inprocess",
+      "path": "apps/library_bola",
+      "partition": "B",
+      "framework": "none",
+      "classes": [
+        "BOLA"
+      ]
+    },
+    {
+      "name": "library_flat_bola",
+      "kind": "inprocess",
+      "path": "apps/library_flat_bola",
+      "partition": "B",
+      "framework": "none",
+      "classes": [
+        "BOLA"
+      ]
+    },
+    {
+      "name": "vampi",
+      "kind": "docker",
+      "path": "apps/vampi",
+      "partition": "A",
+      "framework": "flask",
+      "classes": [
+        "BOLA"
+      ],
+      "runner": "run_vampi.py",
+      "defects": 2,
+      "note": "2 exploit-verified BOLAs (books-read + pw-takeover)"
+    },
+    {
+      "name": "crapi",
+      "kind": "docker",
+      "path": "apps/crapi",
+      "partition": "A",
+      "framework": "multi",
+      "classes": [
+        "BOLA"
+      ],
+      "runner": "run_crapi.py",
+      "defects": 1,
+      "note": "real OWASP API app; shop-order BOLA exploit-confirmed (card-data exposure); multi-container/multi-language"
+    },
+    {
+      "name": "mass_assign",
+      "kind": "inprocess",
+      "path": "apps/mass_assign",
+      "partition": "A",
+      "framework": "none",
+      "classes": [
+        "MASS_ASSIGNMENT"
+      ]
+    },
+    {
+      "name": "ssrf_preview",
+      "kind": "inprocess",
+      "path": "apps/ssrf_preview",
+      "partition": "A",
+      "framework": "none",
+      "classes": [
+        "SSRF"
+      ]
+    },
+    {
+      "name": "missing_auth",
+      "kind": "inprocess",
+      "path": "apps/missing_auth",
+      "partition": "A",
+      "framework": "none",
+      "classes": [
+        "MISSING_AUTH"
+      ]
+    }
+  ],
+  "fixtures": [
+    {
+      "name": "bfla_decorated",
+      "purpose": "detection: up-the-chain decorator dominance"
+    },
+    {
+      "name": "new_issue_idor_note",
+      "purpose": "authoring gate (M13): vuln/safe/flat + exploit"
+    }
+  ],
+  "negative_control": [
+    {
+      "name": "pygoat",
+      "kind": "docker",
+      "path": "apps/pygoat",
+      "vendored": true,
+      "fit": "weak",
+      "note": "access-control lab is cookie-trust, NOT cross-function BOLA/BFLA; XSS/SQLi/cmd/XXE labs are out of scope (single-function). Use as no-false-positives-outside-scope control + future SSRF target. See CORPUS.md."
+    }
+  ],
+  "corpus_guide": "CORPUS.md"
+}

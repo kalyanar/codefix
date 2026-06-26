@@ -1,0 +1,1 @@
+{"app":"admin_bfla","framework":"none","defects":[{"issue_class":"BFLA","function":"admin_delete_account","description":"privileged delete reachable without role check","exploit":"exploit.py","legit":"legit.py"}]}

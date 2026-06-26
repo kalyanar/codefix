@@ -1,0 +1,13 @@
+{
+  "app": "shop_bola",
+  "framework": "none",
+  "defects": [
+    {
+      "issue_class": "BOLA",
+      "function": "get_order",
+      "description": "fetches order by user-supplied id with no ownership check",
+      "exploit": "exploit.py",
+      "legit": "legit.py"
+    }
+  ]
+}

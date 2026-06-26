@@ -1,0 +1,23 @@
+[
+  {
+    "target": "VAmPI (api_views)",
+    "bandit": 3,
+    "semgrep": 0,
+    "baseline_authz": 0,
+    "codefix_authz": "exploit-verified*"
+  },
+  {
+    "target": "shop_bola",
+    "bandit": 0,
+    "semgrep": 0,
+    "baseline_authz": 0,
+    "codefix_authz": 1
+  },
+  {
+    "target": "admin_bfla",
+    "bandit": 0,
+    "semgrep": 0,
+    "baseline_authz": 0,
+    "codefix_authz": 1
+  }
+]

@@ -1,0 +1,1 @@
+{"app":"mass_assign","framework":"none","defects":[{"issue_class":"MASS_ASSIGNMENT","function":"register","description":"unfiltered **kwargs spread; privilege escalation","exploit":"exploit.py","legit":"legit.py"}]}

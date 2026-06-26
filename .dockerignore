@@ -1,0 +1,11 @@
+# keep the repro image small + deterministic
+**/vendor/
+**/__pycache__/
+**/*.pyc
+**/*.db
+**/.pytest_cache/
+bench/baselines/pysa_ws/.pyre/
+bench/baselines/codeql_target/
+**/results.json
+**/results.sarif
+.git/

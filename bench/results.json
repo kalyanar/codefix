@@ -1,0 +1,60 @@
+{
+  "rows": [
+    {
+      "app": "shop_bola",
+      "partition": "A",
+      "issue_class": "BOLA",
+      "func": "get_order",
+      "fp": "ea14d949f4456732",
+      "provenance": "template",
+      "llm_used": false,
+      "warm": false,
+      "status": "success"
+    },
+    {
+      "app": "admin_bfla",
+      "partition": "A",
+      "issue_class": "BFLA",
+      "func": "admin_delete_account",
+      "fp": "1cba907b048a5c5e",
+      "provenance": "template",
+      "llm_used": false,
+      "warm": false,
+      "status": "success"
+    },
+    {
+      "app": "vampi",
+      "partition": "A",
+      "issue_class": "BOLA",
+      "status": "success",
+      "kind": "docker"
+    },
+    {
+      "app": "library_bola",
+      "partition": "B",
+      "issue_class": "BOLA",
+      "func": "view_record",
+      "fp": "ea14d949f4456732",
+      "provenance": "template",
+      "llm_used": false,
+      "warm": true,
+      "status": "success"
+    },
+    {
+      "app": "library_flat_bola",
+      "partition": "B",
+      "issue_class": "BOLA",
+      "func": "view_record",
+      "fp": "ea14d949f4456732",
+      "provenance": "template",
+      "llm_used": false,
+      "warm": true,
+      "status": "success"
+    }
+  ],
+  "metrics": {
+    "f1_success": 1.0,
+    "f1_llm_rate": 0.0,
+    "f2_warm_rate_B": 1.0
+  }
+}

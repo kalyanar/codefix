@@ -1,0 +1,1 @@
+{"app":"missing_auth","framework":"none","defects":[{"issue_class":"MISSING_AUTH","function":"do_transfer","exploit":"exploit.py","legit":"legit.py"}]}

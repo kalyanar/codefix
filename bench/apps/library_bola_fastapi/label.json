@@ -1,0 +1,1 @@
+{"app": "library_bola_fastapi", "framework": "fastapi", "defects": [{"issue_class": "BOLA", "function": "view_record", "owner_field": "owner_id", "description": "fetches record by user-supplied id with no ownership check", "exploit": "exploit.py", "legit": "legit.py"}]}

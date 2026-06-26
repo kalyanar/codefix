@@ -1,0 +1,9 @@
+{
+  "app": "crAPI", "framework": "django+java+go (multi-service)", "source": "https://github.com/OWASP/crAPI",
+  "defects": [
+    {"issue_class": "BOLA", "endpoint": "GET /workshop/api/shop/orders/<id>", "service": "workshop (Python/Django)",
+     "description": "any user reads another user's order incl. payment card details by order id",
+     "exploit": "exploit.py", "legit": "legit.py", "severity": "high (PCI card data exposure)"}
+  ],
+  "note": "multi-language stack; codefix's Python detector applies to the workshop service. No secure variant (always vulnerable); exploit establishes ground truth."
+}

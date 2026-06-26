@@ -1,0 +1,9 @@
+{
+  "app": "VAmPI", "framework": "flask", "source": "https://github.com/erev0s/VAmPI",
+  "defects": [
+    {"issue_class": "BOLA", "endpoint": "GET /books/v1/<book_title>", "function": "get_by_title",
+     "description": "reads any user's book secret by title; no owner check", "exploit": "exploit.py", "legit": "legit.py"},
+    {"issue_class": "BOLA", "endpoint": "PUT /users/v1/<username>/password", "function": "update_password",
+     "description": "account takeover: changes another user's password (URL username, not token)", "exploit": "exploit_pw.py", "legit": "legit_pw.py"}
+  ]
+}

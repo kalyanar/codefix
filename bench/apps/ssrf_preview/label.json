@@ -1,0 +1,1 @@
+{"app":"ssrf_preview","framework":"none","defects":[{"issue_class":"SSRF","function":"get_preview","exploit":"exploit.py","legit":"legit.py"}]}
