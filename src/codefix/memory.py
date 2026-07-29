@@ -45,9 +45,21 @@ CREATE TABLE IF NOT EXISTS detector_specs (
     id INTEGER PRIMARY KEY,
     issue_class TEXT UNIQUE, flow TEXT, transform_id TEXT,
     source_role TEXT, sink_category TEXT, missing_guard_class TEXT, fix_locus TEXT,
-    provenance TEXT
+    provenance TEXT,
+    -- Alg. 2 search parameters; NULL => the engine's built-in anchors/defaults
+    decorator_anchors TEXT, call_anchors TEXT,
+    direction TEXT DEFAULT 'both', depth INTEGER DEFAULT 2
 );
 """
+
+# columns added after the first release — ALTERed in on open (SQLite's
+# CREATE TABLE IF NOT EXISTS will not add them to an existing catalog).
+_SPEC_MIGRATIONS = [
+    ("decorator_anchors", "TEXT"),
+    ("call_anchors", "TEXT"),
+    ("direction", "TEXT DEFAULT 'both'"),
+    ("depth", "INTEGER DEFAULT 2"),
+]
 
 
 @dataclass
@@ -66,6 +78,10 @@ class PatchMemory:
         self.conn = sqlite3.connect(path)
         self.conn.row_factory = sqlite3.Row
         self.conn.executescript(SCHEMA)
+        have = {r["name"] for r in self.conn.execute("PRAGMA table_info(detector_specs)")}
+        for col, decl in _SPEC_MIGRATIONS:
+            if col not in have:
+                self.conn.execute(f"ALTER TABLE detector_specs ADD COLUMN {col} {decl}")
         self.conn.commit()
 
     def close(self):
@@ -142,23 +158,40 @@ class PatchMemory:
     # detector specs (M13: developer-extensible catalog) -------------------
     def admit_spec(self, spec, provenance: str = "llm-authored"):
         """Persist a gate-passed DetectorSpec into the catalog."""
+        anchors = (json.dumps(sorted(spec.decorator_anchors))
+                   if spec.decorator_anchors else None,
+                   json.dumps(sorted(spec.call_anchors))
+                   if spec.call_anchors else None)
         self.conn.execute(
             "INSERT OR REPLACE INTO detector_specs(issue_class,flow,transform_id,"
-            "source_role,sink_category,missing_guard_class,fix_locus,provenance)"
-            " VALUES(?,?,?,?,?,?,?,?)",
+            "source_role,sink_category,missing_guard_class,fix_locus,provenance,"
+            "decorator_anchors,call_anchors,direction,depth)"
+            " VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
             (spec.issue_class, spec.flow, spec.transform_id, spec.source_role,
-             spec.sink_category, spec.missing_guard_class, spec.fix_locus, provenance))
+             spec.sink_category, spec.missing_guard_class, spec.fix_locus, provenance)
+            + anchors + (spec.direction, spec.depth))
         self.conn.commit()
 
     def load_specs(self):
-        """Load admitted DetectorSpecs so the engine runs them — no engine code."""
+        """Load admitted DetectorSpecs so the engine runs them — no engine code.
+        The Alg. 2 search parameters round-trip; NULL restores engine defaults."""
         from .detect import DetectorSpec
+
+        def anchors(v):
+            return frozenset(json.loads(v)) if v else None
+
         rows = self.conn.execute(
             "SELECT issue_class,flow,transform_id,source_role,sink_category,"
-            "missing_guard_class,fix_locus FROM detector_specs").fetchall()
+            "missing_guard_class,fix_locus,decorator_anchors,call_anchors,"
+            "direction,depth FROM detector_specs").fetchall()
         return [DetectorSpec(r["issue_class"], r["flow"], r["transform_id"],
                              r["source_role"], r["sink_category"],
-                             r["missing_guard_class"], r["fix_locus"]) for r in rows]
+                             r["missing_guard_class"], r["fix_locus"],
+                             anchors(r["decorator_anchors"]),
+                             anchors(r["call_anchors"]),
+                             r["direction"] or "both",
+                             r["depth"] if r["depth"] is not None else 2)
+                for r in rows]
 
     def bucket_stats(self, key: FingerprintKey, exclude_fp_id: int | None = None):
         """Aggregate (successes, regressions) across ALL fingerprints in the same

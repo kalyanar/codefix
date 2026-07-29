@@ -98,17 +98,23 @@ def _refs_param(node: ast.expr, params: set[str]) -> list[str]:
     return out
 
 
-def _contains_principal(node: ast.AST) -> bool:
-    """True if the subtree references a principal source (call / name / attr)."""
+def _anchored(node: ast.AST, anchors) -> bool:
+    """True if the subtree references any anchor symbol (call / attr / name).
+    The shared shape behind the principal and authn guard predicates; the
+    anchor set is what a DetectorSpec overrides (Alg. 2 call-name allowlist)."""
     for c in ast.walk(node):
-        if isinstance(c, ast.Call):
-            if _name_of(c) in PRINCIPAL_ANCHORS:
-                return True
-        if isinstance(c, ast.Attribute) and c.attr in PRINCIPAL_ANCHORS:
+        if isinstance(c, ast.Call) and _name_of(c) in anchors:
             return True
-        if isinstance(c, ast.Name) and c.id in PRINCIPAL_ANCHORS:
+        if isinstance(c, ast.Attribute) and c.attr in anchors:
+            return True
+        if isinstance(c, ast.Name) and c.id in anchors:
             return True
     return False
+
+
+def _contains_principal(node: ast.AST) -> bool:
+    """True if the subtree references a principal source (call / name / attr)."""
+    return _anchored(node, PRINCIPAL_ANCHORS)
 
 
 def _branch_denies(if_node: ast.If) -> bool:
@@ -131,29 +137,40 @@ def _is_dominating_guard(fn_node: ast.AST, predicate) -> bool:
     return False
 
 
-def _has_dominating_guard(graph: CodeGraph, func: str, predicate) -> bool:
+def _has_dominating_guard(graph: CodeGraph, func: str, predicate,
+                          direction: str = "both",
+                          decorator_anchors: frozenset | None = None) -> bool:
     """A denial-guard whose test matches `predicate` and DOMINATES the sink:
     top-level in the function, OR in a helper called at top level
     (interprocedural), OR a wrapping decorator. Name-independent (shape, not
     helper name); branch-sensitive. Generic over the guard predicate so BOLA
-    (principal), SSRF (url validation), and missing-auth (authn) all reuse it."""
+    (principal), SSRF (url validation), and missing-auth (authn) all reuse it.
+
+    `direction` selects which arms of the bidirectional search run ("down" =
+    callees, "up" = decorators, "both"); `decorator_anchors` names framework
+    guard decorators whose body we cannot see. Both are supplied by a
+    DetectorSpec (Alg. 2) and default to the engine's built-in behaviour."""
     fn0 = graph.functions.get(func)
     if fn0 is None:
         return False
-    if _is_dominating_guard(fn0.node, predicate):
+    if _is_dominating_guard(fn0.node, predicate):   # own body always dominates
         return True
-    for stmt in fn0.node.body:                      # interprocedural: top-level helper
-        for n in ast.walk(stmt):
-            if isinstance(n, ast.Call):
-                hfn = graph.functions.get(_name_of(n))
-                if hfn is not None and _is_dominating_guard(hfn.node, predicate):
-                    return True
-    for dname in fn0.decorators:                    # up the chain: decorator
-        dfn = graph.functions.get(dname)
-        if dfn is not None and any(
-                isinstance(n, ast.If) and predicate(n.test) and _branch_denies(n)
-                for n in ast.walk(dfn.node)):
-            return True
+    if direction in ("down", "both"):
+        for stmt in fn0.node.body:                  # interprocedural: top-level helper
+            for n in ast.walk(stmt):
+                if isinstance(n, ast.Call):
+                    hfn = graph.functions.get(_name_of(n))
+                    if hfn is not None and _is_dominating_guard(hfn.node, predicate):
+                        return True
+    if direction in ("up", "both"):
+        for dname in fn0.decorators:                # up the chain: decorator
+            if decorator_anchors and dname in decorator_anchors:
+                return True                         # known framework guard decorator
+            dfn = graph.functions.get(dname)
+            if dfn is not None and any(
+                    isinstance(n, ast.If) and predicate(n.test) and _branch_denies(n)
+                    for n in ast.walk(dfn.node)):
+                return True
     return False
 
 
@@ -169,14 +186,7 @@ AUTHN_ANCHORS = {"current_user", "current_user_id", "get_current_user",
 
 
 def _contains_authn(node: ast.AST) -> bool:
-    for c in ast.walk(node):
-        if isinstance(c, ast.Call) and _name_of(c) in AUTHN_ANCHORS:
-            return True
-        if isinstance(c, ast.Attribute) and c.attr in AUTHN_ANCHORS:
-            return True
-        if isinstance(c, ast.Name) and c.id in AUTHN_ANCHORS:
-            return True
-    return False
+    return _anchored(node, AUTHN_ANCHORS)
 
 
 def _tainted_sink(fn_node: ast.FunctionDef, params: set[str]):
@@ -232,13 +242,14 @@ def detect_bola(graph: CodeGraph) -> list[Finding]:
 
 # --- BFLA: privileged operation reachable with no role gate on the path ------
 
-def _contains_role(node: ast.AST) -> bool:
+def _contains_role(node: ast.AST, anchors: frozenset | None = None) -> bool:
+    a = anchors or ROLE_ANCHORS
     for c in ast.walk(node):
-        if isinstance(c, ast.Attribute) and c.attr in ROLE_ANCHORS:
+        if isinstance(c, ast.Attribute) and c.attr in a:
             return True
-        if isinstance(c, ast.Name) and c.id in ROLE_ANCHORS:
+        if isinstance(c, ast.Name) and c.id in a:
             return True
-        if isinstance(c, ast.Constant) and isinstance(c.value, str) and c.value in ROLE_ANCHORS:
+        if isinstance(c, ast.Constant) and isinstance(c.value, str) and c.value in a:
             return True  # e.g. obj["role"]
     return False
 
@@ -250,37 +261,50 @@ ROLE_DECORATOR_ANCHORS = {
 }
 
 
-def _has_role_gate(graph: CodeGraph, func: str) -> bool:
+def _has_role_gate(graph: CodeGraph, func: str, *,
+                   role_anchors: frozenset | None = None,
+                   decorator_anchors: frozenset | None = None,
+                   direction: str = "both", depth: int = 2) -> bool:
     """Dominance-aware: a role comparison that is guaranteed to run before the
     privileged op — searched DOWN the chain (callees) AND UP the chain
     (decorators that wrap this entry point). A guard anywhere on a dominating
-    path counts, regardless of its name."""
-    # down the chain: this function + its callees
-    scope = {func} | graph.callees(func, depth=2)
-    for name in scope:
-        fn = graph.functions.get(name)
-        if fn is None:
-            continue
-        for n in ast.walk(fn.node):
-            if isinstance(n, ast.Compare) and _contains_role(n):
-                return True
-    # up the chain: decorators wrapping this entry point dominate the body
-    fn0 = graph.functions[func]
-    for dname in fn0.decorators:
-        if dname in ROLE_DECORATOR_ANCHORS:
-            return True                       # known framework guard decorator
-        dfn = graph.functions.get(dname)      # local decorator — scan its body
-        if dfn is not None:
-            for n in ast.walk(dfn.node):
-                if isinstance(n, ast.Compare) and _contains_role(n):
+    path counts, regardless of its name. Anchors, direction, and search depth
+    are supplied by a DetectorSpec (Alg. 2); the defaults reproduce the
+    built-in BFLA detector exactly."""
+    # `is None` (not truthiness): an explicitly EMPTY anchor set means "match no
+    # anchors", which is a legitimate spec, not a request for the defaults.
+    roles = ROLE_ANCHORS if role_anchors is None else role_anchors
+    decos = ROLE_DECORATOR_ANCHORS if decorator_anchors is None else decorator_anchors
+
+    def has_role(node):
+        return _contains_role(node, roles)
+
+    if direction in ("down", "both"):
+        scope = {func} | graph.callees(func, depth=depth)
+        for name in scope:
+            fn = graph.functions.get(name)
+            if fn is None:
+                continue
+            for n in ast.walk(fn.node):
+                if isinstance(n, ast.Compare) and has_role(n):
                     return True
+    if direction in ("up", "both"):
+        fn0 = graph.functions[func]
+        for dname in fn0.decorators:
+            if dname in decos:
+                return True                   # known framework guard decorator
+            dfn = graph.functions.get(dname)  # local decorator — scan its body
+            if dfn is not None:
+                for n in ast.walk(dfn.node):
+                    if isinstance(n, ast.Compare) and has_role(n):
+                        return True
     return False
 
 
-def _reaches_mutation(graph: CodeGraph, func: str) -> bool:
+def _reaches_mutation(graph: CodeGraph, func: str, depth: int = 2) -> bool:
     """Name-independent privileged-op signal: a state-changing call (.pop/.remove
     /...) or a `del` anywhere on the callee path."""
-    scope = {func} | graph.callees(func, depth=2)
+    scope = {func} | graph.callees(func, depth=depth)
     for name in scope:
         fn = graph.functions.get(name)
         if fn is None:
@@ -422,6 +446,134 @@ def detect_missing_auth(graph: CodeGraph) -> list[Finding]:
     return out
 
 
+# --- The spec language: sink matcher x guard matcher -------------------------
+#
+# The five built-in detectors above are five points in one cross-product: WHICH
+# sink is reachable from user-controlled input, and WHICH class of guard would
+# have to dominate it. Exposing both axes as registries is what makes a
+# DetectorSpec a real predicate rather than a relabelling of BOLA — a spec picks
+# one sink matcher and one guard matcher, and every combination is expressible
+# as data. The built-ins are the five diagonal cells; the rest are new
+# predicates no built-in covers (e.g. a fetch sink that no OWNERSHIP check
+# dominates, or a data read that no AUTHN step dominates).
+
+
+@dataclass
+class SinkHit:
+    """A sink located by a matcher, normalised across the five sink shapes."""
+    lineno: int
+    assign_target: str
+    tainted_args: list
+    src: str
+
+
+def _entry_lineno(fn_node) -> int:
+    return fn_node.body[0].lineno if fn_node.body else fn_node.lineno + 1
+
+
+def _sink_data_access(graph, func, fn_node, params, taint, spec):
+    hit = _tainted_sink(fn_node, params)
+    if hit is None:
+        return None
+    target, lineno, tainted, src = hit
+    return SinkHit(lineno, target, tainted, src)
+
+
+def _sink_url_fetch(graph, func, fn_node, params, taint, spec):
+    for n in ast.walk(fn_node):
+        if isinstance(n, ast.Assign) and isinstance(n.value, ast.Call) \
+                and _name_of(n.value) in FETCH_ANCHORS:
+            targs = sorted({c.id for c in ast.walk(n.value)
+                            if isinstance(c, ast.Name) and c.id in taint})
+            if targs and len(n.targets) == 1 and isinstance(n.targets[0], ast.Name):
+                return SinkHit(n.lineno, targs[0], targs,
+                               f"fetch of user-controlled {targs[0]}")
+    return None
+
+
+def _sink_model_write(graph, func, fn_node, params, taint, spec):
+    for n in ast.walk(fn_node):
+        if not (isinstance(n, ast.Assign) and isinstance(n.value, ast.Call)):
+            continue
+        star = next((kw for kw in n.value.keywords
+                     if kw.arg is None and isinstance(kw.value, ast.Name)
+                     and kw.value.id in taint), None)
+        if star is None or not (len(n.targets) == 1 and isinstance(n.targets[0], ast.Name)):
+            continue
+        return SinkHit(n.lineno, star.value.id, [star.value.id], ast.unparse(n))
+    return None
+
+
+def _sink_privileged_mutation(graph, func, fn_node, params, taint, spec):
+    if not _reaches_mutation(graph, func, depth=spec.depth):
+        return None
+    return SinkHit(_entry_lineno(fn_node), "", [],
+                   f"privileged op reachable from {func}")
+
+
+def _sink_sensitive_op(graph, func, fn_node, params, taint, spec):
+    scope = {func} | graph.callees(func, depth=spec.depth)
+    reaches = any(
+        isinstance(n, ast.Call) and _name_of(n) in SENSITIVE_ACTIONS
+        for name in scope if graph.functions.get(name)
+        for n in ast.walk(graph.functions[name].node))
+    if not reaches:
+        return None
+    return SinkHit(_entry_lineno(fn_node), "", [],
+                   f"sensitive action reachable from {func}")
+
+
+SINK_MATCHERS = {
+    "data_access_by_id": _sink_data_access,
+    "url_fetch": _sink_url_fetch,
+    "model_write": _sink_model_write,
+    "privileged_mutation": _sink_privileged_mutation,
+    "sensitive_op": _sink_sensitive_op,
+}
+
+
+# Guard matchers: True == a guard of this class DOMINATES the sink (mitigated).
+# Each honours the spec's Alg. 2 search parameters where they apply.
+def _guard_ownership(graph, func, fn_node, taint, hit, spec):
+    anchors = PRINCIPAL_ANCHORS if spec.call_anchors is None else spec.call_anchors
+    return _has_dominating_guard(
+        graph, func, lambda n: _anchored(n, anchors),
+        direction=spec.direction, decorator_anchors=spec.decorator_anchors)
+
+
+def _guard_role(graph, func, fn_node, taint, hit, spec):
+    return _has_role_gate(graph, func, role_anchors=spec.call_anchors,
+                          decorator_anchors=spec.decorator_anchors,
+                          direction=spec.direction, depth=spec.depth)
+
+
+def _guard_authn(graph, func, fn_node, taint, hit, spec):
+    anchors = AUTHN_ANCHORS if spec.call_anchors is None else spec.call_anchors
+    return _has_dominating_guard(
+        graph, func, lambda n: _anchored(n, anchors),
+        direction=spec.direction, decorator_anchors=spec.decorator_anchors)
+
+
+def _guard_url_validation(graph, func, fn_node, taint, hit, spec):
+    def pred(test, t=taint):
+        return any(isinstance(c, ast.Name) and c.id in t for c in ast.walk(test))
+    return _has_dominating_guard(graph, func, pred, direction=spec.direction,
+                                 decorator_anchors=spec.decorator_anchors)
+
+
+def _guard_field_allowlist(graph, func, fn_node, taint, hit, spec):
+    return bool(hit.assign_target) and _has_allowlist(fn_node, hit.assign_target)
+
+
+GUARD_MATCHERS = {
+    "ownership": _guard_ownership,
+    "role": _guard_role,
+    "authn": _guard_authn,
+    "url_validation": _guard_url_validation,
+    "field_allowlist": _guard_field_allowlist,
+}
+
+
 # registry: issue_class -> detector. ALL_CLASSES is the full deterministic sweep.
 DETECTORS = {
     "BOLA": detect_bola, "BFLA": detect_bfla,
@@ -468,49 +620,53 @@ def detect_prioritized(graph: CodeGraph, priority: list[str]):
 
 @dataclass
 class DetectorSpec:
-    """A new issue type as data — added via the authoring gate, no engine code."""
+    """A new issue type as data — added via the authoring gate, no engine code.
+
+    The predicate is the pair (`sink_category`, `missing_guard_class`): which
+    sink must be reachable from user-controlled input, and which class of guard
+    would have to dominate it. `flow` is retained as coarse provenance metadata
+    (and is still vocabulary-checked by the authoring gate); detection is driven
+    by the two matcher registries.
+    """
     issue_class: str
-    flow: str                 # "param_to_sink" | "privileged_op"
+    flow: str                 # "param_to_sink" | "privileged_op" (metadata)
     transform_id: str
     source_role: str
     sink_category: str
     missing_guard_class: str
     fix_locus: str
+    # Alg. 2 search parameters. None/default => the engine's built-in anchors and
+    # bidirectional depth-2 search, so a 7-field spec behaves exactly as before.
+    decorator_anchors: frozenset | None = None   # framework guard decorators
+    call_anchors: frozenset | None = None        # guard call-name allowlist
+    direction: str = "both"                      # "up" | "down" | "both"
+    depth: int = 2                               # call-graph search depth
 
 
 def detect_with_spec(spec: DetectorSpec, graph: CodeGraph) -> list[Finding]:
-    """Run a declarative spec. Reuses the same name-independent flow primitives
-    as the built-in detectors, stamping the spec's issue_class + facets."""
+    """Run a declarative spec: SINK_MATCHERS[sink_category] locates the sink,
+    GUARD_MATCHERS[missing_guard_class] decides whether it is already dominated.
+    A finding is 'this sink is reachable from user input and no guard of the
+    required class dominates it' — the same name-independent primitives the
+    built-ins use, selected as data rather than hardcoded per class."""
+    sink_of = SINK_MATCHERS.get(spec.sink_category)
+    guarded = GUARD_MATCHERS.get(spec.missing_guard_class)
+    if sink_of is None or guarded is None:
+        return []
+    owner_field = infer_owner_field(graph.source)
     out: list[Finding] = []
-    if spec.flow == "param_to_sink":
-        owner_field = infer_owner_field(graph.source)
-        for func in graph.roots():
-            fn = graph.functions[func]
-            params = set(fn.params)
-            if not params:
-                continue
-            sink = _tainted_sink(fn.node, params)
-            if sink is None or _has_principal_guard(graph, func):
-                continue
-            target, lineno, tainted, src = sink
-            out.append(Finding(
-                issue_class=spec.issue_class, func=func, sink_lineno=lineno,
-                sink_assign_target=target, tainted_args=tainted, sink_src=src,
-                file_path=graph.file_path, owner_field=owner_field,
-                transform_id=spec.transform_id, source_role=spec.source_role,
-                sink_category=spec.sink_category,
-                missing_guard_class=spec.missing_guard_class, fix_locus=spec.fix_locus))
-    elif spec.flow == "privileged_op":
-        for func in graph.roots():
-            fn = graph.functions[func]
-            if not _reaches_mutation(graph, func) or _has_role_gate(graph, func):
-                continue
-            body_lineno = fn.node.body[0].lineno if fn.node.body else fn.lineno + 1
-            out.append(Finding(
-                issue_class=spec.issue_class, func=func, sink_lineno=body_lineno,
-                sink_assign_target="", tainted_args=[],
-                sink_src=f"privileged op reachable from {func}",
-                file_path=graph.file_path, transform_id=spec.transform_id,
-                source_role=spec.source_role, sink_category=spec.sink_category,
-                missing_guard_class=spec.missing_guard_class, fix_locus=spec.fix_locus))
+    for func in graph.roots():
+        fn = graph.functions[func]
+        params = set(fn.params)
+        taint = tainted_values(fn.node, params) if params else set()
+        hit = sink_of(graph, func, fn.node, params, taint, spec)
+        if hit is None or guarded(graph, func, fn.node, taint, hit, spec):
+            continue
+        out.append(Finding(
+            issue_class=spec.issue_class, func=func, sink_lineno=hit.lineno,
+            sink_assign_target=hit.assign_target, tainted_args=hit.tainted_args,
+            sink_src=hit.src, file_path=graph.file_path, owner_field=owner_field,
+            transform_id=spec.transform_id, source_role=spec.source_role,
+            sink_category=spec.sink_category,
+            missing_guard_class=spec.missing_guard_class, fix_locus=spec.fix_locus))
     return out

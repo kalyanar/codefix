@@ -30,6 +30,11 @@ VOCAB = {
 # Transforms with an applier in validate._apply_fix (the TRANSFORMS registry).
 KNOWN_TRANSFORMS = {"insert_ownership_guard", "insert_role_guard_at_start"}
 
+# Alg. 2 search parameters a spec may set. Depth is bounded: an unbounded search
+# is a denial-of-service on large repos, and a spec is untrusted input.
+DIRECTIONS = {"up", "down", "both"}
+MAX_DEPTH = 8
+
 
 @dataclass
 class GateResult:
@@ -53,6 +58,15 @@ def _schema_errors(spec: DetectorSpec) -> list[str]:
             errs.append(f"{field}={val!r} not in vocabulary {sorted(vocab)}")
     if spec.transform_id not in KNOWN_TRANSFORMS:
         errs.append(f"transform_id={spec.transform_id!r} has no applier")
+    if spec.direction not in DIRECTIONS:
+        errs.append(f"direction={spec.direction!r} not in {sorted(DIRECTIONS)}")
+    if not isinstance(spec.depth, int) or not 1 <= spec.depth <= MAX_DEPTH:
+        errs.append(f"depth={spec.depth!r} outside 1..{MAX_DEPTH}")
+    for field_name in ("decorator_anchors", "call_anchors"):
+        val = getattr(spec, field_name)
+        if val is not None and not all(isinstance(x, str) and x.isidentifier()
+                                       for x in val):
+            errs.append(f"{field_name} must be identifiers")
     return errs
 
 

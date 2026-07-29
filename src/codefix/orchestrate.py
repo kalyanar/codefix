@@ -88,6 +88,24 @@ def _hierarchical_prior(mem, key, fp_id):
     return 1.0 + PRIOR_STRENGTH * rate, 1.0 + PRIOR_STRENGTH * (1 - rate)
 
 
+def _catalog_findings(mem, g, builtin_findings):
+    """Run the admitted DetectorSpecs from the catalog (M13) and return the
+    findings they contribute, plus the spec count.
+
+    A registered spec never shadows a built-in: if a built-in detector already
+    claimed this (func, sink line), the catalog finding is dropped. So enabling
+    the catalog can only ADD locations — it can never re-report one twice or
+    reorder the built-in findings the bench indexes by position.
+    """
+    specs = mem.load_specs()
+    if not specs:
+        return [], 0
+    claimed = {(f.func, f.sink_lineno) for f in builtin_findings}
+    extra = [f for f in detect.detect_registered(g, specs)
+             if (f.func, f.sink_lineno) not in claimed]
+    return extra, len(specs)
+
+
 def _strategy_candidates(strat, f, stats, provider):
     """Run one proposer strategy; return its candidates (empty if it yields none)."""
     if strat == "template":
@@ -103,12 +121,15 @@ def _strategy_candidates(strat, f, stats, provider):
 def run_once(app_dir: str, db_path: str, *, explore: bool = False, seed: int = 0,
              strategies=DEFAULT_STRATEGIES, provider: str = "mock",
              model: str | None = None, seed_builtin: bool = True,
-             contrastive: bool | None = None, triage: bool = False) -> RunReport:
+             contrastive: bool | None = None, triage: bool = False,
+             catalog: bool = True) -> RunReport:
     app_dir = str(Path(app_dir).resolve())
     label = json.loads(Path(app_dir, "label.json").read_text())
     framework = label.get("framework", "none")
     exploit = str(Path(app_dir, "exploit.py"))
     legit = str(Path(app_dir, "legit.py"))
+
+    mem = PatchMemory(db_path)
 
     g = graphmod.build(str(Path(app_dir, "app.py")))
     if triage:
@@ -119,7 +140,13 @@ def run_once(app_dir: str, db_path: str, *, explore: bool = False, seed: int = 0
     else:
         findings = detect.detect_all(g)
 
-    mem = PatchMemory(db_path)
+    # M13: classes admitted to the catalog run as data, appended after the
+    # built-ins so their positions are unchanged. `catalog=False` ablates.
+    catalog_findings, n_specs = ([], 0)
+    if catalog:
+        catalog_findings, n_specs = _catalog_findings(mem, g, findings)
+        findings = findings + catalog_findings
+
     rng = random.Random(seed)
     llm = resolve_provider(provider, model)
     report = RunReport(app=label.get("app", app_dir))
@@ -127,6 +154,9 @@ def run_once(app_dir: str, db_path: str, *, explore: bool = False, seed: int = 0
     def ev(phase, target, detail):
         report.events.append(LoopEvent(phase, target, detail))
     ev("perceive", report.app, f"{len(findings)} finding(s); framework={framework}")
+    if n_specs:
+        ev("perceive", report.app,
+           f"catalog: {n_specs} admitted spec(s) -> {len(catalog_findings)} added finding(s)")
 
     # M9 feature flag: train a contrastive embedder from verified-outcome pairs and
     # use it for fuzzy recall. OFF -> deterministic M7 embedding (ablatable).

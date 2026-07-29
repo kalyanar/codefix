@@ -437,3 +437,127 @@ def test_m13_extensible_catalog_lifecycle(tmp_path):
     m3 = PatchMemory(str(tmp_path / "cat2.db"))
     assert not admit_if_passes(bad, fx, m3).admitted
     assert m3.load_specs() == []
+
+
+# --- M13b: the spec language is a real predicate, not a relabelling -----------
+
+BUILTIN_AS_SPEC = {
+    "BOLA":            ("data_access_by_id",   "ownership",       "insert_ownership_guard"),
+    "BFLA":            ("privileged_mutation", "role",            "insert_role_guard_at_start"),
+    "MISSING_AUTH":    ("sensitive_op",        "authn",           "insert_authn_guard_at_start"),
+    "SSRF":            ("url_fetch",           "url_validation",  "insert_url_validation_before_sink"),
+    "MASS_ASSIGNMENT": ("model_write",         "field_allowlist", "insert_field_allowlist"),
+}
+
+
+def _bench_apps():
+    root = BENCH.parent
+    return [p for p in sorted(root.rglob("app.py"))
+            if "vendor" not in str(p) and "__pycache__" not in str(p)]
+
+
+def test_m13b_spec_language_subsumes_builtins():
+    """Every built-in detector is expressible as a (sink x guard) spec cell, and
+    the spec reproduces it EXACTLY on every bench app. This is what earns the
+    claim that a defect class is data: the built-ins are five cells of the same
+    language, not a privileged parallel implementation."""
+    from codefix import graph, detect
+    from codefix.detect import DetectorSpec
+    apps = _bench_apps()
+    assert apps, "no bench apps found"
+    for app in apps:
+        g = graph.build(str(app))
+        for cls, (sink_cat, guard_cls, tid) in BUILTIN_AS_SPEC.items():
+            builtin = {(f.func, f.sink_lineno) for f in detect.DETECTORS[cls](g)}
+            spec = DetectorSpec(cls, "param_to_sink", tid, "param",
+                                sink_cat, guard_cls, "sink_local")
+            viaspec = {(f.func, f.sink_lineno) for f in detect.detect_with_spec(spec, g)}
+            assert builtin == viaspec, f"{app.parent.name}/{cls}: {builtin} != {viaspec}"
+
+
+def test_m13b_spec_language_exceeds_builtins():
+    """The cross-product reaches predicates NO built-in expresses — otherwise the
+    catalog could only ever relabel an existing finding. At least one off-diagonal
+    cell must flag a location the full built-in sweep misses."""
+    from codefix import graph, detect
+    from codefix.detect import DetectorSpec, SINK_MATCHERS, GUARD_MATCHERS
+    assert len(SINK_MATCHERS) * len(GUARD_MATCHERS) > len(detect.ALL_CLASSES)
+    novel = set()
+    for app in _bench_apps():
+        g = graph.build(str(app))
+        seen = {(f.func, f.sink_lineno) for f in detect.detect_all(g)}
+        for sink_cat in SINK_MATCHERS:
+            for guard_cls in GUARD_MATCHERS:
+                spec = DetectorSpec("X", "param_to_sink", "insert_ownership_guard",
+                                    "param", sink_cat, guard_cls, "sink_local")
+                hits = {(f.func, f.sink_lineno) for f in detect.detect_with_spec(spec, g)}
+                if hits - seen:
+                    novel.add((sink_cat, guard_cls))
+    assert novel, "spec language is coextensive with the built-ins"
+
+
+# --- M13c: Alg. 2 search parameters are live, not decorative ------------------
+
+def _bfla_spec(**kw):
+    from codefix.detect import DetectorSpec
+    base = dict(decorator_anchors=None, call_anchors=None, direction="both", depth=2)
+    base.update(kw)
+    return DetectorSpec("BFLA_X", "privileged_op", "insert_role_guard_at_start",
+                        "param", "privileged_mutation", "role", "entry_local",
+                        base["decorator_anchors"], base["call_anchors"],
+                        base["direction"], base["depth"])
+
+
+def test_m13c_direction_narrows_the_search():
+    """`direction` is a real Alg. 2 parameter: the decorator-guarded function is
+    cleared by the UP arm, so disabling it ("down") must flag it. If direction
+    were decorative both runs would agree."""
+    from codefix import graph, detect
+    g = graph.build(str(BENCH.parent / "bfla_decorated" / "app.py"))
+    both = {f.func for f in detect.detect_with_spec(_bfla_spec(direction="both"), g)}
+    down = {f.func for f in detect.detect_with_spec(_bfla_spec(direction="down"), g)}
+    assert "delete_account_unsafe" in both      # no guard either way
+    assert "delete_account_safe" not in both    # decorator dominates
+    assert "delete_account_safe" in down        # up-arm disabled -> now flagged
+    assert down > both
+
+
+def test_m13c_decorator_anchors_clear_an_opaque_guard():
+    """A spec may name framework guard decorators whose body the engine cannot
+    read. Naming the fixture's decorator clears the sink under a call-anchor set
+    that otherwise matches nothing."""
+    from codefix import graph, detect
+    g = graph.build(str(BENCH.parent / "bfla_decorated" / "app.py"))
+    blind = _bfla_spec(call_anchors=frozenset({"no_such_symbol"}),
+                       decorator_anchors=frozenset())   # explicitly no anchors
+    assert "delete_account_safe" in {f.func for f in detect.detect_with_spec(blind, g)}
+    named = _bfla_spec(call_anchors=frozenset({"no_such_symbol"}),
+                       decorator_anchors=frozenset({"admin_required"}))
+    assert "delete_account_safe" not in {f.func for f in detect.detect_with_spec(named, g)}
+
+
+def test_m13c_gate_rejects_bad_search_parameters():
+    """The gate validates the Alg. 2 parameters too — a spec is untrusted input,
+    and an unbounded search depth is a denial of service on a large repo."""
+    from codefix.authoring import _schema_errors, MAX_DEPTH
+    assert _schema_errors(_bfla_spec(direction="sideways"))
+    assert _schema_errors(_bfla_spec(depth=0))
+    assert _schema_errors(_bfla_spec(depth=MAX_DEPTH + 1))
+    assert _schema_errors(_bfla_spec(call_anchors=frozenset({"not an identifier"})))
+    assert not _schema_errors(_bfla_spec())          # defaults are valid
+
+
+def test_m13c_search_parameters_round_trip_through_the_catalog(tmp_path):
+    """Alg. 2 parameters survive persistence — otherwise a spec would silently
+    revert to engine defaults on the next run."""
+    from codefix.memory import PatchMemory
+    m = PatchMemory(str(tmp_path / "rt.db"))
+    spec = _bfla_spec(direction="down", depth=4,
+                      decorator_anchors=frozenset({"admin_required"}),
+                      call_anchors=frozenset({"is_admin"}))
+    m.admit_spec(spec, "test")
+    m.close()
+    got = PatchMemory(str(tmp_path / "rt.db")).load_specs()[0]
+    assert got.direction == "down" and got.depth == 4
+    assert got.decorator_anchors == frozenset({"admin_required"})
+    assert got.call_anchors == frozenset({"is_admin"})
