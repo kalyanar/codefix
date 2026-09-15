@@ -1,13 +1,18 @@
 """Legitimate-path check for VAmPI: the owner reads their OWN book.
 
 Must keep working after the fix (differential-behavior half of the validator).
+The captured response body is also the CONTRACT sample: the harness checks its
+keys + value types against the owner's expected response schema.
 
 Exit 0  => owner can read own book.
 Exit !=0 => the fix broke legitimate access (regression).
 
+Prints a machine-readable final line:  RESULT {json}
+
 Usage: python legit.py --base-url http://localhost:5001
 """
 import argparse
+import json
 import secrets
 import sys
 
@@ -35,12 +40,16 @@ def main() -> int:
     r = s.get(f"{base}/books/v1/{title}",
               headers={"Authorization": f"Bearer {tok}"}, timeout=10)
     body = r.json() if r.headers.get("content-type", "").startswith("application/json") else {}
+    ok = body.get("secret") == secret
 
-    if body.get("secret") == secret:
+    result = {"defect": "books-read", "kind": "legit", "ok": ok,
+              "status": r.status_code, "body": body}
+    if ok:
         print(f"OK: owner read own book secret {body.get('secret')!r}")
-        return 0
-    print(f"REGRESSION: owner blocked from own book; status={r.status_code} body={body}")
-    return 1
+    else:
+        print(f"REGRESSION: owner blocked from own book; status={r.status_code} body={body}")
+    print("RESULT " + json.dumps(result))
+    return 0 if ok else 1
 
 
 if __name__ == "__main__":

@@ -1,9 +1,12 @@
 {
   "app": "crAPI", "framework": "django+java+go (multi-service)", "source": "https://github.com/OWASP/crAPI",
+  "harness": "run_crapi.py --patched-src DIR --json OUT",
+  "note": "Live before/after-patch differential on the Python workshop service. Stock stack from published multi-arch images; only the workshop image is rebuilt from source and swapped in (DB and other services stay up). No secure variant ships; ground truth is established on the stock image. Stages: exploit, differential(legit), contract(response schema incl. payment card record), adversarial(varied attacker).",
   "defects": [
     {"issue_class": "BOLA", "endpoint": "GET /workshop/api/shop/orders/<id>", "service": "workshop (Python/Django)",
-     "description": "any user reads another user's order incl. payment card details by order id",
-     "exploit": "exploit.py", "legit": "legit.py", "severity": "high (PCI card data exposure)"}
-  ],
-  "note": "multi-language stack; codefix's Python detector applies to the workshop service. No secure variant (always vulnerable); exploit establishes ground truth."
+     "file": "crapi/shop/views.py", "class": "OrderControlView", "method": "get", "vuln_line": 122,
+     "description": "any user reads another user's order incl. payment card record by order id; get() lacks @jwt_auth_required and an ownership check (unlike put())",
+     "exploit": "exploit.py", "legit": "legit.py", "adversarial": "adversarial.py",
+     "severity": "high (payment card record exposure)"}
+  ]
 }
