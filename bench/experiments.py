@@ -74,30 +74,128 @@ def f2_transfer(tmpdir):
             "warm_start_LLM_calls": warm_llm, "warm_started_verified": warm_started}
 
 
-# --- Ablation: greedy vs Thompson (synthetic competing arms) -----------------
+# --- Ablation: greedy vs Thompson through codefix's own selector -----------------
 def greedy_vs_thompson(seeds=30, N=200, pA=0.80, pB=0.45):
+    """Selection ablation run through codefix's selector (`learn.pick`) over
+    PatchMemory posteriors — greedy (posterior mean) and Thompson (posterior
+    sample) read the SAME Beta rows in `template_fingerprint_links`.
+
+    One BOLA fingerprint has two linked templates: the better one verifies with
+    probability pA, the worse with pB. Adversarial cold start: the worse template
+    is seeded with one early lucky success. Each round the chosen template's
+    exploit-verification outcome is drawn from its true rate (the stochastic part
+    stands in for varied codebases) and written back with `record_outcome`, which
+    is what moves the posterior. Regret = pA - p(chosen), summed over N rounds."""
+    import tempfile
+    from codefix import learn, propose
+    from codefix.fingerprint import FingerprintKey
+    from codefix.memory import PatchMemory
+
+    key = FingerprintKey("BOLA", "path_param", "object_read", "ownership", "handler", "flask")
+
     def sim(mode, seed):
-        rng = random.Random(seed)
-        sA = fA = sB = fB = 0
-        regret = 0.0
-        for _ in range(N):
-            if mode == "greedy":
-                mAv = (sA + 1) / (sA + fA + 2); mBv = (sB + 1) / (sB + fB + 2)
-                arm = "A" if mAv >= mBv else "B"
-            else:
-                arm = "A" if rng.betavariate(sA + 1, fA + 1) >= rng.betavariate(sB + 1, fB + 1) else "B"
-            p = pA if arm == "A" else pB
-            win = rng.random() < p
-            if arm == "A":
-                sA += win; fA += (not win)
-            else:
-                sB += win; fB += (not win)
-            regret += pA - p
+        rng_sel, rng_env = random.Random(seed), random.Random(10_000 + seed)
+        with tempfile.TemporaryDirectory() as d:
+            mem = PatchMemory(":memory:")
+            fp = mem.upsert_fingerprint(key)
+            cb = mem.upsert_codebase(f"stream-{seed}")
+            good = mem.seed_template("guard_after_fetch", "BOLA", "insert_ownership_guard")
+            worse = mem.seed_template("guard_at_route_entry", "BOLA", "insert_ownership_guard")
+            p_true = {good: pA, worse: pB}
+            for t in (good, worse):
+                mem.link(t, fp)
+            issue = mem.record_issue(cb, fp, "BOLA", "seed")
+            mem.record_outcome(mem.record_patch(issue, worse, "template", ""), "success", "exploit")
+            regret = 0.0
+            for i in range(N):
+                cands = [propose.Candidate(t.template_id, t.name, t.transform_id, t.alpha0, t.beta0,
+                                           t.successes, t.regressions, "template", "")
+                         for t in mem.templates_for(fp, "BOLA")]
+                chosen = learn.pick(cands, explore=(mode == "thompson"), rng=rng_sel)
+                ok = rng_env.random() < p_true[chosen.template_id]
+                issue = mem.record_issue(cb, fp, "BOLA", f"instance-{i}")
+                pid = mem.record_patch(issue, chosen.template_id, "template", "")
+                mem.record_outcome(pid, "success" if ok else "regression", "exploit")
+                regret += pA - p_true[chosen.template_id]
+            mem.close()
         return regret
-    g = [sim("greedy", s) for s in range(seeds)]
-    t = [sim("thompson", s) for s in range(seeds)]
+
+    g = [sim("greedy", sd) for sd in range(seeds)]
+    t = [sim("thompson", sd) for sd in range(seeds)]
     return {"greedy_regret_mean": statistics.mean(g), "thompson_regret_mean": statistics.mean(t),
-            "greedy_regret_max": max(g), "thompson_regret_max": max(t)}
+            "greedy_regret_max": max(g), "thompson_regret_max": max(t),
+            "seeds": seeds, "rounds": N, "pA": pA, "pB": pB}
+
+
+# --- Triage (non-gating) -------------------------------------------------------
+def triage_study():
+    """Cost-to-first (1-based detector position of the first hit) with and without
+    triage, recall compared against the full sweep, plus a deliberately wrong tag set."""
+    from codefix import detect, graph, triage
+    rows = []
+    for app in ("shop_bola", "admin_bfla", "mass_assign", "ssrf_preview", "missing_auth"):
+        g = graph.build(str(APPS / app), exclude=graph.harness_excluder)
+        full, c_full = detect.detect_prioritized(g, detect.ALL_CLASSES)
+        tri, c_tri = detect.detect_prioritized(g, triage.class_priority(triage.triage_tags(g.source)))
+        rows.append({"app": app, "cost_full": c_full, "cost_triage": c_tri,
+                     "recall_equal": sorted((f.issue_class, f.func) for f in full) ==
+                     sorted((f.issue_class, f.func) for f in tri)})
+    g = graph.build(str(APPS / "ssrf_preview"), exclude=graph.harness_excluder)
+    wrong, _ = detect.detect_prioritized(g, ["BOLA", "BFLA", "MASS_ASSIGNMENT"])
+    return {"rows": rows, "max_cost_full": max(r["cost_full"] for r in rows),
+            "max_cost_triage": max(r["cost_triage"] for r in rows),
+            "all_recall_equal": all(r["recall_equal"] for r in rows),
+            "wrong_tags_still_find_ssrf": any(f.issue_class == "SSRF" for f in wrong)}
+
+
+# --- Contrastive feature learning -------------------------------------------------
+def contrastive_study(tmpdir):
+    """Train the (feature-flagged) contrastive embedder from outcome-labelled pairs.
+    The transferred pair is mined from PatchMemory after real verified runs (the
+    same template verified on the framework=none and framework=fastapi BOLA); the
+    regressed pair is the nested-context case, labelled -1."""
+    from codefix.contrastive import ContrastiveEmbedder, mine_pairs, tokenize
+    from codefix.memory import PatchMemory
+    db = str(Path(tmpdir, "contrastive.db")); Path(db).unlink(missing_ok=True)
+    run_once(str(APPS / "library_bola"), db, seed=0, seed_builtin=True)
+    run_once(str(APPS / "library_bola_fastapi"), db, seed=0, seed_builtin=True)
+    mem = PatchMemory(db)
+    facets = {r["id"]: r for r in mem.conn.execute("SELECT * FROM fingerprints")}
+    mined = [(a, b, lab) for a, b, lab in mine_pairs(mem) if lab > 0]
+    mem.close()
+    a, b, _ = mined[0]
+    ta = tokenize(facets[a]["issue_class"], facets[a]["sink_category"],
+                  facets[a]["missing_guard_class"], framework=facets[a]["framework"])
+    tb = tokenize(facets[b]["issue_class"], facets[b]["sink_category"],
+                  facets[b]["missing_guard_class"], framework=facets[b]["framework"])
+    base = tokenize("BOLA", "object_read", "ownership")
+    nested = tokenize("BOLA", "object_read", "ownership", context="nested")
+    e = ContrastiveEmbedder()
+    before = (e.cosine(ta, tb), e.cosine(base, nested))
+    e.train([(ta, tb, +1), (base, nested, -1)], epochs=40)
+    return {"mined_transferred_pair": [facets[a]["framework"], facets[b]["framework"]],
+            "cos_before": [round(x, 3) for x in before],
+            "cos_transferred": round(e.cosine(ta, tb), 3),
+            "cos_regressed": round(e.cosine(base, nested), 3),
+            "weights": {k: round(v, 3) for k, v in sorted(e.w.items())}}
+
+
+# --- CodeMap build time ------------------------------------------------------------
+def build_time_study(repeats=20):
+    from codefix import graph
+    out = []
+    for name, path in (("VAmPI", APPS / "vampi" / "vendor"),
+                       ("crAPI workshop", APPS / "crapi" / "vendor"),
+                       ("pygoat", APPS / "pygoat" / "vendor")):
+        if not path.exists():
+            continue
+        times = []
+        for _ in range(repeats):
+            g = graph.build(str(path), exclude=graph.harness_excluder)
+            times.append(g.build_seconds * 1000)
+        out.append({"repo": name, "files": len(g.sources), "functions": len(g.functions),
+                    "edges": len(g.edges), "median_ms": round(statistics.median(times), 1)})
+    return out
 
 
 # --- Ablation: fuzzy on/off, triage on/off -----------------------------------
@@ -122,38 +220,55 @@ def main():
     f2 = f2_transfer(tmp)
     gt = greedy_vs_thompson()
     fz = fuzzy_ablation(tmp)
+    tr = triage_study()
+    ct = contrastive_study(tmp)
+    bt = build_time_study()
 
     print("=" * 64)
     print("F1 — LEARNING CURVE (LLM-call rate over a corpus stream, cold start)")
     print(f"  issues: {f1['n']}   cumulative LLM-call rate:")
     print(f"    1.0 |{sparkline(f1['cum_llm_rate'])}| {f1['final_llm_rate']:.2f}")
-    print(f"  start ~1.0 (every novel fingerprint needs the LLM) -> "
-          f"{f1['final_llm_rate']:.2f} as the memory fills")
     print(f"  exploit-verified success rate (final): {f1['final_success']:.2f}")
 
     print("\n" + "=" * 64)
     print("F2 — TRANSFER (train partition A, warm-start disjoint partition B)")
-    print(f"  B size: {f2['B_size']}")
-    print(f"  cold-start  LLM calls on B: {f2['cold_start_LLM_calls']}")
-    print(f"  warm-start  LLM calls on B: {f2['warm_start_LLM_calls']}  "
-          f"(after training on A)")
-    print(f"  B issues warm-started + exploit-verified: {f2['warm_started_verified']}/{f2['B_size']}")
+    print(f"  cold-start LLM calls on B: {f2['cold_start_LLM_calls']}   warm-start: "
+          f"{f2['warm_start_LLM_calls']}   warm-started + verified: "
+          f"{f2['warm_started_verified']}/{f2['B_size']}")
 
     print("\n" + "=" * 64)
-    print("ABLATION — greedy vs Thompson (synthetic: arm A p=0.80, B p=0.45, 200 trials)")
+    print(f"SELECTION — greedy vs Thompson via codefix's selector + PatchMemory "
+          f"(adversarial cold start, pA={gt['pA']}, pB={gt['pB']}, {gt['rounds']} rounds, "
+          f"{gt['seeds']} seeds)")
     print(f"  greedy   regret: mean {gt['greedy_regret_mean']:5.1f}   WORST-CASE {gt['greedy_regret_max']:5.1f}")
     print(f"  thompson regret: mean {gt['thompson_regret_mean']:5.1f}   WORST-CASE {gt['thompson_regret_max']:5.1f}")
-    print("  -> greedy can LOCK onto the worse arm (catastrophic tail); Thompson")
-    print(f"     explores enough to bound the worst case ({gt['thompson_regret_max']:.0f} vs {gt['greedy_regret_max']:.0f}).")
-    print("     The cold-start risk Thompson removes is exactly codefix's setting.")
 
     print("\n" + "=" * 64)
-    print("ABLATION — fuzzy recall on/off (different-framework BOLA variant)")
-    print(f"  fuzzy ON : provenance={fz['fuzzy_on']['provenance']:8} llm_used={fz['fuzzy_on']['llm_used']}")
-    print(f"  fuzzy OFF: provenance={fz['fuzzy_off']['provenance']:8} llm_used={fz['fuzzy_off']['llm_used']}")
-    print("  -> fuzzy recall avoids the LLM cold-path on the framework-variant")
+    print("FUZZY recall on/off (different-framework BOLA variant)")
+    print(f"  on : {fz['fuzzy_on']}   off: {fz['fuzzy_off']}")
 
-    out = {"F1": f1, "F2": f2, "greedy_vs_thompson": gt, "fuzzy_ablation": fz}
+    print("\n" + "=" * 64)
+    print("TRIAGE (non-gating)")
+    for r in tr["rows"]:
+        print(f"  {r['app']:14} cost-to-first full={r['cost_full']} triage={r['cost_triage']} "
+              f"recall_equal={r['recall_equal']}")
+    print(f"  worst cost-to-first: {tr['max_cost_full']} -> {tr['max_cost_triage']}; "
+          f"wrong tags still find SSRF: {tr['wrong_tags_still_find_ssrf']}")
+
+    print("\n" + "=" * 64)
+    print("CONTRASTIVE (feature-flagged)")
+    print(f"  transferred pair (mined, frameworks {ct['mined_transferred_pair']}): cos -> "
+          f"{ct['cos_transferred']}   regressed nested-context pair: cos -> {ct['cos_regressed']}")
+    print(f"  learned weights: {ct['weights']}")
+
+    print("\n" + "=" * 64)
+    print("CODEMAP build time (median over 20 builds)")
+    for b in bt:
+        print(f"  {b['repo']:15} {b['files']:3} files {b['functions']:4} functions "
+              f"{b['edges']:5} edges  {b['median_ms']} ms")
+
+    out = {"F1": f1, "F2": f2, "greedy_vs_thompson": gt, "fuzzy_ablation": fz,
+           "triage": tr, "contrastive": ct, "build_time": bt}
     (HERE / "experiment_results.json").write_text(json.dumps(out, indent=2))
     print(f"\nwrote {HERE / 'experiment_results.json'}")
 

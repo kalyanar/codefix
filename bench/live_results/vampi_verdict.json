@@ -1,0 +1,132 @@
+{
+  "app": "VAmPI",
+  "patched_src": "<scratch>/vampi/src",
+  "vuln_base": "http://localhost:5002",
+  "patched_base": "http://localhost:5001",
+  "defects": [
+    {
+      "name": "books-read",
+      "class": "BOLA",
+      "pass": true,
+      "stages": {
+        "exploit_before": true,
+        "blocked_after": true,
+        "differential_legit": true,
+        "contract": true,
+        "adversarial": true
+      },
+      "contract_detail": {
+        "expected": {
+          "book_title": "str",
+          "secret": "str",
+          "owner": "str"
+        },
+        "missing": [],
+        "wrong_type": [],
+        "got_keys": [
+          "book_title",
+          "owner",
+          "secret"
+        ]
+      },
+      "raw": {
+        "before": {
+          "exit": 0,
+          "raw": "EXPLOIT-SUCCEEDED: attacker read victim secret 'TOPSECRET_2758c6' (owner=victim_2758c6)\nRESULT {\"defect\": \"books-read\", \"kind\": \"exploit\", \"leaked\": true, \"status\": 200, \"body\": {\"book_title\": \"book_2758c6\", \"owner\": \"victim_2758c6\", \"secret\": \"TOPSECRET_2758c6\"}}",
+          "defect": "books-read",
+          "kind": "exploit",
+          "leaked": true,
+          "status": 200,
+          "body": {
+            "book_title": "book_2758c6",
+            "owner": "victim_2758c6",
+            "secret": "TOPSECRET_2758c6"
+          }
+        },
+        "after": {
+          "exit": 1,
+          "raw": "BLOCKED: status=403 body={}\nRESULT {\"defect\": \"books-read\", \"kind\": \"exploit\", \"leaked\": false, \"status\": 403, \"body\": {}}",
+          "defect": "books-read",
+          "kind": "exploit",
+          "leaked": false,
+          "status": 403,
+          "body": {}
+        },
+        "legit": {
+          "exit": 0,
+          "raw": "OK: owner read own book secret 'SECRET_2b1eea'\nRESULT {\"defect\": \"books-read\", \"kind\": \"legit\", \"ok\": true, \"status\": 200, \"body\": {\"book_title\": \"book_2b1eea\", \"owner\": \"owner_2b1eea\", \"secret\": \"SECRET_2b1eea\"}}",
+          "defect": "books-read",
+          "kind": "legit",
+          "ok": true,
+          "status": 200,
+          "body": {
+            "book_title": "book_2b1eea",
+            "owner": "owner_2b1eea",
+            "secret": "SECRET_2b1eea"
+          }
+        },
+        "adversarial": {
+          "exit": 1,
+          "raw": "BLOCKED (adversarial): status=403 body={}\nRESULT {\"defect\": \"books-read\", \"kind\": \"adversarial\", \"leaked\": false, \"status\": 403, \"body\": {}}",
+          "defect": "books-read",
+          "kind": "adversarial",
+          "leaked": false,
+          "status": 403,
+          "body": {}
+        }
+      }
+    },
+    {
+      "name": "pw-takeover",
+      "class": "BOLA",
+      "pass": true,
+      "stages": {
+        "exploit_before": true,
+        "blocked_after": true,
+        "differential_legit": true,
+        "contract": true,
+        "adversarial": true
+      },
+      "contract_detail": {
+        "expected_status": 204,
+        "got_status": 204
+      },
+      "raw": {
+        "before": {
+          "exit": 0,
+          "raw": "EXPLOIT-SUCCEEDED: took over victim_419aad via password update\nRESULT {\"defect\": \"pw-takeover\", \"kind\": \"exploit\", \"leaked\": true, \"status\": 204}",
+          "defect": "pw-takeover",
+          "kind": "exploit",
+          "leaked": true,
+          "status": 204
+        },
+        "after": {
+          "exit": 1,
+          "raw": "BLOCKED: victim password unchanged\nRESULT {\"defect\": \"pw-takeover\", \"kind\": \"exploit\", \"leaked\": false, \"status\": 403}",
+          "defect": "pw-takeover",
+          "kind": "exploit",
+          "leaked": false,
+          "status": 403
+        },
+        "legit": {
+          "exit": 0,
+          "raw": "OK: owner changed own password\nRESULT {\"defect\": \"pw-takeover\", \"kind\": \"legit\", \"ok\": true, \"status\": 204, \"body\": {}}",
+          "defect": "pw-takeover",
+          "kind": "legit",
+          "ok": true,
+          "status": 204,
+          "body": {}
+        },
+        "adversarial": {
+          "exit": 1,
+          "raw": "BLOCKED (adversarial): victim password unchanged\nRESULT {\"defect\": \"pw-takeover\", \"kind\": \"adversarial\", \"leaked\": false, \"status\": 403}",
+          "defect": "pw-takeover",
+          "kind": "adversarial",
+          "leaked": false,
+          "status": 403
+        }
+      }
+    }
+  ],
+  "pass": true
+}

@@ -90,6 +90,7 @@ def main(argv=None) -> int:
     ap.add_argument("--out", default=None, help="where to write codefix's patched tree")
     ap.add_argument("--render-only", action="store_true")
     ap.add_argument("--json", dest="json_out", default=None)
+    ap.add_argument("--verdict", default=None, help="use an existing runner verdict for this tree")
     args = ap.parse_args(argv)
     cfg = APPS[args.app]
     out = Path(args.out) if args.out else Path(tempfile.mkdtemp(prefix=f"codefix_{args.app}_")) / "src"
@@ -109,11 +110,17 @@ def main(argv=None) -> int:
         return 0 if not missed else 1
 
     verdict_path = out.parent / "verdict.json"
-    proc = subprocess.run([sys.executable, str(cfg["dir"] / cfg["runner"]),
-                           "--patched-src", str(out), "--json", str(verdict_path)],
-                          text=True, capture_output=True, timeout=3600)
-    print(proc.stdout[-4000:])
+    if args.verdict:
+        # re-record an earlier live run of this exact patched tree
+        verdict_path = Path(args.verdict)
+    else:
+        proc = subprocess.run([sys.executable, str(cfg["dir"] / cfg["runner"]),
+                               "--patched-src", str(out), "--json", str(verdict_path)],
+                              text=True, capture_output=True, timeout=3600)
+        print(proc.stdout[-4000:])
     verdict = json.loads(verdict_path.read_text()) if verdict_path.exists() else {"defects": []}
+    if "defects" not in verdict and "stages" in verdict:          # single-defect runner (crAPI)
+        verdict = {"defects": [dict(verdict, name=next(iter(cfg["names"])))]}
     by_name = {d["name"]: d for d in verdict.get("defects", [])}
 
     results = []

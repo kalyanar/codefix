@@ -1,0 +1,143 @@
+{
+  "app": "crAPI",
+  "defect": "shop-order",
+  "class": "BOLA",
+  "patched_src": "<scratch>/crapi/src",
+  "api": "http://127.0.0.1:8888",
+  "pass": true,
+  "stages": {
+    "exploit_before": true,
+    "blocked_after": true,
+    "differential_legit": true,
+    "contract": true,
+    "adversarial": true
+  },
+  "contract_detail": {
+    "order_keys": [
+      "created_on",
+      "id",
+      "product",
+      "quantity",
+      "status",
+      "transaction_id",
+      "user"
+    ],
+    "payment_keys": [
+      "amount",
+      "card_expiry",
+      "card_number",
+      "card_owner_name",
+      "card_type",
+      "currency",
+      "order_id",
+      "paid_on",
+      "transaction_id"
+    ],
+    "problems": []
+  },
+  "raw": {
+    "before": {
+      "exit": 0,
+      "raw": "EXPLOIT-SUCCEEDED: attacker read victim order #6 (owner=v_197e53@ex.com, card=XXXXXXXXXXXX9246)\nRESULT {\"defect\": \"shop-order\", \"kind\": \"exploit\", \"leaked\": true, \"status\": 200, \"order_id\": 6}",
+      "defect": "shop-order",
+      "kind": "exploit",
+      "leaked": true,
+      "status": 200,
+      "order_id": 6
+    },
+    "legit_before": {
+      "exit": 0,
+      "raw": "OK: owner read own order\nRESULT {\"defect\": \"shop-order\", \"kind\": \"legit\", \"ok\": true, \"status\": 200, \"body\": {\"order\": {\"id\": 7, \"user\": {\"email\": \"o_75b54f@ex.com\", \"number\": \"40775b54f0\"}, \"product\": {\"id\": 1, \"name\": \"Seat\", \"price\": \"10.00\", \"image_url\": \"images/seat.svg\"}, \"quantity\": 1, \"status\": \"delivered\", \"transaction_id\": \"ed2144ca-e19c-4df2-a69b-86077fe9a3db\", \"created_on\": \"2026-09-15T14:03:14.412406\"}, \"payment\": {\"transaction_id\": \"ed2144ca-e19c-4df2-a69b-86077fe9a3db\", \"order_id\": 7, \"amount\": 10, \"paid_on\": \"2026-09-15T14:03:14.412406\", \"card_number\": \"XXXXXXXXXXXX9102\", \"card_owner_name\": \"o75b54f\", \"card_type\": \"Visa\", \"card_expiry\": \"06/2030\", \"currency\": \"USD\"}}}",
+      "defect": "shop-order",
+      "kind": "legit",
+      "ok": true,
+      "status": 200,
+      "body": {
+        "order": {
+          "id": 7,
+          "user": {
+            "email": "o_75b54f@ex.com",
+            "number": "40775b54f0"
+          },
+          "product": {
+            "id": 1,
+            "name": "Seat",
+            "price": "10.00",
+            "image_url": "images/seat.svg"
+          },
+          "quantity": 1,
+          "status": "delivered",
+          "transaction_id": "ed2144ca-e19c-4df2-a69b-86077fe9a3db",
+          "created_on": "2026-09-15T14:03:14.412406"
+        },
+        "payment": {
+          "transaction_id": "ed2144ca-e19c-4df2-a69b-86077fe9a3db",
+          "order_id": 7,
+          "amount": 10,
+          "paid_on": "2026-09-15T14:03:14.412406",
+          "card_number": "XXXXXXXXXXXX9102",
+          "card_owner_name": "o75b54f",
+          "card_type": "Visa",
+          "card_expiry": "06/2030",
+          "currency": "USD"
+        }
+      }
+    },
+    "after": {
+      "exit": 1,
+      "raw": "BLOCKED: {'message': 'You are not allowed to access this resource!'}\nRESULT {\"defect\": \"shop-order\", \"kind\": \"exploit\", \"leaked\": false, \"status\": 403, \"order_id\": 8}",
+      "defect": "shop-order",
+      "kind": "exploit",
+      "leaked": false,
+      "status": 403,
+      "order_id": 8
+    },
+    "legit": {
+      "exit": 0,
+      "raw": "OK: owner read own order\nRESULT {\"defect\": \"shop-order\", \"kind\": \"legit\", \"ok\": true, \"status\": 200, \"body\": {\"order\": {\"id\": 9, \"user\": {\"email\": \"o_d54393@ex.com\", \"number\": \"407d543930\"}, \"product\": {\"id\": 1, \"name\": \"Seat\", \"price\": \"10.00\", \"image_url\": \"images/seat.svg\"}, \"quantity\": 1, \"status\": \"delivered\", \"transaction_id\": \"f15b2d72-5b57-4879-8dcc-3822edc0c89a\", \"created_on\": \"2026-09-15T14:03:42.403949\"}, \"payment\": {\"transaction_id\": \"f15b2d72-5b57-4879-8dcc-3822edc0c89a\", \"order_id\": 9, \"amount\": 10, \"paid_on\": \"2026-09-15T14:03:42.403949\", \"card_number\": \"XXXXXXXXXXXX6098\", \"card_owner_name\": \"od54393\", \"card_type\": \"MasterCard\", \"card_expiry\": \"03/2027\", \"currency\": \"USD\"}}}",
+      "defect": "shop-order",
+      "kind": "legit",
+      "ok": true,
+      "status": 200,
+      "body": {
+        "order": {
+          "id": 9,
+          "user": {
+            "email": "o_d54393@ex.com",
+            "number": "407d543930"
+          },
+          "product": {
+            "id": 1,
+            "name": "Seat",
+            "price": "10.00",
+            "image_url": "images/seat.svg"
+          },
+          "quantity": 1,
+          "status": "delivered",
+          "transaction_id": "f15b2d72-5b57-4879-8dcc-3822edc0c89a",
+          "created_on": "2026-09-15T14:03:42.403949"
+        },
+        "payment": {
+          "transaction_id": "f15b2d72-5b57-4879-8dcc-3822edc0c89a",
+          "order_id": 9,
+          "amount": 10,
+          "paid_on": "2026-09-15T14:03:42.403949",
+          "card_number": "XXXXXXXXXXXX6098",
+          "card_owner_name": "od54393",
+          "card_type": "MasterCard",
+          "card_expiry": "03/2027",
+          "currency": "USD"
+        }
+      }
+    },
+    "adversarial": {
+      "exit": 1,
+      "raw": "BLOCKED (adversarial): {'message': 'You are not allowed to access this resource!'}\nRESULT {\"defect\": \"shop-order\", \"kind\": \"adversarial\", \"leaked\": false, \"status\": 403, \"order_id\": 10}",
+      "defect": "shop-order",
+      "kind": "adversarial",
+      "leaked": false,
+      "status": 403,
+      "order_id": 10
+    }
+  }
+}
