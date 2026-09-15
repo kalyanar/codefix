@@ -1,6 +1,0 @@
-__pycache__/
-*.pyc
-*.log
-.coverage
-*.xml
-test-results/

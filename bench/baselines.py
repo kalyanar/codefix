@@ -23,7 +23,7 @@ same for CodeQL. Raw output is stored per platform: raw/<tool>/<platform>/.
 Corpus (paper, "Corpus"): every in-process fixture under bench/apps/ (only the app
 source, not the exploit/legit/contract harness files), OWASP VAmPI
 (bench/apps/vampi/vendor) and the crAPI Python workshop service
-(bench/apps/crapi/vendor/services/workshop). pygoat is vendored but NOT scanned:
+(bench/apps/crapi/vendor). pygoat is vendored but NOT scanned:
 the paper's corpus table lists it as weak-fit, outside the active corpus.
 """
 from __future__ import annotations
@@ -85,7 +85,7 @@ def corpus() -> list[dict]:
     out.append({"name": "vampi", "kind": "real", "src": APPS / "vampi" / "vendor", "files": None,
                 "labels": _labels(APPS / "vampi")})
     out.append({"name": "crapi", "kind": "real",
-                "src": APPS / "crapi" / "vendor" / "services" / "workshop", "files": None,
+                "src": APPS / "crapi" / "vendor", "files": None,
                 "labels": _labels(APPS / "crapi")})
     return out
 
@@ -516,10 +516,9 @@ def classify(f: dict) -> dict:
 # --------------------------------------------------------------------------- codefix hook
 
 def codefix_authz(target_dir) -> int:
-    """codefix's own cross-function authz finding count for an app directory.
-
-    Imports codefix lazily and returns -1 if it is missing or its API does not
-    match. The engine API is being rewritten: wire the new entry point here."""
+    """codefix's own cross-function authz finding count for an app directory:
+    one CodeMap over the whole tree (reproducers and tests excluded), all five
+    built-in detectors. Returns -1 if codefix cannot be imported."""
     try:
         src = str(ROOT / "src")
         if src not in sys.path:
@@ -528,8 +527,8 @@ def codefix_authz(target_dir) -> int:
         from codefix import detect, graph
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", SyntaxWarning)
-            return sum(len(detect.detect_all(graph.build(str(py))))
-                       for py in sorted(Path(target_dir).rglob("*.py")))
+            return len(detect.detect_all(graph.build(str(target_dir),
+                                                     exclude=graph.harness_excluder)))
     except Exception:  # noqa: BLE001  ImportError, API mismatch, engine errors on real apps
         return -1
 
@@ -710,7 +709,7 @@ def _md_main(res, targets) -> str:
           "Fixtures (app source only; the `exploit*`, `legit*`, `bypass`, `contract` harness files are "
           "not scanned): " + ", ".join(f"`{n}`" for n in FIXTURES) + ". Real apps: `vampi` "
           "(`bench/apps/vampi/vendor`, whole repository) and `crapi` "
-          "(`bench/apps/crapi/vendor/services/workshop`, crAPI commit b5fc307, Apache-2.0). Not scanned: "
+          "(`bench/apps/crapi/vendor`, the workshop service at crAPI commit b5fc307, Apache-2.0). Not scanned: "
           + "; ".join(f"`{k}`, {v}" for k, v in res["excluded"].items()) + ".\n",
           "## Classifier: how the authz column is computed\n",
           "A finding counts as **cross-function authz** when the tool's own rule metadata puts it in one of "
@@ -722,12 +721,12 @@ def _md_main(res, targets) -> str:
           "**BOLA/BFLA** is the stricter subset: CWE 284, 285, 639, 862 or 863, or a BOLA, IDOR, "
           "authorization or access-control rule id.\n",
           "## Per target\n",
-          "Each cell is `findings / authz / BOLA-BFLA`; `-` means not run. The codefix hook column is "
-          "`codefix_authz(app_dir)`, where `-1` means the engine was not importable or its API did not match. "
-          "Until the rewritten engine is wired in, the hook calls the current `graph.build` + "
-          "`detect.detect_all` once per `.py` file and sums the results; those numbers are not checked "
-          "against the labels and are not a codefix result.\n",
-          "| Target | " + " | ".join(KIND_LABEL[k] for k in KINDS) + " | codefix hook |",
+          "Each cell is `findings / authz / BOLA-BFLA`; `-` means not run. The codefix column is "
+          "`codefix_authz(app_dir)`: one cross-file CodeMap over the target (reproducers and tests "
+          "excluded) and all five built-in detectors. On VAmPI and crAPI it includes every labelled "
+          "defect, which `bench/live_codefix.py` then fixes and exploit-verifies live; further findings "
+          "there have no reproducer and are reported, not verified.\n",
+          "| Target | " + " | ".join(KIND_LABEL[k] for k in KINDS) + " | codefix |",
           "|---|" + "---:|" * (len(KINDS) + 1)]
     for n in names:
         cells = []

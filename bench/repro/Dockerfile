@@ -20,7 +20,7 @@ RUN pip install --no-cache-dir pytest bandit==1.9.4 semgrep==1.166.0 pyre-check=
 # The root .dockerignore drops every `vendor/` dir, so the vendored real apps come
 # from the named build context `apps` (= bench/apps).
 COPY --from=apps vampi/vendor/requirements.txt /tmp/req/vampi.txt
-COPY --from=apps crapi/vendor/services/workshop/requirements.txt /tmp/req/crapi.txt
+COPY --from=apps crapi/vendor/requirements.txt /tmp/req/crapi.txt
 COPY bench/repro/install_pysa_deps.sh /tmp/req/install_pysa_deps.sh
 RUN bash /tmp/req/install_pysa_deps.sh vampi /tmp/req/vampi.txt \
  && bash /tmp/req/install_pysa_deps.sh crapi /tmp/req/crapi.txt

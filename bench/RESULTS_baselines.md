@@ -15,7 +15,7 @@ Semgrep rules: `https://semgrep.dev/c/p/default`, 1073 rules, sha256 `9bd3706d75
 
 ## Corpus
 
-Fixtures (app source only; the `exploit*`, `legit*`, `bypass`, `contract` harness files are not scanned): `admin_bfla`, `bfla_decorated`, `library_bola`, `library_bola_fastapi`, `library_flat_bola`, `mass_assign`, `missing_auth`, `new_issue_idor_note`, `shop_bola`, `ssrf_preview`. Real apps: `vampi` (`bench/apps/vampi/vendor`, whole repository) and `crapi` (`bench/apps/crapi/vendor/services/workshop`, crAPI commit b5fc307, Apache-2.0). Not scanned: `pygoat`, weak-fit in the paper's corpus table (client-trust access lab); not in the active corpus.
+Fixtures (app source only; the `exploit*`, `legit*`, `bypass`, `contract` harness files are not scanned): `admin_bfla`, `bfla_decorated`, `library_bola`, `library_bola_fastapi`, `library_flat_bola`, `mass_assign`, `missing_auth`, `new_issue_idor_note`, `shop_bola`, `ssrf_preview`. Real apps: `vampi` (`bench/apps/vampi/vendor`, whole repository) and `crapi` (`bench/apps/crapi/vendor`, the workshop service at crAPI commit b5fc307, Apache-2.0). Not scanned: `pygoat`, weak-fit in the paper's corpus table (client-trust access lab); not in the active corpus.
 
 ## Classifier: how the authz column is computed
 
@@ -28,9 +28,9 @@ A finding counts as **cross-function authz** when the tool's own rule metadata p
 
 ## Per target
 
-Each cell is `findings / authz / BOLA-BFLA`; `-` means not run. The codefix hook column is `codefix_authz(app_dir)`, where `-1` means the engine was not importable or its API did not match. Until the rewritten engine is wired in, the hook calls the current `graph.build` + `detect.detect_all` once per `.py` file and sums the results; those numbers are not checked against the labels and are not a codefix result.
+Each cell is `findings / authz / BOLA-BFLA`; `-` means not run. The codefix column is `codefix_authz(app_dir)`: one cross-file CodeMap over the target (reproducers and tests excluded) and all five built-in detectors. On VAmPI and crAPI it includes every labelled defect, which `bench/live_codefix.py` then fixes and exploit-verifies live; further findings there have no reproducer and are reported, not verified.
 
-| Target | Bandit | Semgrep | CodeQL suite | CodeQL BarrierGuard query | Pysa | codefix hook |
+| Target | Bandit | Semgrep | CodeQL suite | CodeQL BarrierGuard query | Pysa | codefix |
 |---|---:|---:|---:|---:|---:|---:|
 | admin_bfla | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 | 1 |
 | bfla_decorated | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 | 1 |
@@ -42,8 +42,8 @@ Each cell is `findings / authz / BOLA-BFLA`; `-` means not run. The codefix hook
 | new_issue_idor_note | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 | 2 |
 | shop_bola | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 | 1 |
 | ssrf_preview | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 | 1 |
-| vampi | 7 / 0 / 0 | 8 / 0 / 0 | 3 / 0 / 0 | 2 / 2 / 2 | 12 / 0 / 0 | 7 |
-| crapi | 25 / 0 / 0 | 11 / 1 / 0 | 14 / 1 / 0 | 12 / 12 / 12 | 0 / 0 / 0 | 23 |
+| vampi | 7 / 0 / 0 | 8 / 0 / 0 | 3 / 0 / 0 | 2 / 2 / 2 | 12 / 0 / 0 | 3 |
+| crapi | 25 / 0 / 0 | 11 / 1 / 0 | 14 / 1 / 0 | 12 / 12 / 12 | 0 / 0 / 0 | 10 |
 
 ## Corpus totals
 
