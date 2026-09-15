@@ -295,7 +295,7 @@ def _sink_object_read(g, fq, body, taint, principal, spec):
     out = []
     params = set(g.functions[fq].params)
     for s, c in body.calls():
-        if c.callee_fqname:
+        if c.callee_fqname and not (m and m.names):
             continue                       # a helper in this codebase: descend instead
         leaf = c.leaf
         if m and m.names:

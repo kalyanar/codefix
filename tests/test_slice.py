@@ -419,12 +419,18 @@ def test_m13_extensible_catalog_lifecycle(tmp_path):
     from codefix.detect import DetectorSpec
     from codefix.authoring import admit_if_passes
     from codefix import graph, detect
+    import importlib.util
     fx = str(BENCH.parent / "new_issue_idor_note")
     db = str(tmp_path / "cat.db")
     assert "IDOR_NOTE" not in detect.ALL_CLASSES               # not a built-in
 
-    good = DetectorSpec("IDOR_NOTE", "param_to_sink", "insert_ownership_guard",
-                        "param", "data_access_by_id", "ownership", "sink_local")
+    # the developer's whole contribution: one declarative literal in new_detector.py
+    mod_spec = importlib.util.spec_from_file_location("new_detector", fx + "/new_detector.py")
+    new_detector = importlib.util.module_from_spec(mod_spec)
+    mod_spec.loader.exec_module(new_detector)
+    good = new_detector.SPEC
+    src = (BENCH.parent / "new_issue_idor_note" / "new_detector.py").read_text()
+    assert len(src.splitlines()) <= 30
     m1 = PatchMemory(db)
     assert admit_if_passes(good, fx, m1).admitted               # gate passes -> persisted
     m1.close()
@@ -432,6 +438,7 @@ def test_m13_extensible_catalog_lifecycle(tmp_path):
     m2 = PatchMemory(db)                                        # fresh instance
     specs = m2.load_specs()
     assert [s.issue_class for s in specs] == ["IDOR_NOTE"]      # persisted across runs
+    assert specs[0].sink.names == frozenset({"get_note"}) and specs[0].direction == detect.UP
     g = graph.build(fx + "/vuln/app.py")
     found = detect.detect_registered(g, specs)
     assert [(f.issue_class, f.func) for f in found] == [("IDOR_NOTE", "read_note")]
@@ -567,3 +574,11 @@ def test_m13c_search_parameters_round_trip_through_the_catalog(tmp_path):
     assert got.direction == detect.DOWN and got.depth == 4
     assert got.decorator_anchors == frozenset({"admin_required"})
     assert got.call_anchors == frozenset({"is_admin"})
+
+
+def test_safe_twins_of_all_five_classes_are_clean():
+    """Corpus safe/unsafe pairs: the guarded twin of each class is not flagged."""
+    from codefix import graph, detect
+    for cls in ("bola", "bfla", "mass_assignment", "ssrf", "missing_auth"):
+        fs = detect.detect_all(graph.build(str(BENCH.parent / "safe_pairs" / cls / "app.py")))
+        assert fs == [], f"{cls}: {[(f.issue_class, f.func) for f in fs]}"
