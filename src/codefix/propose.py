@@ -37,10 +37,15 @@ class Candidate:
         return a / (a + b)
 
 
+RENDER_ERRORS: list[str] = []      # last failures, for the event stream
+
+
 def render(finding: Finding, transform_id: str, graph):
     try:
         return render_patch(transform_id, finding, graph)
-    except (RenderError, SyntaxError, KeyError, IndexError):
+    except (RenderError, SyntaxError, KeyError, IndexError) as e:
+        RENDER_ERRORS.append(f"{transform_id}: {e}")
+        del RENDER_ERRORS[:-20]
         return None
 
 

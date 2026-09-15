@@ -136,6 +136,20 @@ def discover(graph, finding, overrides=None) -> dict:
     flask_login = _imported_symbol(graph, file, "current_user") in ("flask_login.current_user",)
     id_func = next((f for f in PRINCIPAL_ID_FUNCS if f in names), None)
     user_func = next((f for f in PRINCIPAL_USER_FUNCS if f in names), None)
+    p["principal_imports"] = []
+    # the accessor may live in another module of the codebase: import it
+    for want, pool in (("id", PRINCIPAL_ID_FUNCS), ("user", PRINCIPAL_USER_FUNCS)):
+        if (id_func if want == "id" else user_func):
+            continue
+        for fn in graph.functions.values():
+            if fn.name in pool and fn.enclosing is None and fn.parent_class is None \
+                    and fn.module != _module_of(graph, file):
+                p["principal_imports"].append(f"from {fn.module} import {fn.name}")
+                if want == "id":
+                    id_func = fn.name
+                else:
+                    user_func = fn.name
+                break
     if flask_login:
         p["user_id_ref"], p["user_ref"] = "current_user.id", "current_user"
         p["authn_test"] = "not current_user.is_authenticated"
@@ -266,7 +280,7 @@ def _t_ownership(graph, f, p, lines):
         edits.append(("insert_after", after, after, guard))
     else:
         edits.append(("insert_after", s.end_lineno, s.end_lineno, guard + [f"{ind}return {obj}"]))
-    imports = [] if p.get("guard_helper") else [p.get("deny_import")]
+    imports = [] if p.get("guard_helper") else [p.get("deny_import")] + p["principal_imports"]
     return file, edits, text, imports
 
 
@@ -283,7 +297,7 @@ def _t_entry_guard(graph, f, p, lines, test, code, msg, decorator):
     ind = _indent(src[at - 1])
     deny = _deny_stmt(p, code, msg)
     return fn.file, [("insert_before", at, at, [f"{ind}if {test}:", f"{ind}    {deny}"])], \
-        f"if {test}: {deny}", [p.get("deny_import")]
+        f"if {test}: {deny}", [p.get("deny_import")] + p["principal_imports"]
 
 
 def _t_role(graph, f, p, lines):

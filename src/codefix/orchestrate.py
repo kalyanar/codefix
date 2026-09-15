@@ -194,7 +194,8 @@ def run_once(app_dir: str, db_path: str, *, explore: bool = False, seed: int = 0
             if cands:
                 break
         if not cands:
-            ev("recall", f.func, "no strategy produced a candidate")
+            why = propose.RENDER_ERRORS[-1] if propose.RENDER_ERRORS else "no template matched"
+            ev("recall", f.func, f"no strategy produced a candidate ({why})")
             report.results.append(IssueResult(
                 f.func, f.issue_class, key.hex(), "none", False, "-", "unverified",
                 "no strategy produced a candidate", warm=warm, prior_successes=prior,

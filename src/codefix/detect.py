@@ -674,6 +674,12 @@ def infer_owner_field(graph_or_source, default: str = "user_id") -> str:
             return default
     else:
         keys = graph_or_source.record_dicts()
+        # model classes: ``user_id = Column(...)`` / ``owner = ForeignKey(...)``
+        for cls in getattr(graph_or_source, "classes", {}).values():
+            import ast
+            keys.append([t.id for n in cls.body if isinstance(n, (ast.Assign, ast.AnnAssign))
+                         for t in (n.targets if isinstance(n, ast.Assign) else [n.target])
+                         if isinstance(t, ast.Name)])
     for ks in keys:
         for k in ks:
             if pat.match(k):
