@@ -214,7 +214,13 @@ def run_once(app_dir: str, db_path: str, *, explore: bool = False, seed: int = 0
             if c.provenance in ("template", "fuzzy") and (c.successes + c.regressions) == 0:
                 c.alpha0, c.beta0 = prior_a, prior_b
 
-        mode = select or ("thompson" if explore else "greedy")
+        if select == "auto":
+            # explore while no linked template is proven for this fingerprint (§IV.D)
+            proven = any(c.template_id is not None and mem.is_proven(c.template_id, fp_id)
+                         for c in cands)
+            mode = "greedy" if proven and not explore else "thompson"
+        else:
+            mode = select or ("thompson" if explore else "greedy")
         chosen = learn.pick(cands, explore=(mode == "thompson"), rng=rng)
         ev("select", f.func, f"{mode}: {chosen.name} [{chosen.provenance}] "
            f"posterior={chosen.posterior_mean():.3f}")

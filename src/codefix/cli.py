@@ -88,7 +88,8 @@ def _scan(args) -> int:
         applied, all_results = [], []
         for rnd in range(20):
             rep = run_once(str(repo), db, explore=args.explore, seed=rnd,
-                           provider=args.provider, model=args.model, apply=apply)
+                           provider=args.provider, model=args.model, apply=apply,
+                           select=args.select)
             if args.events:
                 for e in rep.events:
                     print(f"  [{e.phase:11}] {e.target:18} {e.detail}")
@@ -135,6 +136,8 @@ def main(argv=None) -> int:
     mode.add_argument("--detect-only", action="store_true")
     mode.add_argument("--dry-run", action="store_true")
     sc.add_argument("--apply", action="store_true", help="write verified fixes into the repo")
+    sc.add_argument("--select", choices=("greedy", "thompson", "auto"), default=None,
+                    help="auto = Thompson while a fingerprint is young, greedy once a template is proven")
     sc.add_argument("--provider", default="mock", help="mock | anthropic")
     sc.add_argument("--model", default=None)
     sc.add_argument("--events", action="store_true")
@@ -151,7 +154,7 @@ def main(argv=None) -> int:
                        help="learn on app A, then warm-start + re-render on app B (F2)")
     t.add_argument("--db", default=".codefixv2_transfer.db")
     t.add_argument("--app-a", default=str(APPS / "shop_bola"))
-    t.add_argument("--app-b", default=str(APPS / "library_bola"))
+    t.add_argument("--app-b", default=str(APPS / "library_flat_bola"))
 
     c = sub.add_parser("coldstart-demo",
                        help="LLM strategy proposes a fix (no template), verified, "

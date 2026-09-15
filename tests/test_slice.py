@@ -301,6 +301,7 @@ def test_m8_hierarchical_prior_patternise(tmp_path):
     fp = mem.upsert_fingerprint(key)
     pa, pb = _hierarchical_prior(mem, key, fp)
     assert pa / (pa + pb) > 0.5                                       # inherits the pattern
+    assert round(pa / (pa + pb), 2) == 0.65                           # from 2 prior BOLA successes
     ek = FingerprintKey("SSRF", "param", "url_fetch", "url_validation", "sink_local", "none")
     fe = mem.upsert_fingerprint(ek)
     pa2, pb2 = _hierarchical_prior(mem, ek, fe)
@@ -319,6 +320,8 @@ def test_m9_contrastive_separates_regressed_pair(tmp_path):
     e.train([(flask, fastapi, +1), (base, nested, -1)], epochs=40)
     assert e.cosine(flask, fastapi) >= 0.95     # transferred pair: close
     assert e.cosine(base, nested) < 0.95        # regressed pair: pushed apart
+    assert round(e.cosine(flask, fastapi), 2) == 1.0 and round(e.cosine(base, nested), 2) == 0.13
+    assert e.weight("fw:flask") == 0.0 and e.weight("ctx:nested") > 1.0   # framework irrelevant
 
 
 def test_m9_feature_flag_off_by_default(tmp_path):
@@ -582,3 +585,88 @@ def test_safe_twins_of_all_five_classes_are_clean():
     for cls in ("bola", "bfla", "mass_assignment", "ssrf", "missing_auth"):
         fs = detect.detect_all(graph.build(str(BENCH.parent / "safe_pairs" / cls / "app.py")))
         assert fs == [], f"{cls}: {[(f.issue_class, f.func) for f in fs]}"
+
+
+# --- site-listed demos, as tests ------------------------------------------------
+
+def test_decorator_demo_bfla_decorated():
+    """Guard in @admin_required, up the chain -> recognised by reading the decorator
+    body; the undecorated sibling is flagged."""
+    from codefix import graph, detect
+    g = graph.build(str(BENCH.parent / "bfla_decorated" / "app.py"))
+    assert [f.func for f in detect.detect_bfla(g)] == ["delete_account_unsafe"]
+
+
+def test_contract_demo_field_strip_is_caught(tmp_path):
+    """A fix that blocks the attack but strips a response field fails the contract stage."""
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent))
+    from test_mechanisms import test_contract_stage_rejects_a_fix_that_strips_a_response_field
+    test_contract_stage_rejects_a_fix_that_strips_a_response_field(tmp_path)
+
+
+def test_transfer_demo_cross_domain(tmp_path, capsys):
+    """shop (user_id, nested) -> library (owner_id, flat): same fingerprint, the fix
+    re-rendered for each codebase, verified there without the LLM."""
+    from codefix.cli import main
+    rc = main(["transfer-demo", "--db", str(tmp_path / "t.db")])
+    out = capsys.readouterr().out
+    assert rc == 0 and "TRANSFER CONFIRMED" in out
+    assert '["user_id"]' in out and '["owner_id"]' in out and "(re-rendered)" in out
+
+
+def test_greedy_and_thompson_share_the_beta_posterior():
+    """Greedy takes the posterior mean, Thompson samples the same Beta — the
+    ablation differs only in the exploration policy."""
+    import random
+    from codefix import learn
+    from codefix.propose import Candidate
+    a = Candidate(1, "a", "t", 1.0, 1.0, 8, 2, "template", "")
+    b = Candidate(2, "b", "t", 1.0, 1.0, 3, 3, "template", "")
+    assert learn.greedy([a, b]) is a
+    rng = random.Random(0)
+    draws = [learn.thompson([a, b], rng) for _ in range(2000)]
+    share_a = sum(d is a for d in draws) / len(draws)
+    # P(Beta(9,3) > Beta(4,4)) from the same parameters greedy used
+    assert 0.85 < share_a < 0.97
+
+
+import os as _os
+import pytest as _pytest
+
+_LIVE = _pytest.mark.skipif(_os.environ.get("CODEFIX_LIVE") != "1",
+                            reason="live docker apps: set CODEFIX_LIVE=1")
+
+
+@_LIVE
+def test_live_vampi_dockerized_http(tmp_path):
+    """codefix scans VAmPI, renders both BOLA fixes; exploit succeeds on :5002 and is
+    blocked on :5001 (codefix's tree, vulnerable=1), legit/contract/adversarial hold."""
+    import sys
+    sys.path.insert(0, str(BENCH.parents[1]))
+    import live_codefix
+    assert live_codefix.main(["vampi", "--out", str(tmp_path / "src"),
+                              "--json", str(tmp_path / "v.json")]) == 0
+
+
+@_LIVE
+def test_live_crapi_ten_container_app(tmp_path):
+    """crAPI shop-order BOLA (order + payment card record): exploit confirmed on the
+    stock workshop, blocked on codefix's rebuilt workshop, owner path preserved."""
+    import sys
+    sys.path.insert(0, str(BENCH.parents[1]))
+    import live_codefix
+    assert live_codefix.main(["crapi", "--out", str(tmp_path / "src"),
+                              "--json", str(tmp_path / "c.json")]) == 0
+
+
+def test_auto_selection_explores_until_a_template_is_proven(tmp_path):
+    from codefix.orchestrate import run_once
+    db = str(tmp_path / "auto.db")
+    first = run_once(str(BENCH), db, seed=0, select="auto")
+    assert any("thompson:" in e.detail for e in first.events if e.phase == "select")
+    from codefix.memory import PatchMemory, pac_min_observations
+    for i in range(pac_min_observations()):
+        run_once(str(BENCH), db, seed=i + 1)
+    later = run_once(str(BENCH), db, seed=99, select="auto")
+    assert any("greedy:" in e.detail for e in later.events if e.phase == "select")
