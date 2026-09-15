@@ -105,13 +105,14 @@ def _catalog_findings(mem, g, builtin_findings):
 
 
 def _harness_for(app_dir: Path, label: dict, finding) -> tuple[str, str, str]:
+    base = app_dir / label.get("harness_root", "")
     for d in label.get("defects", []):
         fn = d.get("function")
         if fn and fn in (finding.func, finding.fqname) and \
                 d.get("issue_class", finding.issue_class) == finding.issue_class:
-            return (str(app_dir / d.get("exploit", "exploit.py")),
-                    str(app_dir / d.get("legit", "legit.py")),
-                    str(app_dir / d.get("bypass", "bypass.py")))
+            return (str(base / d.get("exploit", "exploit.py")),
+                    str(base / d.get("legit", "legit.py")),
+                    str(base / d.get("bypass", "bypass.py")))
     return (str(app_dir / "exploit.py"), str(app_dir / "legit.py"), str(app_dir / "bypass.py"))
 
 
@@ -122,8 +123,11 @@ def run_once(app_dir: str, db_path: str, *, explore: bool = False, seed: int = 0
              catalog: bool = True, apply: bool = False, validate: bool = True,
              select: str | None = None) -> RunReport:
     app = Path(app_dir).resolve()
-    label_path = app / "label.json"
-    label = json.loads(label_path.read_text()) if label_path.exists() else {}
+    label = {}
+    for candidate in (app / ".codefix" / "codefix.json", app / "label.json"):
+        if candidate.exists():
+            label = json.loads(candidate.read_text())
+            break
     mem = PatchMemory(db_path)
     report = RunReport(app=label.get("app", app.name))
 
@@ -150,6 +154,7 @@ def run_once(app_dir: str, db_path: str, *, explore: bool = False, seed: int = 0
     report.findings = findings
 
     codebase_id = mem.upsert_codebase(str(app), g.language, framework)
+    applied_files: set = set()
     rng = random.Random(seed)
     llm = resolve_provider(provider, model)
 
@@ -226,6 +231,11 @@ def run_once(app_dir: str, db_path: str, *, explore: bool = False, seed: int = 0
                 missing_guard_class=f.missing_guard_class, finding=f, patch=chosen.patch))
             continue
 
+        if apply and any(rel in applied_files for rel in chosen.patch.files):
+            report.results.append(IssueResult(
+                f.func, f.issue_class, key.hex(), chosen.provenance, False, chosen.name,
+                "deferred", "file changed by an earlier fix this run; rescan", finding=f))
+            continue
         exploit, legit, bypass = _harness_for(app, label, f)
         verdict = verify(f, chosen, str(app), exploit, legit, bypass, graph=g)
         ev("validate", f.func, f"{verdict.status}: " +
@@ -249,6 +259,7 @@ def run_once(app_dir: str, db_path: str, *, explore: bool = False, seed: int = 0
         applied = False
         if apply and verdict.status == "success":
             chosen.patch.write_to(str(app))
+            applied_files.update(chosen.patch.files)
             applied = True
             ev("act", f.func, "applied to the codebase")
 
