@@ -28,13 +28,13 @@ SKIP_DIRS = {".git", "__pycache__", ".venv", "venv", "env", "node_modules",
 # a request-aborting call ends the path like a raise (flask/werkzeug abort)
 ABORT_LEAVES = {"abort"}
 # reproducers and tests live next to the code but are not the code under scan
-HARNESS_GLOBS = ("exploit*.py", "legit*.py", "bypass*.py", "contract*.py", "run_*.py",
-                 "test_*.py", "*_test.py", "conftest.py")
+HARNESS_GLOBS = ("exploit*.py", "legit*.py", "bypass*.py", "contract*.py", "adversarial*.py",
+                 "run_*.py", "test_*.py", "*_test.py", "tests.py", "conftest.py")
 
 
 def harness_excluder(rel: Path) -> bool:
     import fnmatch
-    if any(p in ("tests", "test", ".codefix") for p in rel.parts[:-1]):
+    if any(p in ("tests", "test", ".codefix", "migrations") for p in rel.parts[:-1]):
         return True
     return any(fnmatch.fnmatch(rel.name, pat) for pat in HARNESS_GLOBS)
 
@@ -445,6 +445,15 @@ def _record(g: CodeGraph, fn: FunctionNode):
 # statement IR + CFG for one function
 # ---------------------------------------------------------------------------
 
+_OPS = {ast.Eq: "eq", ast.NotEq: "ne", ast.Lt: "lt", ast.LtE: "le", ast.Gt: "gt",
+        ast.GtE: "ge", ast.Is: "is", ast.IsNot: "isnot", ast.In: "in", ast.NotIn: "notin"}
+
+
+def _test_ops(expr) -> frozenset:
+    return frozenset(_OPS[type(op)] for n in ast.walk(expr) if isinstance(n, ast.Compare)
+                     for op in n.ops if type(op) in _OPS)
+
+
 def _expr_facts(g: CodeGraph, fn: FunctionNode, expr: ast.AST | None):
     """-> (reads, tokens, calls, has_compare_or_call) for an expression."""
     reads, tokens, calls = set(), set(), []
@@ -533,6 +542,7 @@ class _BodyBuilder:
             reads, tokens, calls, cmp_ = _expr_facts(self.g, self.fn, test)
             s.test_reads, s.test_tokens, s.test_calls, s.test_compares = \
                 frozenset(reads), frozenset(tokens), calls, cmp_
+            s.test_ops = _test_ops(test)
         self.stmts.append(s)
         self.succ[sid] = set()
         return s

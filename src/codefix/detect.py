@@ -62,6 +62,9 @@ ROLE_ANCHORS = frozenset({"role", "roles", "is_admin", "admin", "is_staff",
 AUTHN_ANCHORS = frozenset({"current_user", "current_user_id", "get_current_user",
                            "token_validator", "require_auth", "is_authenticated",
                            "request.user", "get_jwt_identity", "verify_jwt_in_request"})
+# knowing the object's own secret is an object-level check (login, reset flows)
+CREDENTIAL_ANCHORS = frozenset({"password", "check_password", "verify_password",
+                                "check_password_hash", "password_hash", "verify_otp"})
 OWNERSHIP_CALLS = frozenset({"assert_owns", "check_object_permissions", "verify_owner",
                              "require_owner", "has_object_permission"})
 DECORATOR_ANCHORS = {
@@ -93,6 +96,9 @@ MUTATION_LEAVES = frozenset({"pop", "remove", "delete", "drop", "clear", "destro
                              "purge", "delete_one", "delete_many", "truncate"})
 SENSITIVE_REGEX = re.compile(r"^(transfer|send_money|charge|payout|wire|place_order|"
                              r"withdraw|refund|pay)(_|$)")
+AUTH_DECORATOR_RX = re.compile(r"(auth|login|jwt|token)", re.I)
+PRINCIPAL_PARAMS = frozenset({"user", "current_user", "request_user", "principal",
+                              "identity", "auth_user"})
 ROUTE_LEAVES = {"route", "get", "post", "put", "patch", "delete", "api_route",
                 "websocket", "path", "re_path"}
 
@@ -209,11 +215,36 @@ def _route_path_params(g, fq) -> set[str]:
     return out
 
 
+def injected_principals(g, fq) -> set[str]:
+    """Parameters an authentication decorator supplies (``@jwt_auth_required``
+    passing ``user``) hold the principal, not caller-chosen input."""
+    fn = g.functions.get(fq)
+    if fn is None or not any(AUTH_DECORATOR_RX.search(d) for d in fn.decorators):
+        return set()
+    return set(fn.params) & PRINCIPAL_PARAMS
+
+
+# classes whose methods the framework calls with its own objects, not request input
+FRAMEWORK_CALLBACK_BASES = re.compile(r"(Serializer|Model|Form|Admin|Field|Migration|TestCase|"
+                                      r"AppConfig|Command|Middleware)$")
+
+
+def _callback_method(g, fn) -> bool:
+    if not fn.parent_class:
+        return False
+    cls = g.classes.get(f"{fn.module}.{fn.qualname.rsplit('.', 1)[0]}")
+    if cls is None:
+        return False
+    import ast
+    return any(FRAMEWORK_CALLBACK_BASES.search(ast.unparse(b)) for b in cls.bases)
+
+
 def entries(g) -> list[str]:
-    """Entry points: route-decorated functions and functions no one calls."""
+    """Entry points: route-decorated functions and functions no one calls
+    (framework callbacks on serializers/models/forms excluded)."""
     out = []
     for fq, fn in g.functions.items():
-        if fn.enclosing is not None:
+        if fn.enclosing is not None or _callback_method(g, fn):
             continue
         routed = any(d.decorator.rsplit(".", 1)[-1] in ROUTE_LEAVES for d in g.decorators_of(fq))
         if routed or not g.edges_to(fq):
@@ -224,8 +255,9 @@ def entries(g) -> list[str]:
 def _entry_seeds(g, fq) -> dict[str, set[str]]:
     fn = g.functions[fq]
     path_params = _route_path_params(g, fq)
+    injected = injected_principals(g, fq)
     return {p: {"path_param" if p in path_params else "param"}
-            for p in fn.params if p not in REQUEST_OBJECTS}
+            for p in fn.params if p not in REQUEST_OBJECTS and p not in injected}
 
 
 def _bind(callsite, callee, taint) -> dict[str, set[str]]:
@@ -276,18 +308,47 @@ class _Hit:
 
 
 def _exposed(body, s, bound) -> bool:
-    """An object read matters when the object is returned or written through."""
+    """An object read matters when the object — or a value built from it (a
+    response dict) — is returned, written through, or handed to a helper."""
     if s.kind == "return":
         return True
     if not bound:
         return False
-    return any(bound in t.returns_value_reads or bound in t.store_bases
-               or any(bound in c.all_reads() for c in t.calls if c.callee_fqname)
+    derived = {bound}
+    changed = True
+    while changed:
+        changed = False
+        for t in body.real():
+            if t.id != s.id and t.reads & derived and t.writes - derived:
+                derived |= t.writes
+                changed = True
+    return any(t.returns_value_reads & derived or t.store_bases & derived
+               or any(c.all_reads() & derived for c in t.calls if c.callee_fqname)
                for t in body.real() if t.id != s.id)
 
 
 def _bound(s):
     return next(iter(s.writes)) if s.kind == "assign" and len(s.writes) == 1 else None
+
+
+OWNER_ATTR_RX = re.compile(r"^(user|owner|author|account|customer|tenant|created_by|vehicle)(_id)?$")
+
+
+def _unowned_model(g, receiver: str) -> bool:
+    """A model class defined in this codebase with no owner-like field (a public
+    catalog such as ``Product``) cannot be the object of a BOLA."""
+    import ast
+    base = receiver.split(".")[0] if receiver else ""
+    classes = [c for fq, c in g.classes.items() if fq.rsplit(".", 1)[-1] == base]
+    if not classes or re.match(r"^(User|Account|Profile|Customer)", base):
+        return False
+    for cls in classes:
+        for n in cls.body:
+            targets = n.targets if isinstance(n, ast.Assign) else \
+                [n.target] if isinstance(n, ast.AnnAssign) else []
+            if any(isinstance(t, ast.Name) and OWNER_ATTR_RX.match(t.id) for t in targets):
+                return False
+    return True
 
 
 def _sink_object_read(g, fq, body, taint, principal, spec):
@@ -309,6 +370,8 @@ def _sink_object_read(g, fq, body, taint, principal, spec):
                            or accessor_roles({c.receiver})):
             continue
         if m and m.receiver_regex and not re.search(m.receiver_regex, c.receiver or ""):
+            continue
+        if not (m and m.names) and _unowned_model(g, c.receiver):
             continue
         roles, names, toks = _call_arg_roles(c, taint, m.arg if m else None)
         if not roles:
@@ -402,7 +465,8 @@ class _Ctx:
 
     def principal(self, fq):
         if fq not in self._principal:
-            self._principal[fq] = principal_closure(self.g.body(fq), self.principal_anchors())
+            self._principal[fq] = principal_closure(self.g.body(fq), self.principal_anchors(),
+                                                    injected_principals(self.g, fq))
         return self._principal[fq]
 
     def principal_anchors(self):
@@ -441,7 +505,7 @@ class _Ctx:
 def _g_ownership(ctx, fq, s, taint) -> bool:
     """A denial test comparing something against the authenticated principal
     (or calling a helper that reads it, or an allow-listed ownership check)."""
-    principal = ctx.principal(fq)
+    principal = _principal_at(ctx, fq, s)
     if has_anchor(s.test_tokens, ctx.guard_calls()):
         return True
     called = {c.callee_name.split(".")[0] for c in s.test_calls if c.leaf != "__getitem__"}
@@ -449,7 +513,50 @@ def _g_ownership(ctx, fq, s, taint) -> bool:
         bool(s.test_reads & principal) or \
         ctx.helper_reads_principal([c.callee_fqname for c in s.test_calls])
     other = s.test_reads - principal - called - set(ctx.principal_anchors())
-    return reads_principal and bool(other)
+    # an identity comparison (==, !=, is, in) or a helper verdict — not a
+    # quantity check like ``credit < price`` that merely involves the principal
+    identity = bool(s.test_ops & {"eq", "ne", "is", "isnot", "in", "notin"}) or \
+        any(c.callee_fqname for c in s.test_calls)
+    if reads_principal and has_anchor(s.test_tokens, ROLE_ANCHORS):
+        return True                   # a privileged-principal gate (``if user.admin``)
+    if s.test_compares and s.test_reads & set(taint) and _checks_stored_secret(s, taint):
+        return True                   # the caller proved knowledge of the object's secret
+    return reads_principal and bool(other) and identity
+
+
+def _principal_at(ctx, fq, s) -> set[str]:
+    """Names read by `s` whose every reaching definition holds the principal —
+    flow-sensitive, so ``user`` (injected) is the principal at a guard placed
+    before a later ``user = order.user``."""
+    g = ctx.g
+    body = g.body(fq)
+    closure = ctx.principal(fq)
+    seeds = injected_principals(g, fq)
+    params = set(g.functions[fq].params)
+    anchors = ctx.principal_anchors()
+    out = set()
+    for n in s.test_reads | s.reads:
+        reaching, from_entry = body.reaching_defs(n, s.id)
+        if not reaching and not from_entry:
+            continue
+        if from_entry and n in params and n not in seeds:
+            continue
+        if all(has_anchor(d.tokens, anchors) or (d.reads & closure) for d in reaching) \
+                and (reaching or n in seeds):
+            out.add(n)
+    return out | (closure & (s.test_reads | s.reads) - {n for n in s.test_reads | s.reads
+                                                         if n in params and n not in seeds})
+
+
+def _checks_stored_secret(s, taint) -> bool:
+    """The test reads a secret stored on a (non-attacker) object — ``user.password``
+    — or calls a password-verification routine."""
+    for t in s.test_tokens:
+        if "." in t:
+            base, leaf = t.split(".", 1)[0], t.rsplit(".", 1)[-1]
+            if leaf in CREDENTIAL_ANCHORS and not base.startswith("request"):
+                return True
+    return any(c.leaf.startswith(("check_password", "verify_password")) for c in s.test_calls)
 
 
 def _g_role(ctx, fq, s, taint) -> bool:

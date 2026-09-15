@@ -162,6 +162,7 @@ def discover(graph, finding, overrides=None) -> dict:
         p["authn_test"] = f"{p['user_ref']} is None" if p["user_ref"] else None
     p["style"] = _record_style(graph)
     p["owner_field"] = finding.owner_field
+    p["scopes"] = principal_scopes(graph)
     # role field + privileged value, read off the user records
     roles = _dict_values_for_key(graph, "role")
     p["role_field"] = "role" if roles else ("is_admin" if "is_admin" in graph.source else "role")
@@ -223,6 +224,138 @@ def discover(graph, finding, overrides=None) -> dict:
     return p
 
 
+def principal_scopes(graph) -> list[dict]:
+    """How this codebase already ties an object to the authenticated principal:
+    ``User.query.filter_by(username=resp['sub'])`` says the User model's
+    ``username`` field holds the principal expression ``resp['sub']``."""
+    from .taint import PRINCIPAL_ANCHORS, has_anchor
+    out = []
+    for fq, fn in graph.functions.items():
+        body = graph.body(fq)
+        for s, c in body.calls():
+            base = c.receiver.split(".")[0] if c.receiver else ""
+            if base not in {k.rsplit(".", 1)[-1] for k in graph.classes}:
+                continue
+            for kw, toks in c.kw_tokens.items():
+                if not has_anchor(toks, PRINCIPAL_ANCHORS) and not _reads_principal_var(graph, fq, c, kw):
+                    continue
+                expr = _kw_source(graph, fn, s, c, kw)
+                if expr:
+                    out.append({"model": base, "field": kw, "expr": expr, "func": fq})
+    return out
+
+
+def _reads_principal_var(graph, fq, c, kw):
+    from .taint import principal_closure
+    reads = c.kw_reads.get(kw, frozenset())
+    if not reads:
+        return False
+    return bool(reads & principal_closure(graph.body(fq)))
+
+
+def _kw_source(graph, fn, s, c, kw):
+    src = graph.sources[fn.file]
+    for n in ast.walk(s.node):
+        if isinstance(n, ast.Call) and n.lineno == c.lineno:
+            for k in n.keywords:
+                if k.arg == kw:
+                    return ast.get_source_segment(src, k.value)
+    return None
+
+
+def _relationship_attr(graph, model: str, target: str) -> str | None:
+    """``user = relationship("User")`` / ``user = models.ForeignKey(User)`` on `model`."""
+    for fq, cls in graph.classes.items():
+        if fq.rsplit(".", 1)[-1] != model:
+            continue
+        for n in cls.body:
+            if isinstance(n, ast.Assign) and isinstance(n.value, ast.Call) \
+                    and len(n.targets) == 1 and isinstance(n.targets[0], ast.Name):
+                leaf = (ast.unparse(n.value.func)).rsplit(".", 1)[-1]
+                args = [ast.unparse(a).strip("'\"") for a in n.value.args]
+                if leaf in ("relationship", "ForeignKey", "OneToOneField") and target in args:
+                    return n.targets[0].id
+    return None
+
+
+def _scoped_test(graph, finding, obj, p):
+    """An ownership test in the codebase's own scoping idiom, if it has one and the
+    principal expression is available where the guard goes."""
+    sink_call = finding.path[-1].call
+    if sink_call is None or not sink_call.receiver:
+        return None
+    model = sink_call.receiver.split(".")[0]
+    entry = graph.functions[finding.path[0].fqname if finding.fix_locus != "helper"
+                            else finding.path[-1].fqname]
+    bound_here = {w for s in graph.body(entry.fqname).real() for w in s.writes} | set(entry.params)
+    for sc in p["scopes"]:
+        base = re.match(r"[A-Za-z_]\w*", sc["expr"])
+        if not base or (base.group(0) not in bound_here and base.group(0) not in
+                        _module_names(graph, entry.file)):
+            continue
+        if sc["model"] == model:
+            return f"{obj}.{sc['field']} != {sc['expr']}"
+        rel = _relationship_attr(graph, model, sc["model"])
+        if rel:
+            return f"{obj}.{rel}.{sc['field']} != {sc['expr']}"
+    return None
+
+
+def guard_idioms(graph, finding) -> list[dict]:
+    """Ownership guards the codebase already writes (``if user != order.user:
+    return Response(..., 403)`` under ``@jwt_auth_required``): the test, the object
+    it protects, the denial it uses and the decorators that supply the principal.
+    Same class first, then same module, then anywhere."""
+    from .detect import AUTH_DECORATOR_RX, BUILTIN_SPECS, _Ctx, _g_ownership, _principal_at
+    ctx = _Ctx(graph, BUILTIN_SPECS["BOLA"])
+    entry = graph.functions[finding.fqname]
+    out = []
+    for fq, fn in graph.functions.items():
+        if fq == finding.fqname:
+            continue
+        body = graph.body(fq)
+        for s in body.real():
+            node = s.node
+            if s.kind != "if" or node.orelse or not node.body:
+                continue
+            last = node.body[-1]
+            if not isinstance(last, (ast.Return, ast.Raise)):
+                continue
+            if not _g_ownership(ctx, fq, s, {}):
+                continue
+            principal = _principal_at(ctx, fq, s) & s.test_reads
+            called = {c.callee_name.split(".")[0] for c in s.test_calls if c.leaf != "__getitem__"}
+            objs = s.test_reads - principal - called
+            if len(objs) != 1 or not principal:
+                continue
+            decos = [d for d in fn.node.decorator_list
+                     if AUTH_DECORATOR_RX.search(ast.unparse(d))]
+            rank = 0 if fn.parent_class and fn.parent_class == entry.parent_class and \
+                fn.module == entry.module else (1 if fn.module == entry.module else 2)
+            out.append({"rank": rank, "fq": fq, "file": fn.file, "test": node.test,
+                        "obj": next(iter(objs)), "principal": principal, "deny": node.body,
+                        "decorators": decos, "module": fn.module})
+    return sorted(out, key=lambda d: d["rank"])
+
+
+class _Rename(ast.NodeTransformer):
+    def __init__(self, old, new):
+        self.old, self.new = old, new
+
+    def visit_Name(self, n):
+        if n.id == self.old:
+            return ast.copy_location(ast.Name(self.new, n.ctx), n)
+        return n
+
+
+def _source_block(graph, file, stmts, indent):
+    lines = graph.sources[file].splitlines()
+    first, last = stmts[0], stmts[-1]
+    block = lines[first.lineno - 1:last.end_lineno]
+    cut = first.col_offset
+    return [indent + (ln[cut:] if ln[:cut].strip() == "" else ln.lstrip()) for ln in block]
+
+
 def _module_level_names(graph, file):
     tree = graph.trees[file]
     out = set()
@@ -267,20 +400,60 @@ def _t_ownership(graph, f, p, lines):
         after = None
     else:
         raise RenderError("sink result is not bound; cannot place an ownership guard")
+    scoped = _scoped_test(graph, f, obj, p)
+    entry = graph.functions[lv.fqname]
+    entry_names = set(entry.params) | {w for st in body.real() for w in st.writes}
+    idiom = None
+    for cand in guard_idioms(graph, f):
+        needs = cand["principal"]
+        deco_src = {ast.unparse(d) for d in cand["decorators"]}
+        have = {ast.unparse(d) for d in entry.node.decorator_list}
+        if needs <= entry_names or (needs <= set(entry.params) and deco_src):
+            idiom = cand
+            break
+    if idiom and not p.get("guard_helper"):
+        test = ast.unparse(_Rename(idiom["obj"], obj).visit(
+            ast.parse(ast.unparse(idiom["test"]), mode="eval")).body)
+        guard = [f"{ind}if {test}:"] + _source_block(graph, idiom["file"], idiom["deny"], ind + "    ")
+        text = f"if {test}: " + " ".join(ln.strip() for ln in guard[1:])
+        imports = []
+        missing = [d for d in idiom["decorators"] if ast.unparse(d) not in
+                   {ast.unparse(x) for x in entry.node.decorator_list}]
+        if missing:
+            def_ind = _indent(src[entry.node.lineno - 1])
+            edits.append(("insert_before", entry.node.lineno, entry.node.lineno,
+                          [f"{def_ind}@{ast.unparse(d)}" for d in missing]))
+            text = " ".join(f"@{ast.unparse(d)}" for d in missing) + " + " + text
+            names = _module_names(graph, file)
+            for d in missing:
+                head = ast.unparse(d).split("(")[0].split(".")[0]
+                if head not in names:
+                    sym = graph.imports.get(idiom["module"], {}).get(head)
+                    if sym:
+                        imports.append(f"from {sym.rsplit('.', 1)[0]} import {head}")
+        if after is not None:
+            edits.append(("insert_after", after, after, guard))
+        else:
+            edits.append(("insert_after", s.end_lineno, s.end_lineno, guard + [f"{ind}return {obj}"]))
+        return file, edits, text, imports
     if p.get("guard_helper"):
         guard = [f"{ind}{p['guard_helper']}({obj})"]
         text = guard[0].strip()
     else:
-        if not p.get("user_id_ref"):
+        if scoped:
+            test = f"{obj} is not None and {scoped}"
+        elif not p.get("user_id_ref"):
             raise RenderError("no principal accessor found in this codebase")
-        test = f"{obj} is not None and {_access(obj, p['owner_field'], p['style'])} != {p['user_id_ref']}"
+        else:
+            test = f"{obj} is not None and {_access(obj, p['owner_field'], p['style'])} != {p['user_id_ref']}"
         guard = [f"{ind}if {test}:", f"{ind}    {_deny_stmt(p, 403, 'not owner')}"]
         text = f"if {test}: {_deny_stmt(p, 403, 'not owner')}"
     if after is not None:
         edits.append(("insert_after", after, after, guard))
     else:
         edits.append(("insert_after", s.end_lineno, s.end_lineno, guard + [f"{ind}return {obj}"]))
-    imports = [] if p.get("guard_helper") else [p.get("deny_import")] + p["principal_imports"]
+    imports = [] if p.get("guard_helper") else [p.get("deny_import")] + \
+        ([] if scoped else p["principal_imports"])
     return file, edits, text, imports
 
 

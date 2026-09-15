@@ -63,19 +63,25 @@ def has_anchor(tokens, anchors) -> bool:
     return False
 
 
-def principal_closure(body: FunctionBody, anchors=PRINCIPAL_ANCHORS) -> set[str]:
-    names: set[str] = set()
+def principal_closure(body: FunctionBody, anchors=PRINCIPAL_ANCHORS, seeds=()) -> set[str]:
+    """Names that hold the authenticated identity on every definition (a must
+    analysis): ``book`` bound from a principal-scoped query in one branch and from
+    a caller-chosen title in another is NOT principal-derived. `seeds` are
+    parameters an authentication decorator injects (``user``)."""
+    defs: dict[str, list] = {}
+    for s in body.real():
+        for w in s.writes:
+            defs.setdefault(w, []).append(s)
+    names: set[str] = {n for n in seeds if n not in defs}
     changed = True
     while changed:
         changed = False
-        for s in body.real():
-            if not s.writes:
+        for name, ds in defs.items():
+            if name in names:
                 continue
-            if has_anchor(s.tokens, anchors) or (s.reads & names):
-                new = s.writes - names
-                if new:
-                    names |= new
-                    changed = True
+            if all(has_anchor(d.tokens, anchors) or (d.reads & names) for d in ds):
+                names.add(name)
+                changed = True
     return names
 
 

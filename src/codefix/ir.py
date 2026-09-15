@@ -67,6 +67,7 @@ class Stmt:
     test_tokens: frozenset = frozenset()
     test_calls: list = field(default_factory=list)
     test_compares: bool = False           # test contains a comparison or a call
+    test_ops: frozenset = frozenset()     # comparison operators in the test: eq ne lt is in ...
     dict_filter: bool = False             # assign of a dict comprehension (allow-list shape)
     denies: bool = False                  # raise, or a call that aborts the request
     returns_value_reads: frozenset = frozenset()
@@ -151,9 +152,11 @@ class FunctionBody:
         dom = self._dominators()
         return b in dom and bool(dom[b] >> a & 1)
 
-    def reaches(self, start: int, target: int, avoid: int | None = None) -> bool:
-        """Is `target` reachable from `start` without passing through `avoid`?"""
-        if start == avoid:
+    def reaches(self, start: int, target: int, avoid=None) -> bool:
+        """Is `target` reachable from `start` without passing through `avoid`
+        (a statement id or a set of them)?"""
+        avoid = set() if avoid is None else ({avoid} if isinstance(avoid, int) else set(avoid))
+        if start in avoid:
             return False
         seen, stack = {start}, [start]
         while stack:
@@ -161,7 +164,7 @@ class FunctionBody:
             if n == target:
                 return True
             for m in self.succ.get(n, ()):
-                if m != avoid and m not in seen:
+                if m not in avoid and m not in seen:
                     seen.add(m)
                     stack.append(m)
         return False
@@ -193,6 +196,17 @@ class FunctionBody:
         """A statement-level guard call (``assert_owns(obj)``) protects `u` when
         it dominates it."""
         return self.dominates(c, u)
+
+    def reaching_defs(self, name: str, at: int) -> tuple[list, bool]:
+        """Definitions of `name` that reach statement `at`, and whether the value
+        on function entry (a parameter) also reaches it."""
+        defs = [s for s in self.real() if name in s.writes]
+        ids = {d.id for d in defs}
+        reaching = [d for d in defs if d.id != at and any(
+            self.reaches(m, at, avoid=ids - {d.id}) or m == at for m in self.succ.get(d.id, ()))]
+        from_entry = self.reaches(ENTRY, at, avoid=ids - {at}) if at not in ids else \
+            self.reaches(ENTRY, at, avoid=ids - {at})
+        return reaching, from_entry
 
     def normal_exit(self) -> int:
         return EXIT
