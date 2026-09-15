@@ -1,4 +1,4 @@
-"""Fingerprint = path-semantic FACET identity (NOT a structural hash).
+"""Fingerprint = path-semantic FACET identity (NOT a structural hash) — paper §III.D.
 
 The identity is a tuple of meaningful facets derived from the entry->sink path,
 deliberately NOT encoding the exact call-chain shape. So a flat (inlined sink)
@@ -13,24 +13,6 @@ from dataclasses import dataclass
 
 from .graph import CodeGraph
 from .detect import Finding
-
-# Per-class semantic facets (sink category + which guard is missing).
-_CLASS_FACETS = {
-    "BOLA": ("data_access_by_id", "ownership"),
-    "BFLA": ("privileged_mutation", "role"),
-    "MISSING_AUTH": ("sensitive_op", "authn"),
-    "SSRF": ("url_fetch", "url_validation"),
-    "MASS_ASSIGNMENT": ("model_write", "field_allowlist"),
-}
-# Fix locus implied by the transform (where the guard should go on the path).
-_LOCUS = {
-    "insert_ownership_guard": "sink_local",
-    "insert_role_guard_at_start": "entry_local",
-    "insert_authn_guard_at_start": "entry_local",
-    "insert_url_validation_before_sink": "sink_local",
-    "insert_field_allowlist": "sink_local",
-}
-
 
 @dataclass(frozen=True)
 class FingerprintKey:
@@ -84,18 +66,23 @@ def precondition_mask(key: "FingerprintKey") -> int:
 
 
 def compute(finding: Finding, graph: CodeGraph, framework: str) -> FingerprintKey:
-    # prefer facets stamped by a DetectorSpec; else fall back to the class map
-    if finding.sink_category and finding.missing_guard_class:
-        sink_category = finding.sink_category
-        missing_guard = finding.missing_guard_class
-    else:
-        sink_category, missing_guard = _CLASS_FACETS.get(
-            finding.issue_class, ("unknown", "unknown"))
+    """Alg. 3: every facet is read off the detected entry-to-sink path — the
+    source role from the taint origin, the sink category from the matched sink
+    predicate, the missing-guard class from the unsatisfied mitigation, the fix
+    locus from where a dominating guard must be inserted. None of them depends
+    on call depth, helper count or identifier names."""
     return FingerprintKey(
         issue_class=finding.issue_class,
-        source_role=finding.source_role or "param",
-        sink_category=sink_category,
-        missing_guard_class=missing_guard,
-        fix_locus=finding.fix_locus or _LOCUS.get(finding.transform_id, "sink_local"),
+        source_role=finding.source_role or "none",
+        sink_category=finding.sink_category,
+        missing_guard_class=finding.missing_guard_class,
+        fix_locus=finding.fix_locus or "handler",
         framework=framework or "none",
     )
+
+
+def label(key: FingerprintKey, finding: Finding | None = None) -> str:
+    """Human-readable fingerprint label for PRs (``bola/nested/ownership``); the
+    shape word is descriptive only and is not part of the key."""
+    shape = "nested" if finding is not None and len(finding.path) > 1 else "flat"
+    return f"{key.issue_class.lower()}/{shape}/{key.missing_guard_class}"

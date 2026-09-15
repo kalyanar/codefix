@@ -90,7 +90,7 @@ def test_store_invariant_to_structure(tmp_path):
         run_once(str(BENCH.parent / app), db, seed=0)
     c = sqlite3.connect(db)
     rows = c.execute("SELECT COUNT(*) FROM fingerprints").fetchone()[0]
-    succ = c.execute("SELECT successes FROM links").fetchone()[0]
+    succ = c.execute("SELECT successes FROM template_fingerprint_links").fetchone()[0]
     assert rows == 1          # one row for 3 different-structure apps
     assert succ == 3          # all fed the same posterior
 
@@ -280,7 +280,7 @@ def test_m7_fuzzy_recall_on_exact_miss(tmp_path):
     assert rb.status == "success"            # exploit-verified
     c = sqlite3.connect(db)
     promoted = c.execute(
-        "SELECT COUNT(*) FROM links l JOIN fingerprints f ON f.id=l.fingerprint_id"
+        "SELECT COUNT(*) FROM template_fingerprint_links l JOIN fingerprints f ON f.id=l.fingerprint_id"
         " WHERE f.framework='fastapi'").fetchone()[0]
     assert promoted > 0                      # promoted to exact for next time
 
@@ -377,9 +377,14 @@ def test_m11_pr_output(tmp_path):
     draft = make_pr_draft(rep.app, rep.results[0])
     assert draft is not None
     assert "fix(security): BOLA" in draft.title
-    assert "Exploit-verified evidence" in draft.body
-    assert "[x] exploit-blocked" in draft.body
+    assert draft.body.startswith("## exploit-verified fix · BOLA · ownership guard")
+    for box in ("exploit blocked on patched endpoint",
+                "legitimate path preserved (differential)",
+                "response contract holds", "adversarial variant blocked"):
+        assert f"- [x] {box}" in draft.body
     assert "```diff" in draft.body
+    assert rep.results[0].rendered_diff in draft.body          # the diff that was applied
+    assert "> verified by codefix · fingerprint: bola/" in draft.body
     # an unverified result produces no PR
     from dataclasses import replace
     bad = replace(rep.results[0], status="regression")
@@ -550,6 +555,7 @@ def test_m13c_gate_rejects_bad_search_parameters():
 def test_m13c_search_parameters_round_trip_through_the_catalog(tmp_path):
     """Alg. 2 parameters survive persistence — otherwise a spec would silently
     revert to engine defaults on the next run."""
+    from codefix import detect
     from codefix.memory import PatchMemory
     m = PatchMemory(str(tmp_path / "rt.db"))
     spec = _bfla_spec(direction="down", depth=4,
@@ -558,6 +564,6 @@ def test_m13c_search_parameters_round_trip_through_the_catalog(tmp_path):
     m.admit_spec(spec, "test")
     m.close()
     got = PatchMemory(str(tmp_path / "rt.db")).load_specs()[0]
-    assert got.direction == "down" and got.depth == 4
+    assert got.direction == detect.DOWN and got.depth == 4
     assert got.decorator_anchors == frozenset({"admin_required"})
     assert got.call_anchors == frozenset({"is_admin"})

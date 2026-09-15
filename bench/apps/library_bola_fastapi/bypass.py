@@ -11,15 +11,15 @@ def _load():
 
 def main():
     """Varied attackers (other principal, other object, signed out) must all be blocked."""
-    attacks = [(1, 2), (2, 1), (None, 2)]
+    attacks = [(2, 1), (None, 2), (3, 2)]
     for who, target in attacks:
         app = _load()
-        app.login(who)
+        app.sign_in(who)
         try:
-            rec = app.get_order(target)
+            rec = app.view_record(target)
         except PermissionError:
             continue
-        if rec is not None and rec.get("user_id") != who:
+        if rec is not None and rec.get("owner_id") != who:
             print(f"BYPASS: principal {who} read {target}: {rec}")
             return 1
     print("all variant attacks blocked")
