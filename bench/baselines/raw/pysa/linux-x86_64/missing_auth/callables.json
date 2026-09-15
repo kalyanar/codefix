@@ -1,0 +1,7 @@
+[
+ "app.$toplevel",
+ "app.current_user",
+ "app.do_transfer",
+ "app.login",
+ "app.transfer"
+]

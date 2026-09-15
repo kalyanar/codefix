@@ -1,0 +1,12 @@
+{
+  "tool": "semgrep",
+  "version": "1.166.0",
+  "config": "https://semgrep.dev/c/p/default",
+  "config_sha256": "856b53aae4b6a4291a4498f6e73d55bae8294c7cce3ab6b286691609839ad3c1",
+  "config_rules": 1073,
+  "equivalent_to": "--config=auto (no project context)",
+  "command": "semgrep scan --metrics=off --config <p/default snapshot> --json .  (cwd = staged app root)",
+  "platform": "linux-aarch64",
+  "host_note": "native aarch64",
+  "run_at": "2026-09-15T13:35:36+00:00"
+}

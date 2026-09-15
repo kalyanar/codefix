@@ -1,0 +1,9 @@
+[
+ "app.$toplevel",
+ "app.admin_required",
+ "app.admin_required.wrapper",
+ "app.current_user",
+ "app.delete_account_safe",
+ "app.delete_account_unsafe",
+ "app.sign_in"
+]

@@ -1,0 +1,80 @@
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:17: `pandas.core.generic.NDFrame.to_csv` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:15: `pandas.io.spss.read_spss` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:14: `pandas.io.orc.read_orc` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:13: `pandas.io.feather_format.read_feather` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:12: `pandas.io.parquet.read_parquet` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:11: `pandas.io.pytables.read_hdf` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:10: `pandas.io.excel._base.read_excel` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:9: `pandas.io.html.read_html` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:8: `pandas.io.json._json.read_json` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:7: `pandas.io.parsers.read_csv` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:5: `pandas.io.sql.read_sql_query` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:4: `pandas.io.sql.read_sql` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:2: `pandas.io.pickle.read_pickle` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:1: `pandas.core.computation.eval.eval` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:64: `starlette.responses.Response.delete_cookie` is not part of the environment, no module `starlette` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:63: `starlette.responses.Response.set_cookie` is not part of the environment, no module `starlette` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:61: `fastapi.WebSocket.cookies` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:58: `fastapi.responses.RedirectResponse.body` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:56: `fastapi.responses.Response.body` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:55: `fastapi.responses.HTMLResponse.body` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:53: `fastapi.responses.FileResponse.headers` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:52: `fastapi.responses.StreamingResponse.headers` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:51: `fastapi.responses.RedirectResponse.headers` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:50: `fastapi.Response.headers` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:49: `fastapi.responses.PlainTextResponse.headers` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:48: `fastapi.responses.JSONResponse.headers` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:47: `fastapi.responses.HTMLResponse.headers` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:46: `fastapi.WebSocket.headers` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:45: `starlette.responses.Response.init_headers` is not part of the environment, no module `starlette` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:43: `fastapi.WebSocket.cookies` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:42: `fastapi.Request.cookies` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:40: `fastapi.applications.FastAPI.__init__` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/aiohttp_client.pysa:89: `aiohttp.client.ClientSession.request` is not part of the environment, no module `aiohttp` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/aiohttp_client.pysa:67: `aiohttp.client.ClientSession.ws_connect` is not part of the environment, no module `aiohttp` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/aiohttp_client.pysa:58: `aiohttp.client.ClientSession.delete` is not part of the environment, no module `aiohttp` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/aiohttp_client.pysa:49: `aiohttp.client.ClientSession.patch` is not part of the environment, no module `aiohttp` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/aiohttp_client.pysa:40: `aiohttp.client.ClientSession.put` is not part of the environment, no module `aiohttp` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/aiohttp_client.pysa:31: `aiohttp.client.ClientSession.post` is not part of the environment, no module `aiohttp` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/aiohttp_client.pysa:21: `aiohttp.client.ClientSession.head` is not part of the environment, no module `aiohttp` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/aiohttp_client.pysa:11: `aiohttp.client.ClientSession.options` is not part of the environment, no module `aiohttp` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/aiohttp_client.pysa:1: `aiohttp.client.ClientSession.get` is not part of the environment, no module `aiohttp` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/authentication_sinks.pysa:14: `amazon.api.AmazonAPI.__init__` is not part of the environment, no module `amazon` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/authentication_sinks.pysa:9: `s3fs.core.S3FileSystem.__init__` is not part of the environment, no module `s3fs` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/authentication_sinks.pysa:2: `boto3.client` is not part of the environment, no module `boto3` in search path.
+INFO  Parsed taint models: 21.142s
+PERFORMANCE  Parsed taint models (models: 897, queries: 6): 21.142s
+ERROR  Found 6 model verification errors!
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:31: Model Query `get_fastapi_exception_handler` output no models.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:3: Model Query `get_fastapi_route_decorator` output no models.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/flask_sources_sinks.pysa:107: Model Query `get_route_sources_sinks` output no models.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/flask_sources_sinks.pysa:122: Model Query `get_errorhandler_sinks` output no models.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/tornado_sources_sinks.pysa:49: Model Query `get_tornado_sources` output no models.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/wtforms_sources.pysa:1: Model Query `get_wtforms_sources` output no models.
+WARNING  `django.core.management.base.BaseCommand.add_arguments` has 68 overrides, this might slow down the analysis considerably.
+WARNING  `django.core.management.base.BaseCommand.handle` has 77 overrides, this might slow down the analysis considerably.
+INFO  Iteration #0. 8230 callables [...]
+INFO  Iteration #1. 2061 callables [...]
+INFO  Iteration #2. 1749 callables [...]
+INFO  Iteration #3. 1236 callables [...]
+INFO  Iteration #4. 851 callables [...]
+INFO  Iteration #5. 558 callables [...]
+INFO  Iteration #6. 229 callables [...]
+INFO  Iteration #7. 89 callables [...]
+INFO  Iteration #8. 15 callables [...]
+INFO  Iteration #9. 12 callables [...]
+INFO  Iteration #10. 2 callables [django.utils.safestring._safety_decorator.wrapped[local($parameter$safety_marker)=django.utils.functional.keep_lazy.decorator.wrapper[local($local_django?utils?functional?keep_lazy?decorator$lazy_func)=django.utils.functional.lazy.__wrapper__, local($parameter$func)=django.utils.safestring.mark_safe]], django.contrib.admin.options.ModelAdmin.action_checkbox@decora
+INFO  Analysis fixpoint started for 11156 overrides and 1283 functions......
+INFO  Iteration #0. 910 callables [...]
+INFO  Iteration #1. 736 callables [...]
+INFO  Iteration #2. 166 callables [...]
+INFO  Iteration #3. 49 callables [...]
+INFO  Iteration #4. 30 callables [...]
+INFO  Iteration #5. 32 callables [...]
+INFO  Iteration #6. 17 callables [...]
+INFO  Iteration #7. 20 callables [...]
+INFO  Iteration #8. 17 callables [...]
+INFO  Iteration #9. 12 callables [...]
+INFO  Iteration #10. 10 callables [...]
+INFO  Found 0 issues
+PERFORMANCE  Analyze: 1972.091s

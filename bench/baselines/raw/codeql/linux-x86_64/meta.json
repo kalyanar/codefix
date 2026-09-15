@@ -1,0 +1,16 @@
+{
+  "tool": "codeql",
+  "version": "CodeQL command-line toolchain release 2.27.0.",
+  "python_queries": [
+    "1.8.10"
+  ],
+  "python_all": [
+    "7.2.5"
+  ],
+  "suite": "codeql/python-queries:codeql-suites/python-security-extended.qls",
+  "extra_query": "bench/baselines/codeql/BolaBarrierGuard.ql",
+  "command": "codeql database create --language=python; database analyze <suite>; database analyze bench/baselines/codeql/BolaBarrierGuard.ql",
+  "platform": "linux-x86_64",
+  "host_note": "linux/amd64 container under qemu-user on a aarch64 host",
+  "run_at": "2026-09-15T14:35:07+00:00"
+}

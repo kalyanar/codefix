@@ -1,0 +1,1178 @@
+{
+ "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+ "runs": [
+  {
+   "artifacts": [
+    {
+     "location": {
+      "index": 0,
+      "uri": "crapi/merchant/views.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 1,
+      "uri": "crapi/shop/views.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 2,
+      "uri": "crapi/mechanic/views.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 3,
+      "uri": "crapi/mechanic/serializers.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 4,
+      "uri": "crapi/migrations/__init__.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 5,
+      "uri": "setup.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 6,
+      "uri": "crapi/user/models.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 7,
+      "uri": "crapi/migrations/0004_alter_servicerequest_status_servicecomment.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 8,
+      "uri": "crapi_site/__init__.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 9,
+      "uri": "crapi/merchant/__init__.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 10,
+      "uri": "core/__init__.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 11,
+      "uri": "crapi_site/wsgi.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 12,
+      "uri": "core/management/commands/seed_database.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 13,
+      "uri": "crapi/merchant/urls.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 14,
+      "uri": "crapi/shop/__init__.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 15,
+      "uri": "crapi/migrations/0003_alter_appliedcoupon_id_alter_mechanic_id_and_more.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 16,
+      "uri": "utils/mock_methods.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 17,
+      "uri": "crapi/admin.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 18,
+      "uri": "crapi/user/urls.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 19,
+      "uri": "crapi/models.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 20,
+      "uri": "crapi/mechanic/tests.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 21,
+      "uri": "crapi/shop/models.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 22,
+      "uri": "core/management/__init__.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 23,
+      "uri": "utils/helper.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 24,
+      "uri": "crapi/mechanic/urls.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 25,
+      "uri": "crapi/merchant/tests.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 26,
+      "uri": "crapi/user/__init__.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 27,
+      "uri": "crapi/__init__.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 28,
+      "uri": "crapi_site/settings.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 29,
+      "uri": "utils/messages.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 30,
+      "uri": "crapi/user/views.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 31,
+      "uri": "crapi/user/tests.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 32,
+      "uri": "__init__.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 33,
+      "uri": "crapi/tests.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 34,
+      "uri": "crapi/shop/urls.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 35,
+      "uri": "crapi/user/serializers.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 36,
+      "uri": "crapi/urls.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 37,
+      "uri": "crapi/shop/serializers.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 38,
+      "uri": "manage.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 39,
+      "uri": "crapi/migrations/0002_order_transaction_id.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 40,
+      "uri": "utils/jwt.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 41,
+      "uri": "crapi/apps.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 42,
+      "uri": "crapi_site/urls.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 43,
+      "uri": "utils/__init__.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 44,
+      "uri": "crapi/mechanic/models.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 45,
+      "uri": "utils/logging.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 46,
+      "uri": "crapi/mechanic/__init__.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 47,
+      "uri": "crapi/migrations/0001_initial.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 48,
+      "uri": "crapi/user/sapps.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 49,
+      "uri": "crapi/merchant/serializers.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 50,
+      "uri": "crapi/shop/tests.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 51,
+      "uri": "utils/service_report.html",
+      "uriBaseId": "%SRCROOT%"
+     }
+    }
+   ],
+   "columnKind": "unicodeCodePoints",
+   "properties": {
+    "semmle.formatSpecifier": "sarif-latest"
+   },
+   "results": [
+    {
+     "locations": [
+      {
+       "physicalLocation": {
+        "artifactLocation": {
+         "index": 0,
+         "uri": "crapi/merchant/views.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 32,
+         "startColumn": 21,
+         "startLine": 88
+        }
+       }
+      }
+     ],
+     "message": {
+      "text": "Object lookup in 'post' is keyed by [user-controlled input](1) with no dominating ownership check."
+     },
+     "partialFingerprints": {
+      "primaryLocationLineHash": "8873d2b548cd3fe5:1",
+      "primaryLocationStartColumnFingerprint": "0"
+     },
+     "relatedLocations": [
+      {
+       "id": 1,
+       "message": {
+        "text": "user-controlled input"
+       },
+       "physicalLocation": {
+        "artifactLocation": {
+         "index": 0,
+         "uri": "crapi/merchant/views.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 27,
+         "startColumn": 20,
+         "startLine": 46
+        }
+       }
+      }
+     ],
+     "rule": {
+      "id": "codefix-baseline/py/bola-barrierguard",
+      "index": 0
+     },
+     "ruleId": "codefix-baseline/py/bola-barrierguard",
+     "ruleIndex": 0
+    },
+    {
+     "locations": [
+      {
+       "physicalLocation": {
+        "artifactLocation": {
+         "index": 0,
+         "uri": "crapi/merchant/views.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 86,
+         "startColumn": 29,
+         "startLine": 90
+        }
+       }
+      }
+     ],
+     "message": {
+      "text": "Object lookup in 'post' is keyed by [user-controlled input](1) with no dominating ownership check."
+     },
+     "partialFingerprints": {
+      "primaryLocationLineHash": "d7a463f2464e12ad:1",
+      "primaryLocationStartColumnFingerprint": "8"
+     },
+     "relatedLocations": [
+      {
+       "id": 1,
+       "message": {
+        "text": "user-controlled input"
+       },
+       "physicalLocation": {
+        "artifactLocation": {
+         "index": 0,
+         "uri": "crapi/merchant/views.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 27,
+         "startColumn": 20,
+         "startLine": 46
+        }
+       }
+      }
+     ],
+     "rule": {
+      "id": "codefix-baseline/py/bola-barrierguard",
+      "index": 0
+     },
+     "ruleId": "codefix-baseline/py/bola-barrierguard",
+     "ruleIndex": 0
+    },
+    {
+     "locations": [
+      {
+       "physicalLocation": {
+        "artifactLocation": {
+         "index": 0,
+         "uri": "crapi/merchant/views.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 40,
+         "startColumn": 28,
+         "startLine": 89
+        }
+       }
+      }
+     ],
+     "message": {
+      "text": "Object lookup in 'post' is keyed by [user-controlled input](1) with no dominating ownership check."
+     },
+     "partialFingerprints": {
+      "primaryLocationLineHash": "e3e427427a9d4439:1",
+      "primaryLocationStartColumnFingerprint": "7"
+     },
+     "relatedLocations": [
+      {
+       "id": 1,
+       "message": {
+        "text": "user-controlled input"
+       },
+       "physicalLocation": {
+        "artifactLocation": {
+         "index": 0,
+         "uri": "crapi/merchant/views.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 27,
+         "startColumn": 20,
+         "startLine": 46
+        }
+       }
+      }
+     ],
+     "rule": {
+      "id": "codefix-baseline/py/bola-barrierguard",
+      "index": 0
+     },
+     "ruleId": "codefix-baseline/py/bola-barrierguard",
+     "ruleIndex": 0
+    },
+    {
+     "locations": [
+      {
+       "physicalLocation": {
+        "artifactLocation": {
+         "index": 0,
+         "uri": "crapi/merchant/views.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 75,
+         "startColumn": 57,
+         "startLine": 141
+        }
+       }
+      }
+     ],
+     "message": {
+      "text": "Object lookup in 'get' is keyed by [user-controlled input](1) with no dominating ownership check."
+     },
+     "partialFingerprints": {
+      "primaryLocationLineHash": "38923b61ce0a9f70:1",
+      "primaryLocationStartColumnFingerprint": "48"
+     },
+     "relatedLocations": [
+      {
+       "id": 1,
+       "message": {
+        "text": "user-controlled input"
+       },
+       "physicalLocation": {
+        "artifactLocation": {
+         "index": 0,
+         "uri": "crapi/merchant/views.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 57,
+         "startColumn": 39,
+         "startLine": 137
+        }
+       }
+      }
+     ],
+     "rule": {
+      "id": "codefix-baseline/py/bola-barrierguard",
+      "index": 0
+     },
+     "ruleId": "codefix-baseline/py/bola-barrierguard",
+     "ruleIndex": 0
+    },
+    {
+     "locations": [
+      {
+       "physicalLocation": {
+        "artifactLocation": {
+         "index": 0,
+         "uri": "crapi/merchant/views.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 74,
+         "startColumn": 71,
+         "startLine": 178
+        }
+       }
+      }
+     ],
+     "message": {
+      "text": "Object lookup in 'get' is keyed by [user-controlled input](1) with no dominating ownership check."
+     },
+     "partialFingerprints": {
+      "primaryLocationLineHash": "1fad2e4a47b1b74a:1",
+      "primaryLocationStartColumnFingerprint": "62"
+     },
+     "relatedLocations": [
+      {
+       "id": 1,
+       "message": {
+        "text": "user-controlled input"
+       },
+       "physicalLocation": {
+        "artifactLocation": {
+         "index": 0,
+         "uri": "crapi/merchant/views.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 31,
+         "startColumn": 28,
+         "startLine": 166
+        }
+       }
+      }
+     ],
+     "rule": {
+      "id": "codefix-baseline/py/bola-barrierguard",
+      "index": 0
+     },
+     "ruleId": "codefix-baseline/py/bola-barrierguard",
+     "ruleIndex": 0
+    },
+    {
+     "locations": [
+      {
+       "physicalLocation": {
+        "artifactLocation": {
+         "index": 1,
+         "uri": "crapi/shop/views.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 46,
+         "startColumn": 38,
+         "startLine": 122
+        }
+       }
+      }
+     ],
+     "message": {
+      "text": "Object lookup in 'get' is keyed by [user-controlled input](1) with no dominating ownership check."
+     },
+     "partialFingerprints": {
+      "primaryLocationLineHash": "6388ade4400fe35e:1",
+      "primaryLocationStartColumnFingerprint": "29"
+     },
+     "relatedLocations": [
+      {
+       "id": 1,
+       "message": {
+        "text": "user-controlled input"
+       },
+       "physicalLocation": {
+        "artifactLocation": {
+         "index": 1,
+         "uri": "crapi/shop/views.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 36,
+         "startColumn": 28,
+         "startLine": 109
+        }
+       }
+      }
+     ],
+     "rule": {
+      "id": "codefix-baseline/py/bola-barrierguard",
+      "index": 0
+     },
+     "ruleId": "codefix-baseline/py/bola-barrierguard",
+     "ruleIndex": 0
+    },
+    {
+     "locations": [
+      {
+       "physicalLocation": {
+        "artifactLocation": {
+         "index": 1,
+         "uri": "crapi/shop/views.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 63,
+         "startColumn": 29,
+         "startLine": 412
+        }
+       }
+      }
+     ],
+     "message": {
+      "text": "Object lookup in 'post' is keyed by [user-controlled input](1) with no dominating ownership check."
+     },
+     "partialFingerprints": {
+      "primaryLocationLineHash": "d190be2b4f4ce038:1",
+      "primaryLocationStartColumnFingerprint": "12"
+     },
+     "relatedLocations": [
+      {
+       "id": 1,
+       "message": {
+        "text": "user-controlled input"
+       },
+       "physicalLocation": {
+        "artifactLocation": {
+         "index": 1,
+         "uri": "crapi/shop/views.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 27,
+         "startColumn": 20,
+         "startLine": 366
+        }
+       }
+      }
+     ],
+     "rule": {
+      "id": "codefix-baseline/py/bola-barrierguard",
+      "index": 0
+     },
+     "ruleId": "codefix-baseline/py/bola-barrierguard",
+     "ruleIndex": 0
+    },
+    {
+     "locations": [
+      {
+       "physicalLocation": {
+        "artifactLocation": {
+         "index": 2,
+         "uri": "crapi/mechanic/views.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 69,
+         "startColumn": 60,
+         "startLine": 235
+        }
+       }
+      }
+     ],
+     "message": {
+      "text": "Object lookup in 'get' is keyed by [user-controlled input](1) with no dominating ownership check."
+     },
+     "partialFingerprints": {
+      "primaryLocationLineHash": "ec825cae6aa5a91f:1",
+      "primaryLocationStartColumnFingerprint": "51"
+     },
+     "relatedLocations": [
+      {
+       "id": 1,
+       "message": {
+        "text": "user-controlled input"
+       },
+       "physicalLocation": {
+        "artifactLocation": {
+         "index": 2,
+         "uri": "crapi/mechanic/views.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 26,
+         "startColumn": 19,
+         "startLine": 214
+        }
+       }
+      }
+     ],
+     "rule": {
+      "id": "codefix-baseline/py/bola-barrierguard",
+      "index": 0
+     },
+     "ruleId": "codefix-baseline/py/bola-barrierguard",
+     "ruleIndex": 0
+    },
+    {
+     "locations": [
+      {
+       "physicalLocation": {
+        "artifactLocation": {
+         "index": 2,
+         "uri": "crapi/mechanic/views.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 75,
+         "startColumn": 57,
+         "startLine": 318
+        }
+       }
+      }
+     ],
+     "message": {
+      "text": "Object lookup in 'post' is keyed by [user-controlled input](1) with no dominating ownership check."
+     },
+     "partialFingerprints": {
+      "primaryLocationLineHash": "1e11adec0ea47f68:1",
+      "primaryLocationStartColumnFingerprint": "48"
+     },
+     "relatedLocations": [
+      {
+       "id": 1,
+       "message": {
+        "text": "user-controlled input"
+       },
+       "physicalLocation": {
+        "artifactLocation": {
+         "index": 2,
+         "uri": "crapi/mechanic/views.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 58,
+         "startColumn": 40,
+         "startLine": 300
+        }
+       }
+      }
+     ],
+     "rule": {
+      "id": "codefix-baseline/py/bola-barrierguard",
+      "index": 0
+     },
+     "ruleId": "codefix-baseline/py/bola-barrierguard",
+     "ruleIndex": 0
+    },
+    {
+     "locations": [
+      {
+       "physicalLocation": {
+        "artifactLocation": {
+         "index": 2,
+         "uri": "crapi/mechanic/views.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 75,
+         "startColumn": 57,
+         "startLine": 335
+        }
+       }
+      }
+     ],
+     "message": {
+      "text": "Object lookup in 'get' is keyed by [user-controlled input](1) with no dominating ownership check."
+     },
+     "partialFingerprints": {
+      "primaryLocationLineHash": "4038a2ec0a87f47c:1",
+      "primaryLocationStartColumnFingerprint": "48"
+     },
+     "relatedLocations": [
+      {
+       "id": 1,
+       "message": {
+        "text": "user-controlled input"
+       },
+       "physicalLocation": {
+        "artifactLocation": {
+         "index": 2,
+         "uri": "crapi/mechanic/views.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 57,
+         "startColumn": 39,
+         "startLine": 331
+        }
+       }
+      }
+     ],
+     "rule": {
+      "id": "codefix-baseline/py/bola-barrierguard",
+      "index": 0
+     },
+     "ruleId": "codefix-baseline/py/bola-barrierguard",
+     "ruleIndex": 0
+    },
+    {
+     "locations": [
+      {
+       "physicalLocation": {
+        "artifactLocation": {
+         "index": 2,
+         "uri": "crapi/mechanic/views.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 75,
+         "startColumn": 57,
+         "startLine": 361
+        }
+       }
+      }
+     ],
+     "message": {
+      "text": "Object lookup in 'put' is keyed by [user-controlled input](1) with no dominating ownership check."
+     },
+     "partialFingerprints": {
+      "primaryLocationLineHash": "c4a7d16a5b6a1394:1",
+      "primaryLocationStartColumnFingerprint": "48"
+     },
+     "relatedLocations": [
+      {
+       "id": 1,
+       "message": {
+        "text": "user-controlled input"
+       },
+       "physicalLocation": {
+        "artifactLocation": {
+         "index": 2,
+         "uri": "crapi/mechanic/views.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 57,
+         "startColumn": 39,
+         "startLine": 348
+        }
+       }
+      }
+     ],
+     "rule": {
+      "id": "codefix-baseline/py/bola-barrierguard",
+      "index": 0
+     },
+     "ruleId": "codefix-baseline/py/bola-barrierguard",
+     "ruleIndex": 0
+    },
+    {
+     "locations": [
+      {
+       "physicalLocation": {
+        "artifactLocation": {
+         "index": 2,
+         "uri": "crapi/mechanic/views.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 75,
+         "startColumn": 57,
+         "startLine": 372
+        }
+       }
+      }
+     ],
+     "message": {
+      "text": "Object lookup in 'get' is keyed by [user-controlled input](1) with no dominating ownership check."
+     },
+     "partialFingerprints": {
+      "primaryLocationLineHash": "6ef163a32f02f10:1",
+      "primaryLocationStartColumnFingerprint": "48"
+     },
+     "relatedLocations": [
+      {
+       "id": 1,
+       "message": {
+        "text": "user-controlled input"
+       },
+       "physicalLocation": {
+        "artifactLocation": {
+         "index": 2,
+         "uri": "crapi/mechanic/views.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 57,
+         "startColumn": 39,
+         "startLine": 368
+        }
+       }
+      }
+     ],
+     "rule": {
+      "id": "codefix-baseline/py/bola-barrierguard",
+      "index": 0
+     },
+     "ruleId": "codefix-baseline/py/bola-barrierguard",
+     "ruleIndex": 0
+    }
+   ],
+   "tool": {
+    "driver": {
+     "name": "CodeQL",
+     "notifications": [
+      {
+       "defaultConfiguration": {
+        "enabled": true
+       },
+       "fullDescription": {
+        "text": "Files appearing in the source archive that are expected to be extracted."
+       },
+       "id": "py/baseline/expected-extracted-files",
+       "name": "py/baseline/expected-extracted-files",
+       "properties": {
+        "tags": [
+         "expected-extracted-files",
+         "telemetry"
+        ]
+       },
+       "shortDescription": {
+        "text": "Expected extracted files"
+       }
+      },
+      {
+       "defaultConfiguration": {
+        "enabled": true
+       },
+       "fullDescription": {
+        "text": "Files appearing in the source archive that are expected to be extracted."
+       },
+       "id": "js/baseline/expected-extracted-files",
+       "name": "js/baseline/expected-extracted-files",
+       "properties": {
+        "tags": [
+         "expected-extracted-files",
+         "telemetry"
+        ]
+       },
+       "shortDescription": {
+        "text": "Expected extracted files"
+       }
+      },
+      {
+       "defaultConfiguration": {
+        "enabled": true
+       },
+       "fullDescription": {
+        "text": "File coverage baseline telemetry"
+       },
+       "id": "cli/file-coverage-baseline",
+       "name": "cli/file-coverage-baseline",
+       "shortDescription": {
+        "text": "File coverage baseline telemetry"
+       }
+      },
+      {
+       "defaultConfiguration": {
+        "enabled": true
+       },
+       "fullDescription": {
+        "text": "Platform"
+       },
+       "id": "cli/platform",
+       "name": "cli/platform",
+       "shortDescription": {
+        "text": "Platform"
+       }
+      }
+     ],
+     "organization": "GitHub",
+     "rules": [
+      {
+       "defaultConfiguration": {
+        "enabled": true,
+        "level": "error"
+       },
+       "fullDescription": {
+        "text": "A best-effort, hand-authored attempt to find Broken Object Level Authorization with CodeQL's standard building blocks: global taint tracking from a RemoteFlowSource (the library's own notion of a routed request parameter / request data) into the key of an object lookup, where an ownership comparison acts as a BarrierGuard. This is NOT part of any CodeQL suite: it is the \"CodeQL can express guard dominance via BarrierGuard\" experiment for the codefix baselines (bench/baselines.py). It was written once, before looking at its results, and is not tuned per app."
+       },
+       "id": "codefix-baseline/py/bola-barrierguard",
+       "name": "codefix-baseline/py/bola-barrierguard",
+       "properties": {
+        "description": "A best-effort, hand-authored attempt to find Broken Object Level\n              Authorization with CodeQL's standard building blocks: global taint\n              tracking from a RemoteFlowSource (the library's own notion of a\n              routed request parameter / request data) into the key of an\n              object lookup, where an ownership comparison acts as a\n              BarrierGuard. This is NOT part of any CodeQL suite: it is the\n              \"CodeQL can express guard dominance via BarrierGuard\" experiment\n              for the codefix baselines (bench/baselines.py). It was written\n              once, before looking at its results, and is not tuned per app.",
+        "id": "codefix-baseline/py/bola-barrierguard",
+        "kind": "problem",
+        "name": "Object lookup keyed by user input without an ownership check (BOLA attempt)",
+        "problem.severity": "error",
+        "tags": [
+         "security",
+         "external/cwe/cwe-639"
+        ]
+       },
+       "shortDescription": {
+        "text": "Object lookup keyed by user input without an ownership check (BOLA attempt)"
+       }
+      }
+     ],
+     "semanticVersion": "2.27.0"
+    },
+    "extensions": [
+     {
+      "locations": [
+       {
+        "description": {
+         "text": "The QL pack root directory."
+        },
+        "properties": {
+         "tags": [
+          "CodeQL/LocalPackRoot"
+         ]
+        },
+        "uri": "file:///codefix/bench/baselines/codeql/"
+       },
+       {
+        "description": {
+         "text": "The QL pack definition file."
+        },
+        "properties": {
+         "tags": [
+          "CodeQL/LocalPackDefinitionFile"
+         ]
+        },
+        "uri": "file:///codefix/bench/baselines/codeql/qlpack.yml"
+       }
+      ],
+      "name": "codefix/baseline-authz-queries",
+      "semanticVersion": "0.0.1"
+     },
+     {
+      "locations": [
+       {
+        "description": {
+         "text": "The QL pack root directory."
+        },
+        "properties": {
+         "tags": [
+          "CodeQL/LocalPackRoot"
+         ]
+        },
+        "uri": "file:///opt/codeql-packs/codeql/python-all/7.2.5/"
+       },
+       {
+        "description": {
+         "text": "The QL pack definition file."
+        },
+        "properties": {
+         "tags": [
+          "CodeQL/LocalPackDefinitionFile"
+         ]
+        },
+        "uri": "file:///opt/codeql-packs/codeql/python-all/7.2.5/qlpack.yml"
+       }
+      ],
+      "name": "codeql/python-all",
+      "semanticVersion": "7.2.5+c6baf479093fafc81d4655dc2014dc583360308e"
+     },
+     {
+      "locations": [
+       {
+        "description": {
+         "text": "The QL pack root directory."
+        },
+        "properties": {
+         "tags": [
+          "CodeQL/LocalPackRoot"
+         ]
+        },
+        "uri": "file:///opt/codeql-packs/codeql/threat-models/1.0.57/"
+       },
+       {
+        "description": {
+         "text": "The QL pack definition file."
+        },
+        "properties": {
+         "tags": [
+          "CodeQL/LocalPackDefinitionFile"
+         ]
+        },
+        "uri": "file:///opt/codeql-packs/codeql/threat-models/1.0.57/qlpack.yml"
+       }
+      ],
+      "name": "codeql/threat-models",
+      "semanticVersion": "1.0.57+c6baf479093fafc81d4655dc2014dc583360308e"
+     }
+    ]
+   }
+  }
+ ],
+ "version": "2.1.0"
+}

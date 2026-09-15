@@ -1,0 +1,80 @@
+ERROR  /usr/local/lib/pyre_check/third_party_taint/filesystem_sinks.pysa:5: `markdown.core.Markdown.convertFile` is not part of the environment, no module `markdown` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/filesystem_sinks.pysa:4: `markdown.core.markdownFromFile` is not part of the environment, no module `markdown` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/filesystem_sinks.pysa:2: `PIL.Image.Image.save` is not part of the environment, no module `PIL` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/filesystem_sinks.pysa:1: `PIL.Image.open` is not part of the environment, no module `PIL` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/dill_sinks.pysa:4: `dill._dill.Unpickler.__init__` is not part of the environment, no module `dill` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/dill_sinks.pysa:3: `dill._dill.load_session` is not part of the environment, no module `dill` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/dill_sinks.pysa:2: `dill._dill.loads` is not part of the environment, no module `dill` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/dill_sinks.pysa:1: `dill._dill.load` is not part of the environment, no module `dill` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/server_side_template_injection_sinks.pysa:22: `airspeed.Template.__init__` is not part of the environment, no module `airspeed` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/server_side_template_injection_sinks.pysa:19: `Cheetah.Template.Template.__init__` is not part of the environment, no module `Cheetah` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/server_side_template_injection_sinks.pysa:16: `trender.trender.TRender.__init__` is not part of the environment, no module `trender` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/server_side_template_injection_sinks.pysa:13: `genshi.template.base.Template.__init__` is not part of the environment, no module `genshi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/server_side_template_injection_sinks.pysa:10: `chameleon.template.BaseTemplate.__init__` is not part of the environment, no module `chameleon` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/server_side_template_injection_sinks.pysa:7: `mako.template.Template.__init__` is not part of the environment, no module `mako` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/server_side_template_injection_sinks.pysa:4: `jinja2.environment.Environment.compile_expression` is not part of the environment, no module `jinja2` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/server_side_template_injection_sinks.pysa:3: `jinja2.environment.Environment.from_string` is not part of the environment, no module `jinja2` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/server_side_template_injection_sinks.pysa:2: `jinja2.environment.Template.__new__` is not part of the environment, no module `jinja2` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pymssql_sinks.pysa:2: `pymssql.Cursor.executemany` is not part of the environment, no module `pymssql` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pymssql_sinks.pysa:1: `pymssql.Cursor.execute` is not part of the environment, no module `pymssql` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:20: `pandas.core.generic.NDFrame.to_sql` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:19: `pandas.core.generic.NDFrame.to_latex` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:18: `pandas.core.generic.NDFrame.to_hdf` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:17: `pandas.core.generic.NDFrame.to_csv` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:15: `pandas.io.spss.read_spss` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:14: `pandas.io.orc.read_orc` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:13: `pandas.io.feather_format.read_feather` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:12: `pandas.io.parquet.read_parquet` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:11: `pandas.io.pytables.read_hdf` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:10: `pandas.io.excel._base.read_excel` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:9: `pandas.io.html.read_html` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:8: `pandas.io.json._json.read_json` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:7: `pandas.io.parsers.read_csv` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:5: `pandas.io.sql.read_sql_query` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:4: `pandas.io.sql.read_sql` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:2: `pandas.io.pickle.read_pickle` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/pandas_sinks.pysa:1: `pandas.core.computation.eval.eval` is not part of the environment, no module `pandas` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:64: `starlette.responses.Response.delete_cookie` is not part of the environment, no module `starlette` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:63: `starlette.responses.Response.set_cookie` is not part of the environment, no module `starlette` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:61: `fastapi.WebSocket.cookies` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:58: `fastapi.responses.RedirectResponse.body` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:56: `fastapi.responses.Response.body` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:55: `fastapi.responses.HTMLResponse.body` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:53: `fastapi.responses.FileResponse.headers` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:52: `fastapi.responses.StreamingResponse.headers` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:51: `fastapi.responses.RedirectResponse.headers` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:50: `fastapi.Response.headers` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:49: `fastapi.responses.PlainTextResponse.headers` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:48: `fastapi.responses.JSONResponse.headers` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:47: `fastapi.responses.HTMLResponse.headers` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:46: `fastapi.WebSocket.headers` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:45: `starlette.responses.Response.init_headers` is not part of the environment, no module `starlette` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:43: `fastapi.WebSocket.cookies` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:42: `fastapi.Request.cookies` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:40: `fastapi.applications.FastAPI.__init__` is not part of the environment, no module `fastapi` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/aiohttp_client.pysa:89: `aiohttp.client.ClientSession.request` is not part of the environment, no module `aiohttp` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/aiohttp_client.pysa:67: `aiohttp.client.ClientSession.ws_connect` is not part of the environment, no module `aiohttp` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/aiohttp_client.pysa:58: `aiohttp.client.ClientSession.delete` is not part of the environment, no module `aiohttp` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/aiohttp_client.pysa:49: `aiohttp.client.ClientSession.patch` is not part of the environment, no module `aiohttp` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/aiohttp_client.pysa:40: `aiohttp.client.ClientSession.put` is not part of the environment, no module `aiohttp` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/aiohttp_client.pysa:31: `aiohttp.client.ClientSession.post` is not part of the environment, no module `aiohttp` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/aiohttp_client.pysa:21: `aiohttp.client.ClientSession.head` is not part of the environment, no module `aiohttp` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/aiohttp_client.pysa:11: `aiohttp.client.ClientSession.options` is not part of the environment, no module `aiohttp` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/aiohttp_client.pysa:1: `aiohttp.client.ClientSession.get` is not part of the environment, no module `aiohttp` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/authentication_sinks.pysa:14: `amazon.api.AmazonAPI.__init__` is not part of the environment, no module `amazon` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/authentication_sinks.pysa:9: `s3fs.core.S3FileSystem.__init__` is not part of the environment, no module `s3fs` in search path.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/authentication_sinks.pysa:2: `boto3.client` is not part of the environment, no module `boto3` in search path.
+INFO  Parsed taint models: 19.454s
+PERFORMANCE  Parsed taint models (models: 823, queries: 6): 19.454s
+ERROR  Found 6 model verification errors!
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:31: Model Query `get_fastapi_exception_handler` output no models.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/fastapi_models.pysa:3: Model Query `get_fastapi_route_decorator` output no models.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/flask_sources_sinks.pysa:107: Model Query `get_route_sources_sinks` output no models.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/flask_sources_sinks.pysa:122: Model Query `get_errorhandler_sinks` output no models.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/tornado_sources_sinks.pysa:49: Model Query `get_tornado_sources` output no models.
+ERROR  /usr/local/lib/pyre_check/third_party_taint/wtforms_sources.pysa:1: Model Query `get_wtforms_sources` output no models.
+INFO  Iteration #0. 5 callables [app.lookup_record, app.view_record, app.sign_in, app.current_user_id, app.$toplevel]
+INFO  Analysis fixpoint started for 2451 overrides and 8 functions......
+INFO  Iteration #0. 5 callables [app.lookup_record, app.view_record, app.sign_in, app.current_user_id, app.$toplevel]
+INFO  Found 0 issues
+PERFORMANCE  Analyze: 63.357s

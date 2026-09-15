@@ -1,0 +1,32 @@
+# CodeQL baseline image, pinned to linux/amd64 (qemu-user on arm64 hosts).
+# Built and run by bench/repro/codeql.sh.
+FROM --platform=linux/amd64 python:3.11-slim
+
+ARG CODEQL_VERSION=2.27.0
+ARG CODEQL_SHA256=9ce76544eff4cb7f5b6d3c3ae14598686dd63dbb7dbc61ffd9b52a7e73151bd2
+
+RUN apt-get update && apt-get install -y --no-install-recommends curl unzip ca-certificates \
+ && rm -rf /var/lib/apt/lists/*
+RUN curl -fsSL -o /tmp/codeql.zip \
+      "https://github.com/github/codeql-cli-binaries/releases/download/v${CODEQL_VERSION}/codeql-linux64.zip" \
+ && echo "${CODEQL_SHA256}  /tmp/codeql.zip" | sha256sum -c - \
+ && unzip -q /tmp/codeql.zip -d /opt && rm /tmp/codeql.zip
+# Query packs pinned to the versions python-queries 1.8.10 was built against
+# (its codeql-pack.lock.yml); python-all and friends compile the BarrierGuard query.
+RUN /opt/codeql/codeql pack download --dir=/opt/codeql-packs \
+      codeql/python-queries@1.8.10 codeql/python-all@7.2.5 codeql/concepts@0.0.31 \
+      codeql/controlflow@2.0.41 codeql/dataflow@2.1.13 codeql/mad@1.0.57 codeql/regex@1.0.57 \
+      codeql/ssa@2.0.33 codeql/suite-helpers@1.0.57 codeql/threat-models@1.0.57 \
+      codeql/tutorial@1.0.57 codeql/typetracking@2.0.41 codeql/util@2.0.44 codeql/xml@1.0.57 \
+      codeql/yaml@1.0.57 \
+ && chmod -R a+rX /opt/codeql-packs
+ENV CODEQL=/opt/codeql/codeql CODEQL_PACKS=/opt/codeql-packs HOME=/tmp
+
+WORKDIR /codefix
+COPY bench /codefix/bench
+# the root .dockerignore drops `vendor/`; the vendored real apps come from the `apps` context
+COPY --from=apps vampi/vendor /codefix/bench/apps/vampi/vendor
+COPY --from=apps crapi/vendor /codefix/bench/apps/crapi/vendor
+# the run may execute as the host user (codeql.sh passes --user): let CodeQL write its query cache
+RUN chmod -R a+rwX /codefix/bench/baselines/codeql
+ENTRYPOINT ["python", "bench/baselines.py", "run", "--tools", "codeql", "--strict"]

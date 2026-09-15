@@ -1,0 +1,8 @@
+{
+  "tool": "bandit",
+  "version": "bandit 1.9.4",
+  "command": "bandit -r . -f json -o <target>.json   (cwd = staged app root)",
+  "platform": "linux-x86_64",
+  "host_note": "linux/amd64 container under qemu-user, host arch aarch64",
+  "run_at": "2026-09-15T15:29:26+00:00"
+}

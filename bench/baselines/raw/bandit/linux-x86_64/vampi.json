@@ -1,0 +1,306 @@
+{
+ "errors": [],
+ "metrics": {
+  "./api_views/__init__.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 0,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./api_views/books.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 63,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./api_views/json_schemas.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 32,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./api_views/main.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 16,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./api_views/users.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 3,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 3,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 192,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./app.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 1,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 1,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 11,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./config.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 1,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 1,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 20,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./database/__init__.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 0,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./models/__init__.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 0,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./models/books_model.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 21,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./models/user_model.py": {
+   "CONFIDENCE.HIGH": 1,
+   "CONFIDENCE.LOW": 1,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 1,
+   "SEVERITY.MEDIUM": 1,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 86,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "_totals": {
+   "CONFIDENCE.HIGH": 1,
+   "CONFIDENCE.LOW": 1,
+   "CONFIDENCE.MEDIUM": 5,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 5,
+   "SEVERITY.MEDIUM": 2,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 441,
+   "nosec": 0,
+   "skipped_tests": 0
+  }
+ },
+ "results": [
+  {
+   "code": "121         except:\n122             auth_token = \"\"\n123     else:\n",
+   "col_offset": 25,
+   "end_col_offset": 27,
+   "filename": "./api_views/users.py",
+   "issue_confidence": "MEDIUM",
+   "issue_cwe": {
+    "id": 259,
+    "link": "https://cwe.mitre.org/data/definitions/259.html"
+   },
+   "issue_severity": "LOW",
+   "issue_text": "Possible hardcoded password: ''",
+   "line_number": 122,
+   "line_range": [
+    122
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b105_hardcoded_password_string.html",
+   "test_id": "B105",
+   "test_name": "hardcoded_password_string"
+  },
+  {
+   "code": "123     else:\n124         auth_token = \"\"\n125     if auth_token:\n",
+   "col_offset": 21,
+   "end_col_offset": 23,
+   "filename": "./api_views/users.py",
+   "issue_confidence": "MEDIUM",
+   "issue_cwe": {
+    "id": 259,
+    "link": "https://cwe.mitre.org/data/definitions/259.html"
+   },
+   "issue_severity": "LOW",
+   "issue_text": "Possible hardcoded password: ''",
+   "line_number": 124,
+   "line_range": [
+    124
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b105_hardcoded_password_string.html",
+   "test_id": "B105",
+   "test_name": "hardcoded_password_string"
+  },
+  {
+   "code": "198                 'status': 'success',\n199                 'Password': 'Updated.'\n200             }\n201             return Response(json.dumps(responseObject), 204, mimetype=\"application/json\")\n202         else:\n203             return Response(error_message_helper(\"Malformed Data\"), 400, mimetype=\"application/json\")\n",
+   "col_offset": 16,
+   "end_col_offset": 26,
+   "filename": "./api_views/users.py",
+   "issue_confidence": "MEDIUM",
+   "issue_cwe": {
+    "id": 259,
+    "link": "https://cwe.mitre.org/data/definitions/259.html"
+   },
+   "issue_severity": "LOW",
+   "issue_text": "Possible hardcoded password: 'Updated.'",
+   "line_number": 199,
+   "line_range": [
+    197,
+    198,
+    199,
+    200
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b105_hardcoded_password_string.html",
+   "test_id": "B105",
+   "test_name": "hardcoded_password_string"
+  },
+  {
+   "code": "16 if __name__ == '__main__':\n17     vuln_app.run(host='0.0.0.0', port=5000, debug=True)\n",
+   "col_offset": 22,
+   "end_col_offset": 31,
+   "filename": "./app.py",
+   "issue_confidence": "MEDIUM",
+   "issue_cwe": {
+    "id": 605,
+    "link": "https://cwe.mitre.org/data/definitions/605.html"
+   },
+   "issue_severity": "MEDIUM",
+   "issue_text": "Possible binding to all interfaces.",
+   "line_number": 17,
+   "line_range": [
+    17
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b104_hardcoded_bind_all_interfaces.html",
+   "test_id": "B104",
+   "test_name": "hardcoded_bind_all_interfaces"
+  },
+  {
+   "code": "12 \n13 vuln_app.app.config['SECRET_KEY'] = 'random'\n14 # start the db\n",
+   "col_offset": 20,
+   "end_col_offset": 32,
+   "filename": "./config.py",
+   "issue_confidence": "MEDIUM",
+   "issue_cwe": {
+    "id": 259,
+    "link": "https://cwe.mitre.org/data/definitions/259.html"
+   },
+   "issue_severity": "LOW",
+   "issue_text": "Possible hardcoded password: 'random'",
+   "line_number": 13,
+   "line_range": [
+    13
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b105_hardcoded_password_string.html",
+   "test_id": "B105",
+   "test_name": "hardcoded_password_string"
+  },
+  {
+   "code": "71         if vuln:  # SQLi Injection\n72             user_query = f\"SELECT * FROM users WHERE username = '{username}'\"\n73             query = db.session.execute(text(user_query))\n",
+   "col_offset": 25,
+   "end_col_offset": 77,
+   "filename": "./models/user_model.py",
+   "issue_confidence": "LOW",
+   "issue_cwe": {
+    "id": 89,
+    "link": "https://cwe.mitre.org/data/definitions/89.html"
+   },
+   "issue_severity": "MEDIUM",
+   "issue_text": "Possible SQL injection vector through string-based query construction.",
+   "line_number": 72,
+   "line_range": [
+    72
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b608_hardcoded_sql_expressions.html",
+   "test_id": "B608",
+   "test_name": "hardcoded_sql_expressions"
+  },
+  {
+   "code": "85         new_user = User(username=username, password=password, email=email, admin=admin)\n86         randomint = str(randrange(100))\n87         new_user.books = [Book(book_title=\"bookTitle\" + randomint, secret_content=\"secret for bookTitle\" + randomint)]\n",
+   "col_offset": 24,
+   "end_col_offset": 38,
+   "filename": "./models/user_model.py",
+   "issue_confidence": "HIGH",
+   "issue_cwe": {
+    "id": 330,
+    "link": "https://cwe.mitre.org/data/definitions/330.html"
+   },
+   "issue_severity": "LOW",
+   "issue_text": "Standard pseudo-random generators are not suitable for security/cryptographic purposes.",
+   "line_number": 86,
+   "line_range": [
+    86
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_calls.html#b311-random",
+   "test_id": "B311",
+   "test_name": "blacklist"
+  }
+ ]
+}

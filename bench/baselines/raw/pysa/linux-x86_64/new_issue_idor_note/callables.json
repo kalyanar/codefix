@@ -1,0 +1,16 @@
+[
+ "flat.app.$toplevel",
+ "flat.app.current_user_id",
+ "flat.app.read_note",
+ "flat.app.sign_in",
+ "safe.app.$toplevel",
+ "safe.app.current_user_id",
+ "safe.app.fetch_note",
+ "safe.app.read_note",
+ "safe.app.sign_in",
+ "vuln.app.$toplevel",
+ "vuln.app.current_user_id",
+ "vuln.app.fetch_note",
+ "vuln.app.read_note",
+ "vuln.app.sign_in"
+]

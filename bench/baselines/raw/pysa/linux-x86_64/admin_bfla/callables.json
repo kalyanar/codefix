@@ -1,0 +1,7 @@
+[
+ "app.$toplevel",
+ "app.admin_delete_account",
+ "app.current_user",
+ "app.sign_in",
+ "app.wipe_account"
+]

@@ -1,23 +1,1253 @@
-[
-  {
-    "target": "VAmPI (api_views)",
-    "bandit": 3,
-    "semgrep": 0,
-    "baseline_authz": 0,
-    "codefix_authz": "exploit-verified*"
+{
+  "generated_by": "python bench/baselines.py report",
+  "classifier": {
+    "authz_cwes": {
+      "284": "access control",
+      "285": "authorization",
+      "639": "BOLA/IDOR",
+      "862": "missing authorization",
+      "863": "incorrect authorization",
+      "306": "missing authentication",
+      "915": "mass assignment",
+      "918": "SSRF"
+    },
+    "rule_id_keywords": [
+      "\\b(bola|bfla|idor)\\b",
+      "insecure[-_ ]direct[-_ ]object",
+      "authori[sz]",
+      "access[-_ ]control",
+      "ownership",
+      "missing[-_ ](authentication|authn|auth)\\b",
+      "mass[-_ ]assign",
+      "\\bssrf\\b|server[-_ ]side[-_ ]request"
+    ]
   },
-  {
-    "target": "shop_bola",
-    "bandit": 0,
-    "semgrep": 0,
-    "baseline_authz": 0,
-    "codefix_authz": 1
+  "excluded_targets": {
+    "pygoat": "weak-fit in the paper's corpus table (client-trust access lab); not in the active corpus"
   },
-  {
-    "target": "admin_bfla",
-    "bandit": 0,
-    "semgrep": 0,
-    "baseline_authz": 0,
-    "codefix_authz": 1
-  }
-]
+  "tools": {
+    "bandit": {
+      "ran": true,
+      "primary": "linux-x86_64",
+      "meta": {
+        "tool": "bandit",
+        "version": "bandit 1.9.4",
+        "command": "bandit -r . -f json -o <target>.json   (cwd = staged app root)",
+        "platform": "linux-x86_64",
+        "host_note": "linux/amd64 container under qemu-user, host arch aarch64",
+        "run_at": "2026-09-15T15:29:26+00:00"
+      },
+      "cross_platform": {
+        "linux-aarch64": {
+          "identical_findings": true,
+          "compared": 12,
+          "version": "bandit 1.9.4"
+        }
+      }
+    },
+    "semgrep": {
+      "ran": true,
+      "primary": "linux-x86_64",
+      "meta": {
+        "tool": "semgrep",
+        "version": "1.166.0",
+        "config": "https://semgrep.dev/c/p/default",
+        "config_sha256": "9bd3706d75878fecafaa0057c96089546e28874f92b766ee906d62f8885ed7c6",
+        "config_rules": 1073,
+        "equivalent_to": "--config=auto (no project context)",
+        "command": "semgrep scan --metrics=off --config <p/default snapshot> --json .  (cwd = staged app root)",
+        "platform": "linux-x86_64",
+        "host_note": "linux/amd64 container under qemu-user, host arch aarch64",
+        "run_at": "2026-09-15T16:09:58+00:00"
+      },
+      "cross_platform": {
+        "linux-aarch64": {
+          "identical_findings": true,
+          "compared": 12,
+          "version": "1.166.0"
+        }
+      }
+    },
+    "codeql": {
+      "ran": true,
+      "primary": "linux-x86_64",
+      "meta": {
+        "tool": "codeql",
+        "version": "CodeQL command-line toolchain release 2.27.0.",
+        "python_queries": [
+          "1.8.10"
+        ],
+        "python_all": [
+          "7.2.5"
+        ],
+        "suite": "codeql/python-queries:codeql-suites/python-security-extended.qls",
+        "extra_query": "bench/baselines/codeql/BolaBarrierGuard.ql",
+        "command": "codeql database create --language=python; database analyze <suite>; database analyze bench/baselines/codeql/BolaBarrierGuard.ql",
+        "platform": "linux-x86_64",
+        "host_note": "linux/amd64 container under qemu-user on a aarch64 host",
+        "run_at": "2026-09-15T14:35:07+00:00"
+      },
+      "cross_platform": {
+        "linux-aarch64": {
+          "identical_findings": true,
+          "compared": 24,
+          "version": "CodeQL command-line toolchain release 2.27.0."
+        }
+      }
+    },
+    "pysa": {
+      "ran": true,
+      "primary": "linux-x86_64",
+      "meta": {
+        "tool": "pysa",
+        "version": "pyre-check 0.9.25",
+        "models_corpus": [
+          "<pyre_check>/taint",
+          "<pyre_check>/third_party_taint"
+        ],
+        "models_toy": "bench/baselines/pysa_ws/{models.pysa,taint.config}",
+        "app_dependencies_on_search_path": {
+          "admin_bfla": false,
+          "bfla_decorated": false,
+          "library_bola": false,
+          "library_bola_fastapi": false,
+          "library_flat_bola": false,
+          "mass_assign": false,
+          "missing_auth": false,
+          "new_issue_idor_note": false,
+          "shop_bola": false,
+          "ssrf_preview": false,
+          "vampi": true,
+          "crapi": true
+        },
+        "command": "pyre --noninteractive analyze --save-results-to <dir> (--no-verify for the corpus runs with shipped models)",
+        "platform": "linux-x86_64",
+        "host_note": "linux/amd64 container under qemu-user, host arch aarch64",
+        "run_at": "2026-09-15T17:02:59+00:00"
+      },
+      "cross_platform": {}
+    }
+  },
+  "codefix_authz": {
+    "admin_bfla": 1,
+    "bfla_decorated": 1,
+    "library_bola": 1,
+    "library_bola_fastapi": 1,
+    "library_flat_bola": 1,
+    "mass_assign": 1,
+    "missing_auth": 1,
+    "new_issue_idor_note": 2,
+    "shop_bola": 1,
+    "ssrf_preview": 1,
+    "vampi": 7,
+    "crapi": 23
+  },
+  "rows": [
+    {
+      "tool": "bandit",
+      "target": "admin_bfla",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "bandit",
+      "target": "bfla_decorated",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 0,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "bandit",
+      "target": "library_bola",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "bandit",
+      "target": "library_bola_fastapi",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "bandit",
+      "target": "library_flat_bola",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "bandit",
+      "target": "mass_assign",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "bandit",
+      "target": "missing_auth",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "bandit",
+      "target": "new_issue_idor_note",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 0,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "bandit",
+      "target": "shop_bola",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "bandit",
+      "target": "ssrf_preview",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "bandit",
+      "target": "vampi",
+      "kind": "real",
+      "total": 7,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 2,
+      "labelled_defects_with_any_finding": [
+        "update_password"
+      ],
+      "rules": {
+        "B105": 4,
+        "B104": 1,
+        "B311": 1,
+        "B608": 1
+      },
+      "authz_findings": []
+    },
+    {
+      "tool": "bandit",
+      "target": "crapi",
+      "kind": "real",
+      "total": 25,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [
+        "OrderControlView.get"
+      ],
+      "rules": {
+        "B105": 9,
+        "B311": 6,
+        "B501": 4,
+        "B113": 3,
+        "B608": 2,
+        "B107": 1
+      },
+      "authz_findings": []
+    },
+    {
+      "tool": "semgrep",
+      "target": "admin_bfla",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "semgrep",
+      "target": "bfla_decorated",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 0,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "semgrep",
+      "target": "library_bola",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "semgrep",
+      "target": "library_bola_fastapi",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "semgrep",
+      "target": "library_flat_bola",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "semgrep",
+      "target": "mass_assign",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "semgrep",
+      "target": "missing_auth",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "semgrep",
+      "target": "new_issue_idor_note",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 0,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "semgrep",
+      "target": "shop_bola",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "semgrep",
+      "target": "ssrf_preview",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "semgrep",
+      "target": "vampi",
+      "kind": "real",
+      "total": 8,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 2,
+      "labelled_defects_with_any_finding": [],
+      "rules": {
+        "yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag": 4,
+        "dockerfile.security.missing-user-entrypoint.missing-user-entrypoint": 1,
+        "dockerfile.security.missing-user.missing-user": 1,
+        "generic.secrets.security.detected-jwt-token.detected-jwt-token": 1,
+        "python.flask.security.audit.hardcoded-config.avoid_hardcoded_config_SECRET_KEY": 1
+      },
+      "authz_findings": []
+    },
+    {
+      "tool": "semgrep",
+      "target": "crapi",
+      "kind": "real",
+      "total": 11,
+      "authz": 1,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [
+        "OrderControlView.get"
+      ],
+      "rules": {
+        "python.requests.security.disabled-cert-validation.disabled-cert-validation": 4,
+        "dockerfile.security.missing-user.missing-user": 1,
+        "python.django.security.audit.csrf-exempt.no-csrf-exempt": 1,
+        "python.django.security.audit.django-rest-framework.missing-throttle-config.missing-throttle-config": 1,
+        "python.django.security.injection.tainted-sql-string.tainted-sql-string": 1,
+        "python.flask.security.xss.audit.direct-use-of-jinja2.direct-use-of-jinja2": 1,
+        "python.jwt.security.unverified-jwt-decode.unverified-jwt-decode": 1,
+        "python.sqlalchemy.security.sqlalchemy-execute-raw-query.sqlalchemy-execute-raw-query": 1
+      },
+      "authz_findings": [
+        {
+          "rule": "python.django.security.injection.tainted-sql-string.tainted-sql-string",
+          "name": "tainted-sql-string",
+          "cwes": [
+            915
+          ],
+          "path": "crapi/shop/views.py",
+          "line": 389,
+          "authz": true,
+          "class": "mass assignment",
+          "basis": "CWE-915",
+          "bola_bfla": false,
+          "in_labelled_function": false
+        }
+      ]
+    },
+    {
+      "tool": "codeql",
+      "target": "admin_bfla",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "codeql",
+      "target": "bfla_decorated",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 0,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "codeql",
+      "target": "library_bola",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "codeql",
+      "target": "library_bola_fastapi",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "codeql",
+      "target": "library_flat_bola",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "codeql",
+      "target": "mass_assign",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "codeql",
+      "target": "missing_auth",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "codeql",
+      "target": "new_issue_idor_note",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 0,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "codeql",
+      "target": "shop_bola",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "codeql",
+      "target": "ssrf_preview",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "codeql",
+      "target": "vampi",
+      "kind": "real",
+      "total": 3,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 2,
+      "labelled_defects_with_any_finding": [],
+      "rules": {
+        "py/polynomial-redos": 2,
+        "py/redos": 1
+      },
+      "authz_findings": []
+    },
+    {
+      "tool": "codeql",
+      "target": "crapi",
+      "kind": "real",
+      "total": 14,
+      "authz": 1,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [
+        "OrderControlView.get"
+      ],
+      "rules": {
+        "py/path-injection": 5,
+        "py/request-without-cert-validation": 4,
+        "py/stack-trace-exposure": 2,
+        "py/log-injection": 1,
+        "py/partial-ssrf": 1,
+        "py/sql-injection": 1
+      },
+      "authz_findings": [
+        {
+          "rule": "py/partial-ssrf",
+          "name": "py/partial-ssrf",
+          "cwes": [
+            918
+          ],
+          "path": "crapi/merchant/views.py",
+          "line": 87,
+          "message": "Part of the URL of this request depends on a [user-provided value](1).\nPart of the URL of this request depends on a [user-provided value](1).",
+          "authz": true,
+          "class": "SSRF",
+          "basis": "CWE-918",
+          "bola_bfla": false,
+          "in_labelled_function": false
+        }
+      ]
+    },
+    {
+      "tool": "codeql-bola",
+      "target": "admin_bfla",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "codeql-bola",
+      "target": "bfla_decorated",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 0,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "codeql-bola",
+      "target": "library_bola",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "codeql-bola",
+      "target": "library_bola_fastapi",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "codeql-bola",
+      "target": "library_flat_bola",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "codeql-bola",
+      "target": "mass_assign",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "codeql-bola",
+      "target": "missing_auth",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "codeql-bola",
+      "target": "new_issue_idor_note",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 0,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "codeql-bola",
+      "target": "shop_bola",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "codeql-bola",
+      "target": "ssrf_preview",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "codeql-bola",
+      "target": "vampi",
+      "kind": "real",
+      "total": 2,
+      "authz": 2,
+      "bola_bfla": 2,
+      "labelled_defects": 2,
+      "labelled_defects_with_any_finding": [],
+      "rules": {
+        "codefix-baseline/py/bola-barrierguard": 2
+      },
+      "authz_findings": [
+        {
+          "rule": "codefix-baseline/py/bola-barrierguard",
+          "name": "codefix-baseline/py/bola-barrierguard",
+          "cwes": [
+            639
+          ],
+          "path": "api_views/users.py",
+          "line": 55,
+          "message": "Object lookup in 'register_user' is keyed by [user-controlled input](1) with no dominating ownership check.",
+          "authz": true,
+          "class": "BOLA/IDOR",
+          "basis": "CWE-639",
+          "bola_bfla": true,
+          "in_labelled_function": false
+        },
+        {
+          "rule": "codefix-baseline/py/bola-barrierguard",
+          "name": "codefix-baseline/py/bola-barrierguard",
+          "cwes": [
+            639
+          ],
+          "path": "api_views/users.py",
+          "line": 92,
+          "message": "Object lookup in 'login_user' is keyed by [user-controlled input](1) with no dominating ownership check.",
+          "authz": true,
+          "class": "BOLA/IDOR",
+          "basis": "CWE-639",
+          "bola_bfla": true,
+          "in_labelled_function": false
+        }
+      ]
+    },
+    {
+      "tool": "codeql-bola",
+      "target": "crapi",
+      "kind": "real",
+      "total": 12,
+      "authz": 12,
+      "bola_bfla": 12,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [
+        "OrderControlView.get"
+      ],
+      "rules": {
+        "codefix-baseline/py/bola-barrierguard": 12
+      },
+      "authz_findings": [
+        {
+          "rule": "codefix-baseline/py/bola-barrierguard",
+          "name": "codefix-baseline/py/bola-barrierguard",
+          "cwes": [
+            639
+          ],
+          "path": "crapi/merchant/views.py",
+          "line": 88,
+          "message": "Object lookup in 'post' is keyed by [user-controlled input](1) with no dominating ownership check.",
+          "authz": true,
+          "class": "BOLA/IDOR",
+          "basis": "CWE-639",
+          "bola_bfla": true,
+          "in_labelled_function": false
+        },
+        {
+          "rule": "codefix-baseline/py/bola-barrierguard",
+          "name": "codefix-baseline/py/bola-barrierguard",
+          "cwes": [
+            639
+          ],
+          "path": "crapi/merchant/views.py",
+          "line": 90,
+          "message": "Object lookup in 'post' is keyed by [user-controlled input](1) with no dominating ownership check.",
+          "authz": true,
+          "class": "BOLA/IDOR",
+          "basis": "CWE-639",
+          "bola_bfla": true,
+          "in_labelled_function": false
+        },
+        {
+          "rule": "codefix-baseline/py/bola-barrierguard",
+          "name": "codefix-baseline/py/bola-barrierguard",
+          "cwes": [
+            639
+          ],
+          "path": "crapi/merchant/views.py",
+          "line": 89,
+          "message": "Object lookup in 'post' is keyed by [user-controlled input](1) with no dominating ownership check.",
+          "authz": true,
+          "class": "BOLA/IDOR",
+          "basis": "CWE-639",
+          "bola_bfla": true,
+          "in_labelled_function": false
+        },
+        {
+          "rule": "codefix-baseline/py/bola-barrierguard",
+          "name": "codefix-baseline/py/bola-barrierguard",
+          "cwes": [
+            639
+          ],
+          "path": "crapi/merchant/views.py",
+          "line": 141,
+          "message": "Object lookup in 'get' is keyed by [user-controlled input](1) with no dominating ownership check.",
+          "authz": true,
+          "class": "BOLA/IDOR",
+          "basis": "CWE-639",
+          "bola_bfla": true,
+          "in_labelled_function": false
+        },
+        {
+          "rule": "codefix-baseline/py/bola-barrierguard",
+          "name": "codefix-baseline/py/bola-barrierguard",
+          "cwes": [
+            639
+          ],
+          "path": "crapi/merchant/views.py",
+          "line": 178,
+          "message": "Object lookup in 'get' is keyed by [user-controlled input](1) with no dominating ownership check.",
+          "authz": true,
+          "class": "BOLA/IDOR",
+          "basis": "CWE-639",
+          "bola_bfla": true,
+          "in_labelled_function": false
+        },
+        {
+          "rule": "codefix-baseline/py/bola-barrierguard",
+          "name": "codefix-baseline/py/bola-barrierguard",
+          "cwes": [
+            639
+          ],
+          "path": "crapi/shop/views.py",
+          "line": 122,
+          "message": "Object lookup in 'get' is keyed by [user-controlled input](1) with no dominating ownership check.",
+          "authz": true,
+          "class": "BOLA/IDOR",
+          "basis": "CWE-639",
+          "bola_bfla": true,
+          "in_labelled_function": true
+        },
+        {
+          "rule": "codefix-baseline/py/bola-barrierguard",
+          "name": "codefix-baseline/py/bola-barrierguard",
+          "cwes": [
+            639
+          ],
+          "path": "crapi/shop/views.py",
+          "line": 412,
+          "message": "Object lookup in 'post' is keyed by [user-controlled input](1) with no dominating ownership check.",
+          "authz": true,
+          "class": "BOLA/IDOR",
+          "basis": "CWE-639",
+          "bola_bfla": true,
+          "in_labelled_function": false
+        },
+        {
+          "rule": "codefix-baseline/py/bola-barrierguard",
+          "name": "codefix-baseline/py/bola-barrierguard",
+          "cwes": [
+            639
+          ],
+          "path": "crapi/mechanic/views.py",
+          "line": 235,
+          "message": "Object lookup in 'get' is keyed by [user-controlled input](1) with no dominating ownership check.",
+          "authz": true,
+          "class": "BOLA/IDOR",
+          "basis": "CWE-639",
+          "bola_bfla": true,
+          "in_labelled_function": false
+        },
+        {
+          "rule": "codefix-baseline/py/bola-barrierguard",
+          "name": "codefix-baseline/py/bola-barrierguard",
+          "cwes": [
+            639
+          ],
+          "path": "crapi/mechanic/views.py",
+          "line": 318,
+          "message": "Object lookup in 'post' is keyed by [user-controlled input](1) with no dominating ownership check.",
+          "authz": true,
+          "class": "BOLA/IDOR",
+          "basis": "CWE-639",
+          "bola_bfla": true,
+          "in_labelled_function": false
+        },
+        {
+          "rule": "codefix-baseline/py/bola-barrierguard",
+          "name": "codefix-baseline/py/bola-barrierguard",
+          "cwes": [
+            639
+          ],
+          "path": "crapi/mechanic/views.py",
+          "line": 335,
+          "message": "Object lookup in 'get' is keyed by [user-controlled input](1) with no dominating ownership check.",
+          "authz": true,
+          "class": "BOLA/IDOR",
+          "basis": "CWE-639",
+          "bola_bfla": true,
+          "in_labelled_function": false
+        },
+        {
+          "rule": "codefix-baseline/py/bola-barrierguard",
+          "name": "codefix-baseline/py/bola-barrierguard",
+          "cwes": [
+            639
+          ],
+          "path": "crapi/mechanic/views.py",
+          "line": 361,
+          "message": "Object lookup in 'put' is keyed by [user-controlled input](1) with no dominating ownership check.",
+          "authz": true,
+          "class": "BOLA/IDOR",
+          "basis": "CWE-639",
+          "bola_bfla": true,
+          "in_labelled_function": false
+        },
+        {
+          "rule": "codefix-baseline/py/bola-barrierguard",
+          "name": "codefix-baseline/py/bola-barrierguard",
+          "cwes": [
+            639
+          ],
+          "path": "crapi/mechanic/views.py",
+          "line": 372,
+          "message": "Object lookup in 'get' is keyed by [user-controlled input](1) with no dominating ownership check.",
+          "authz": true,
+          "class": "BOLA/IDOR",
+          "basis": "CWE-639",
+          "bola_bfla": true,
+          "in_labelled_function": false
+        }
+      ]
+    },
+    {
+      "tool": "pysa",
+      "target": "admin_bfla",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "n_callables": 5,
+      "analysed_label_functions": {
+        "app.py:admin_delete_account": [
+          "app.admin_delete_account"
+        ]
+      },
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "pysa",
+      "target": "bfla_decorated",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 0,
+      "labelled_defects_with_any_finding": [],
+      "n_callables": 7,
+      "analysed_label_functions": {},
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "pysa",
+      "target": "library_bola",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "n_callables": 5,
+      "analysed_label_functions": {
+        "app.py:view_record": [
+          "app.view_record"
+        ]
+      },
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "pysa",
+      "target": "library_bola_fastapi",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "n_callables": 5,
+      "analysed_label_functions": {
+        "app.py:view_record": [
+          "app.view_record"
+        ]
+      },
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "pysa",
+      "target": "library_flat_bola",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "n_callables": 4,
+      "analysed_label_functions": {
+        "app.py:view_record": [
+          "app.view_record"
+        ]
+      },
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "pysa",
+      "target": "mass_assign",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "n_callables": 3,
+      "analysed_label_functions": {
+        "app.py:register": [
+          "app.register"
+        ]
+      },
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "pysa",
+      "target": "missing_auth",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "n_callables": 5,
+      "analysed_label_functions": {
+        "app.py:do_transfer": [
+          "app.do_transfer"
+        ]
+      },
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "pysa",
+      "target": "new_issue_idor_note",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 0,
+      "labelled_defects_with_any_finding": [],
+      "n_callables": 14,
+      "analysed_label_functions": {},
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "pysa",
+      "target": "shop_bola",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "n_callables": 5,
+      "analysed_label_functions": {
+        "app.py:get_order": [
+          "app.get_order"
+        ]
+      },
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "pysa",
+      "target": "ssrf_preview",
+      "kind": "fixture",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "n_callables": 4,
+      "analysed_label_functions": {
+        "app.py:get_preview": [
+          "app.get_preview"
+        ]
+      },
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "pysa",
+      "target": "vampi",
+      "kind": "real",
+      "total": 12,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 2,
+      "labelled_defects_with_any_finding": [
+        "get_by_title",
+        "update_password"
+      ],
+      "n_callables": 38,
+      "analysed_label_functions": {
+        "api_views/books.py:get_by_title": [
+          "api_views.books.get_by_title"
+        ],
+        "api_views/users.py:update_password": [
+          "api_views.users.update_password"
+        ]
+      },
+      "rules": {
+        "5008": 12
+      },
+      "authz_findings": []
+    },
+    {
+      "tool": "pysa",
+      "target": "crapi",
+      "kind": "real",
+      "total": 0,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "n_callables": 108,
+      "analysed_label_functions": {
+        "crapi/shop/views.py:OrderControlView.get": [
+          "crapi.shop.views.OrderControlView.get"
+        ]
+      },
+      "rules": {},
+      "authz_findings": []
+    },
+    {
+      "tool": "pysa",
+      "target": "pysa_toy",
+      "kind": "toy",
+      "total": 1,
+      "authz": 0,
+      "bola_bfla": 0,
+      "labelled_defects": 1,
+      "labelled_defects_with_any_finding": [],
+      "n_callables": 4,
+      "analysed_label_functions": {
+        "target.py:get_order": [
+          "target.get_order"
+        ]
+      },
+      "rules": {
+        "5001": 1
+      },
+      "authz_findings": []
+    }
+  ]
+}

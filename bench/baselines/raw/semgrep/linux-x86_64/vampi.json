@@ -1,0 +1,449 @@
+{
+ "engine_requested": "OSS",
+ "errors": [],
+ "paths": {
+  "scanned": [
+   ".dockerignore",
+   ".github/FUNDING.yml",
+   ".github/workflows/docker-image.yml",
+   ".gitignore",
+   "Dockerfile",
+   "LICENSE",
+   "README.md",
+   "api_views/__init__.py",
+   "api_views/books.py",
+   "api_views/json_schemas.py",
+   "api_views/main.py",
+   "api_views/users.py",
+   "app.py",
+   "config.py",
+   "database/__init__.py",
+   "docker-compose.yaml",
+   "models/__init__.py",
+   "models/books_model.py",
+   "models/user_model.py",
+   "openapi_specs/VAmPI.postman_collection.json",
+   "openapi_specs/openapi3.yml",
+   "requirements.txt"
+  ]
+ },
+ "profiling_results": [],
+ "results": [
+  {
+   "check_id": "yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag",
+   "end": {
+    "col": 42,
+    "line": 16,
+    "offset": 194
+   },
+   "extra": {
+    "engine_kind": "OSS",
+    "fingerprint": "requires login",
+    "lines": "requires login",
+    "message": "GitHub Actions step uses a mutable tag or branch reference. Tags and branch names can be silently repointed by the action owner, enabling supply-chain attacks \u2014 as seen in the trivy-action and kics-github-action compromises. Pin the reference to a full 40-character commit SHA instead, e.g. `uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608`.",
+    "metadata": {
+     "category": "security",
+     "confidence": "HIGH",
+     "cwe": [
+      "CWE-1357: Reliance on Insufficiently Trustworthy Component",
+      "CWE-353: Missing Support for Integrity Check"
+     ],
+     "impact": "HIGH",
+     "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+     "likelihood": "MEDIUM",
+     "owasp": [
+      "A08:2021 - Software and Data Integrity Failures",
+      "A08:2025 - Software and Data Integrity Failures"
+     ],
+     "references": [
+      "https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-third-party-actions"
+     ],
+     "shortlink": "https://sg.run/2LgAL",
+     "source": "https://semgrep.dev/r/yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag",
+     "subcategory": [
+      "vuln"
+     ],
+     "technology": [
+      "github-actions"
+     ],
+     "vulnerability_class": [
+      "Cryptographic Issues",
+      "Other"
+     ]
+    },
+    "severity": "WARNING",
+    "validation_state": "NO_VALIDATOR"
+   },
+   "path": ".github/workflows/docker-image.yml",
+   "start": {
+    "col": 9,
+    "line": 16,
+    "offset": 161
+   }
+  },
+  {
+   "check_id": "yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag",
+   "end": {
+    "col": 44,
+    "line": 19,
+    "offset": 281
+   },
+   "extra": {
+    "engine_kind": "OSS",
+    "fingerprint": "requires login",
+    "lines": "requires login",
+    "message": "GitHub Actions step uses a mutable tag or branch reference. Tags and branch names can be silently repointed by the action owner, enabling supply-chain attacks \u2014 as seen in the trivy-action and kics-github-action compromises. Pin the reference to a full 40-character commit SHA instead, e.g. `uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608`.",
+    "metadata": {
+     "category": "security",
+     "confidence": "HIGH",
+     "cwe": [
+      "CWE-1357: Reliance on Insufficiently Trustworthy Component",
+      "CWE-353: Missing Support for Integrity Check"
+     ],
+     "impact": "HIGH",
+     "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+     "likelihood": "MEDIUM",
+     "owasp": [
+      "A08:2021 - Software and Data Integrity Failures",
+      "A08:2025 - Software and Data Integrity Failures"
+     ],
+     "references": [
+      "https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-third-party-actions"
+     ],
+     "shortlink": "https://sg.run/2LgAL",
+     "source": "https://semgrep.dev/r/yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag",
+     "subcategory": [
+      "vuln"
+     ],
+     "technology": [
+      "github-actions"
+     ],
+     "vulnerability_class": [
+      "Cryptographic Issues",
+      "Other"
+     ]
+    },
+    "severity": "WARNING",
+    "validation_state": "NO_VALIDATOR"
+   },
+   "path": ".github/workflows/docker-image.yml",
+   "start": {
+    "col": 9,
+    "line": 19,
+    "offset": 246
+   }
+  },
+  {
+   "check_id": "yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag",
+   "end": {
+    "col": 37,
+    "line": 22,
+    "offset": 360
+   },
+   "extra": {
+    "engine_kind": "OSS",
+    "fingerprint": "requires login",
+    "lines": "requires login",
+    "message": "GitHub Actions step uses a mutable tag or branch reference. Tags and branch names can be silently repointed by the action owner, enabling supply-chain attacks \u2014 as seen in the trivy-action and kics-github-action compromises. Pin the reference to a full 40-character commit SHA instead, e.g. `uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608`.",
+    "metadata": {
+     "category": "security",
+     "confidence": "HIGH",
+     "cwe": [
+      "CWE-1357: Reliance on Insufficiently Trustworthy Component",
+      "CWE-353: Missing Support for Integrity Check"
+     ],
+     "impact": "HIGH",
+     "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+     "likelihood": "MEDIUM",
+     "owasp": [
+      "A08:2021 - Software and Data Integrity Failures",
+      "A08:2025 - Software and Data Integrity Failures"
+     ],
+     "references": [
+      "https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-third-party-actions"
+     ],
+     "shortlink": "https://sg.run/2LgAL",
+     "source": "https://semgrep.dev/r/yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag",
+     "subcategory": [
+      "vuln"
+     ],
+     "technology": [
+      "github-actions"
+     ],
+     "vulnerability_class": [
+      "Cryptographic Issues",
+      "Other"
+     ]
+    },
+    "severity": "WARNING",
+    "validation_state": "NO_VALIDATOR"
+   },
+   "path": ".github/workflows/docker-image.yml",
+   "start": {
+    "col": 9,
+    "line": 22,
+    "offset": 332
+   }
+  },
+  {
+   "check_id": "yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag",
+   "end": {
+    "col": 42,
+    "line": 28,
+    "offset": 558
+   },
+   "extra": {
+    "engine_kind": "OSS",
+    "fingerprint": "requires login",
+    "lines": "requires login",
+    "message": "GitHub Actions step uses a mutable tag or branch reference. Tags and branch names can be silently repointed by the action owner, enabling supply-chain attacks \u2014 as seen in the trivy-action and kics-github-action compromises. Pin the reference to a full 40-character commit SHA instead, e.g. `uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608`.",
+    "metadata": {
+     "category": "security",
+     "confidence": "HIGH",
+     "cwe": [
+      "CWE-1357: Reliance on Insufficiently Trustworthy Component",
+      "CWE-353: Missing Support for Integrity Check"
+     ],
+     "impact": "HIGH",
+     "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+     "likelihood": "MEDIUM",
+     "owasp": [
+      "A08:2021 - Software and Data Integrity Failures",
+      "A08:2025 - Software and Data Integrity Failures"
+     ],
+     "references": [
+      "https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-third-party-actions"
+     ],
+     "shortlink": "https://sg.run/2LgAL",
+     "source": "https://semgrep.dev/r/yaml.github-actions.security.github-actions-mutable-action-tag.github-actions-mutable-action-tag",
+     "subcategory": [
+      "vuln"
+     ],
+     "technology": [
+      "github-actions"
+     ],
+     "vulnerability_class": [
+      "Cryptographic Issues",
+      "Other"
+     ]
+    },
+    "severity": "WARNING",
+    "validation_state": "NO_VALIDATOR"
+   },
+   "path": ".github/workflows/docker-image.yml",
+   "start": {
+    "col": 9,
+    "line": 28,
+    "offset": 525
+   }
+  },
+  {
+   "check_id": "dockerfile.security.missing-user-entrypoint.missing-user-entrypoint",
+   "end": {
+    "col": 22,
+    "line": 16,
+    "offset": 450
+   },
+   "extra": {
+    "engine_kind": "OSS",
+    "fingerprint": "requires login",
+    "fix": "USER non-root\nENTRYPOINT [\"python\"]",
+    "lines": "requires login",
+    "message": "By not specifying a USER, a program in the container may run as 'root'. This is a security hazard. If an attacker can control a process running as root, they may have control over the container. Ensure that the last USER in a Dockerfile is a USER other than 'root'.",
+    "metadata": {
+     "category": "security",
+     "confidence": "MEDIUM",
+     "cwe": [
+      "CWE-269: Improper Privilege Management"
+     ],
+     "impact": "MEDIUM",
+     "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+     "likelihood": "LOW",
+     "owasp": [
+      "A04:2021 - Insecure Design",
+      "A06:2025 - Insecure Design"
+     ],
+     "references": [
+      "https://owasp.org/Top10/A04_2021-Insecure_Design"
+     ],
+     "shortlink": "https://sg.run/k281",
+     "source": "https://semgrep.dev/r/dockerfile.security.missing-user-entrypoint.missing-user-entrypoint",
+     "subcategory": [
+      "audit"
+     ],
+     "technology": [
+      "dockerfile"
+     ],
+     "vulnerability_class": [
+      "Improper Authorization"
+     ]
+    },
+    "severity": "ERROR",
+    "validation_state": "NO_VALIDATOR"
+   },
+   "path": "Dockerfile",
+   "start": {
+    "col": 1,
+    "line": 16,
+    "offset": 429
+   }
+  },
+  {
+   "check_id": "dockerfile.security.missing-user.missing-user",
+   "end": {
+    "col": 15,
+    "line": 17,
+    "offset": 465
+   },
+   "extra": {
+    "engine_kind": "OSS",
+    "fingerprint": "requires login",
+    "fix": "USER non-root\nCMD [\"app.py\"]",
+    "lines": "requires login",
+    "message": "By not specifying a USER, a program in the container may run as 'root'. This is a security hazard. If an attacker can control a process running as root, they may have control over the container. Ensure that the last USER in a Dockerfile is a USER other than 'root'.",
+    "metadata": {
+     "category": "security",
+     "confidence": "MEDIUM",
+     "cwe": [
+      "CWE-250: Execution with Unnecessary Privileges"
+     ],
+     "impact": "MEDIUM",
+     "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+     "likelihood": "LOW",
+     "owasp": [
+      "A04:2021 - Insecure Design",
+      "A06:2025 - Insecure Design"
+     ],
+     "references": [
+      "https://owasp.org/Top10/A04_2021-Insecure_Design"
+     ],
+     "shortlink": "https://sg.run/Gbvn",
+     "source": "https://semgrep.dev/r/dockerfile.security.missing-user.missing-user",
+     "subcategory": [
+      "audit"
+     ],
+     "technology": [
+      "dockerfile"
+     ],
+     "vulnerability_class": [
+      "Improper Authorization"
+     ]
+    },
+    "severity": "ERROR",
+    "validation_state": "NO_VALIDATOR"
+   },
+   "path": "Dockerfile",
+   "start": {
+    "col": 1,
+    "line": 17,
+    "offset": 451
+   }
+  },
+  {
+   "check_id": "python.flask.security.audit.hardcoded-config.avoid_hardcoded_config_SECRET_KEY",
+   "end": {
+    "col": 45,
+    "line": 13,
+    "offset": 499
+   },
+   "extra": {
+    "engine_kind": "OSS",
+    "fingerprint": "requires login",
+    "lines": "requires login",
+    "message": "Hardcoded variable `SECRET_KEY` detected. Use environment variables or config files instead",
+    "metadata": {
+     "category": "security",
+     "confidence": "LOW",
+     "cwe": [
+      "CWE-489: Active Debug Code"
+     ],
+     "impact": "LOW",
+     "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+     "likelihood": "LOW",
+     "owasp": [
+      "A05:2021 - Security Misconfiguration",
+      "A02:2025 - Security Misconfiguration"
+     ],
+     "references": [
+      "https://bento.dev/checks/flask/avoid-hardcoded-config/",
+      "https://flask.palletsprojects.com/en/1.1.x/config/?highlight=configuration#builtin-configuration-values",
+      "https://flask.palletsprojects.com/en/1.1.x/config/?highlight=configuration#environment-and-debug-features"
+     ],
+     "shortlink": "https://sg.run/Ekde",
+     "source": "https://semgrep.dev/r/python.flask.security.audit.hardcoded-config.avoid_hardcoded_config_SECRET_KEY",
+     "subcategory": [
+      "audit"
+     ],
+     "technology": [
+      "flask"
+     ],
+     "vulnerability_class": [
+      "Active Debug Code"
+     ]
+    },
+    "severity": "ERROR",
+    "validation_state": "NO_VALIDATOR"
+   },
+   "path": "config.py",
+   "start": {
+    "col": 1,
+    "line": 13,
+    "offset": 455
+   }
+  },
+  {
+   "check_id": "generic.secrets.security.detected-jwt-token.detected-jwt-token",
+   "end": {
+    "col": 141,
+    "line": 193,
+    "offset": 6010
+   },
+   "extra": {
+    "engine_kind": "OSS",
+    "fingerprint": "requires login",
+    "lines": "requires login",
+    "message": "JWT token detected",
+    "metadata": {
+     "category": "security",
+     "confidence": "LOW",
+     "cwe": [
+      "CWE-321: Use of Hard-coded Cryptographic Key"
+     ],
+     "impact": "MEDIUM",
+     "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+     "likelihood": "LOW",
+     "owasp": [
+      "A02:2021 - Cryptographic Failures",
+      "A04:2025 - Cryptographic Failures"
+     ],
+     "references": [
+      "https://semgrep.dev/blog/2020/hardcoded-secrets-unverified-tokens-and-other-common-jwt-mistakes/"
+     ],
+     "shortlink": "https://sg.run/05N5",
+     "source": "https://semgrep.dev/r/generic.secrets.security.detected-jwt-token.detected-jwt-token",
+     "source-rule-url": "https://github.com/Yelp/detect-secrets/blob/master/detect_secrets/plugins/jwt.py",
+     "subcategory": [
+      "audit"
+     ],
+     "technology": [
+      "secrets",
+      "jwt"
+     ],
+     "vulnerability_class": [
+      "Cryptographic Issues"
+     ]
+    },
+    "severity": "ERROR",
+    "validation_state": "NO_VALIDATOR"
+   },
+   "path": "openapi_specs/openapi3.yml",
+   "start": {
+    "col": 33,
+    "line": 193,
+    "offset": 5902
+   }
+  }
+ ],
+ "skipped_rules": [],
+ "version": "1.166.0"
+}

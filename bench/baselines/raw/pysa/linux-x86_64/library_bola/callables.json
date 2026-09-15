@@ -1,0 +1,7 @@
+[
+ "app.$toplevel",
+ "app.current_user_id",
+ "app.lookup_record",
+ "app.sign_in",
+ "app.view_record"
+]

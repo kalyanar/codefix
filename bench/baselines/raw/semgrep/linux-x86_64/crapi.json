@@ -1,0 +1,651 @@
+{
+ "engine_requested": "OSS",
+ "errors": [],
+ "paths": {
+  "scanned": [
+   ".dockerignore",
+   ".env",
+   ".gitignore",
+   "Dockerfile",
+   "__init__.py",
+   "build-image.bat",
+   "build-image.sh",
+   "core/__init__.py",
+   "core/management/__init__.py",
+   "core/management/commands/seed_database.py",
+   "crapi/__init__.py",
+   "crapi/admin.py",
+   "crapi/apps.py",
+   "crapi/mechanic/__init__.py",
+   "crapi/mechanic/models.py",
+   "crapi/mechanic/serializers.py",
+   "crapi/mechanic/tests.py",
+   "crapi/mechanic/urls.py",
+   "crapi/mechanic/views.py",
+   "crapi/merchant/__init__.py",
+   "crapi/merchant/serializers.py",
+   "crapi/merchant/tests.py",
+   "crapi/merchant/urls.py",
+   "crapi/merchant/views.py",
+   "crapi/migrations/0001_initial.py",
+   "crapi/migrations/0002_order_transaction_id.py",
+   "crapi/migrations/0003_alter_appliedcoupon_id_alter_mechanic_id_and_more.py",
+   "crapi/migrations/0004_alter_servicerequest_status_servicecomment.py",
+   "crapi/migrations/__init__.py",
+   "crapi/models.py",
+   "crapi/shop/__init__.py",
+   "crapi/shop/models.py",
+   "crapi/shop/serializers.py",
+   "crapi/shop/tests.py",
+   "crapi/shop/urls.py",
+   "crapi/shop/views.py",
+   "crapi/tests.py",
+   "crapi/urls.py",
+   "crapi/user/__init__.py",
+   "crapi/user/models.py",
+   "crapi/user/sapps.py",
+   "crapi/user/serializers.py",
+   "crapi/user/tests.py",
+   "crapi/user/urls.py",
+   "crapi/user/views.py",
+   "crapi_site/__init__.py",
+   "crapi_site/settings.py",
+   "crapi_site/urls.py",
+   "crapi_site/wsgi.py",
+   "dev-requirements.txt",
+   "health.sh",
+   "manage.py",
+   "requirements.txt",
+   "runner.sh",
+   "setup.py",
+   "utils/__init__.py",
+   "utils/helper.py",
+   "utils/jwt.py",
+   "utils/logging.py",
+   "utils/messages.py",
+   "utils/mock_methods.py",
+   "utils/return-qr-code.png",
+   "utils/service_report.html"
+  ]
+ },
+ "profiling_results": [],
+ "results": [
+  {
+   "check_id": "dockerfile.security.missing-user.missing-user",
+   "end": {
+    "col": 23,
+    "line": 48,
+    "offset": 1527
+   },
+   "extra": {
+    "engine_kind": "OSS",
+    "fingerprint": "requires login",
+    "fix": "USER non-root\nCMD [\"/app/runner.sh\"]",
+    "lines": "requires login",
+    "message": "By not specifying a USER, a program in the container may run as 'root'. This is a security hazard. If an attacker can control a process running as root, they may have control over the container. Ensure that the last USER in a Dockerfile is a USER other than 'root'.",
+    "metadata": {
+     "category": "security",
+     "confidence": "MEDIUM",
+     "cwe": [
+      "CWE-250: Execution with Unnecessary Privileges"
+     ],
+     "impact": "MEDIUM",
+     "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+     "likelihood": "LOW",
+     "owasp": [
+      "A04:2021 - Insecure Design",
+      "A06:2025 - Insecure Design"
+     ],
+     "references": [
+      "https://owasp.org/Top10/A04_2021-Insecure_Design"
+     ],
+     "shortlink": "https://sg.run/Gbvn",
+     "source": "https://semgrep.dev/r/dockerfile.security.missing-user.missing-user",
+     "subcategory": [
+      "audit"
+     ],
+     "technology": [
+      "dockerfile"
+     ],
+     "vulnerability_class": [
+      "Improper Authorization"
+     ]
+    },
+    "severity": "ERROR",
+    "validation_state": "NO_VALIDATOR"
+   },
+   "path": "Dockerfile",
+   "start": {
+    "col": 1,
+    "line": 48,
+    "offset": 1505
+   }
+  },
+  {
+   "check_id": "python.requests.security.disabled-cert-validation.disabled-cert-validation",
+   "end": {
+    "col": 75,
+    "line": 220,
+    "offset": 7377
+   },
+   "extra": {
+    "engine_kind": "OSS",
+    "fingerprint": "requires login",
+    "fix": "requests.get(identity_health_url, headers, verify=True)",
+    "lines": "requires login",
+    "message": "Certificate verification has been explicitly disabled. This permits insecure connections to insecure servers. Re-enable certification validation.",
+    "metadata": {
+     "category": "security",
+     "confidence": "LOW",
+     "cwe": [
+      "CWE-295: Improper Certificate Validation"
+     ],
+     "impact": "LOW",
+     "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+     "likelihood": "LOW",
+     "owasp": [
+      "A03:2017 - Sensitive Data Exposure",
+      "A07:2021 - Identification and Authentication Failures",
+      "A07:2025 - Authentication Failures"
+     ],
+     "references": [
+      "https://stackoverflow.com/questions/41740361/is-it-safe-to-disable-ssl-certificate-verification-in-pythonss-requests-lib"
+     ],
+     "shortlink": "https://sg.run/AlYp",
+     "source": "https://semgrep.dev/r/python.requests.security.disabled-cert-validation.disabled-cert-validation",
+     "subcategory": [
+      "audit"
+     ],
+     "technology": [
+      "requests"
+     ],
+     "vulnerability_class": [
+      "Improper Authentication"
+     ]
+    },
+    "severity": "ERROR",
+    "validation_state": "NO_VALIDATOR"
+   },
+   "path": "core/management/commands/seed_database.py",
+   "start": {
+    "col": 19,
+    "line": 220,
+    "offset": 7321
+   }
+  },
+  {
+   "check_id": "python.django.security.audit.csrf-exempt.no-csrf-exempt",
+   "end": {
+    "col": 10,
+    "line": 122,
+    "offset": 4207
+   },
+   "extra": {
+    "engine_kind": "OSS",
+    "fingerprint": "requires login",
+    "lines": "requires login",
+    "message": "Detected usage of @csrf_exempt, which indicates that there is no CSRF token set for this route. This could lead to an attacker manipulating the user's account and exfiltration of private data. Instead, create a function without this decorator.",
+    "metadata": {
+     "category": "security",
+     "confidence": "LOW",
+     "cwe": [
+      "CWE-352: Cross-Site Request Forgery (CSRF)"
+     ],
+     "cwe2021-top25": true,
+     "cwe2022-top25": true,
+     "impact": "MEDIUM",
+     "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+     "likelihood": "LOW",
+     "owasp": [
+      "A01:2021 - Broken Access Control",
+      "A01:2025 - Broken Access Control"
+     ],
+     "references": [
+      "https://owasp.org/Top10/A01_2021-Broken_Access_Control"
+     ],
+     "shortlink": "https://sg.run/rd5e",
+     "source": "https://semgrep.dev/r/python.django.security.audit.csrf-exempt.no-csrf-exempt",
+     "subcategory": [
+      "vuln"
+     ],
+     "technology": [
+      "django"
+     ],
+     "vulnerability_class": [
+      "Cross-Site Request Forgery (CSRF)"
+     ]
+    },
+    "severity": "WARNING",
+    "validation_state": "NO_VALIDATOR"
+   },
+   "path": "crapi/mechanic/views.py",
+   "start": {
+    "col": 5,
+    "line": 54,
+    "offset": 1705
+   }
+  },
+  {
+   "check_id": "python.flask.security.xss.audit.direct-use-of-jinja2.direct-use-of-jinja2",
+   "end": {
+    "col": 62,
+    "line": 427,
+    "offset": 15610
+   },
+   "extra": {
+    "engine_kind": "OSS",
+    "fingerprint": "requires login",
+    "lines": "requires login",
+    "message": "Detected direct use of jinja2. If not done properly, this may bypass HTML escaping which opens up the application to cross-site scripting (XSS) vulnerabilities. Prefer using the Flask method 'render_template()' and templates with a '.html' extension in order to prevent XSS.",
+    "metadata": {
+     "category": "security",
+     "confidence": "LOW",
+     "cwe": [
+      "CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')"
+     ],
+     "cwe2021-top25": true,
+     "cwe2022-top25": true,
+     "impact": "MEDIUM",
+     "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+     "likelihood": "LOW",
+     "owasp": [
+      "A07:2017 - Cross-Site Scripting (XSS)",
+      "A03:2021 - Injection",
+      "A05:2025 - Injection"
+     ],
+     "references": [
+      "https://jinja.palletsprojects.com/en/2.11.x/api/#basics"
+     ],
+     "shortlink": "https://sg.run/RoKe",
+     "source": "https://semgrep.dev/r/python.flask.security.xss.audit.direct-use-of-jinja2.direct-use-of-jinja2",
+     "subcategory": [
+      "audit"
+     ],
+     "technology": [
+      "flask"
+     ],
+     "vulnerability_class": [
+      "Cross-Site-Scripting (XSS)"
+     ]
+    },
+    "severity": "WARNING",
+    "validation_state": "NO_VALIDATOR"
+   },
+   "path": "crapi/mechanic/views.py",
+   "start": {
+    "col": 19,
+    "line": 427,
+    "offset": 15567
+   }
+  },
+  {
+   "check_id": "python.requests.security.disabled-cert-validation.disabled-cert-validation",
+   "end": {
+    "col": 18,
+    "line": 92,
+    "offset": 3444
+   },
+   "extra": {
+    "engine_kind": "OSS",
+    "fingerprint": "requires login",
+    "fix": "requests.get(\n                    request_url,\n                    params=request_data,\n                    headers={\"Authorization\": request.META.get(\"HTTP_AUTHORIZATION\")},\n                    verify=True,\n                )",
+    "lines": "requires login",
+    "message": "Certificate verification has been explicitly disabled. This permits insecure connections to insecure servers. Re-enable certification validation.",
+    "metadata": {
+     "category": "security",
+     "confidence": "LOW",
+     "cwe": [
+      "CWE-295: Improper Certificate Validation"
+     ],
+     "impact": "LOW",
+     "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+     "likelihood": "LOW",
+     "owasp": [
+      "A03:2017 - Sensitive Data Exposure",
+      "A07:2021 - Identification and Authentication Failures",
+      "A07:2025 - Authentication Failures"
+     ],
+     "references": [
+      "https://stackoverflow.com/questions/41740361/is-it-safe-to-disable-ssl-certificate-verification-in-pythonss-requests-lib"
+     ],
+     "shortlink": "https://sg.run/AlYp",
+     "source": "https://semgrep.dev/r/python.requests.security.disabled-cert-validation.disabled-cert-validation",
+     "subcategory": [
+      "audit"
+     ],
+     "technology": [
+      "requests"
+     ],
+     "vulnerability_class": [
+      "Improper Authentication"
+     ]
+    },
+    "severity": "ERROR",
+    "validation_state": "NO_VALIDATOR"
+   },
+   "path": "crapi/merchant/views.py",
+   "start": {
+    "col": 37,
+    "line": 87,
+    "offset": 3218
+   }
+  },
+  {
+   "check_id": "python.requests.security.disabled-cert-validation.disabled-cert-validation",
+   "end": {
+    "col": 18,
+    "line": 150,
+    "offset": 5667
+   },
+   "extra": {
+    "engine_kind": "OSS",
+    "fingerprint": "requires login",
+    "fix": "requests.post(\n                    gateway_endpoint,\n                    headers={\n                        \"Authorization\": gateway_credential,\n                        \"Content-Type\": \"application/json\",\n                    },\n                    json=data,\n                    verify=True,\n                    timeout=5,\n                )",
+    "lines": "requires login",
+    "message": "Certificate verification has been explicitly disabled. This permits insecure connections to insecure servers. Re-enable certification validation.",
+    "metadata": {
+     "category": "security",
+     "confidence": "LOW",
+     "cwe": [
+      "CWE-295: Improper Certificate Validation"
+     ],
+     "impact": "LOW",
+     "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+     "likelihood": "LOW",
+     "owasp": [
+      "A03:2017 - Sensitive Data Exposure",
+      "A07:2021 - Identification and Authentication Failures",
+      "A07:2025 - Authentication Failures"
+     ],
+     "references": [
+      "https://stackoverflow.com/questions/41740361/is-it-safe-to-disable-ssl-certificate-verification-in-pythonss-requests-lib"
+     ],
+     "shortlink": "https://sg.run/AlYp",
+     "source": "https://semgrep.dev/r/python.requests.security.disabled-cert-validation.disabled-cert-validation",
+     "subcategory": [
+      "audit"
+     ],
+     "technology": [
+      "requests"
+     ],
+     "vulnerability_class": [
+      "Improper Authentication"
+     ]
+    },
+    "severity": "ERROR",
+    "validation_state": "NO_VALIDATOR"
+   },
+   "path": "crapi/shop/views.py",
+   "start": {
+    "col": 36,
+    "line": 141,
+    "offset": 5327
+   }
+  },
+  {
+   "check_id": "python.sqlalchemy.security.sqlalchemy-execute-raw-query.sqlalchemy-execute-raw-query",
+   "end": {
+    "col": 18,
+    "line": 394,
+    "offset": 15019
+   },
+   "extra": {
+    "engine_kind": "OSS",
+    "fingerprint": "requires login",
+    "lines": "requires login",
+    "message": "Avoiding SQL string concatenation: untrusted input concatenated with raw SQL query can result in SQL Injection. In order to execute raw query safely, prepared statement should be used. SQLAlchemy provides TextualSQL to easily used prepared statement with named parameters. For complex SQL composition, use SQL Expression Language or Schema Definition Language. In most cases, SQLAlchemy ORM will be a better option.",
+    "metadata": {
+     "category": "security",
+     "confidence": "LOW",
+     "cwe": [
+      "CWE-89: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')"
+     ],
+     "cwe2021-top25": true,
+     "cwe2022-top25": true,
+     "impact": "HIGH",
+     "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+     "likelihood": "LOW",
+     "owasp": [
+      "A01:2017 - Injection",
+      "A03:2021 - Injection",
+      "A05:2025 - Injection"
+     ],
+     "references": [
+      "https://docs.sqlalchemy.org/en/14/core/tutorial.html#using-textual-sql",
+      "https://www.tutorialspoint.com/sqlalchemy/sqlalchemy_quick_guide.htm",
+      "https://docs.sqlalchemy.org/en/14/core/tutorial.html#using-more-specific-text-with-table-expression-literal-column-and-expression-column"
+     ],
+     "shortlink": "https://sg.run/2b1L",
+     "source": "https://semgrep.dev/r/python.sqlalchemy.security.sqlalchemy-execute-raw-query.sqlalchemy-execute-raw-query",
+     "subcategory": [
+      "audit"
+     ],
+     "technology": [
+      "sqlalchemy"
+     ],
+     "vulnerability_class": [
+      "SQL Injection"
+     ]
+    },
+    "severity": "ERROR",
+    "validation_state": "NO_VALIDATOR"
+   },
+   "path": "crapi/shop/views.py",
+   "start": {
+    "col": 17,
+    "line": 388,
+    "offset": 14745
+   }
+  },
+  {
+   "check_id": "python.django.security.injection.tainted-sql-string.tainted-sql-string",
+   "end": {
+    "col": 26,
+    "line": 393,
+    "offset": 15001
+   },
+   "extra": {
+    "engine_kind": "OSS",
+    "fingerprint": "requires login",
+    "lines": "requires login",
+    "message": "Detected user input used to manually construct a SQL string. This is usually bad practice because manual construction could accidentally result in a SQL injection. An attacker could use a SQL injection to steal or modify contents of the database. Instead, use a parameterized query which is available by default in most database engines. Alternatively, consider using the Django object-relational mappers (ORM) instead of raw SQL queries.",
+    "metadata": {
+     "category": "security",
+     "confidence": "LOW",
+     "cwe": [
+      "CWE-915: Improperly Controlled Modification of Dynamically-Determined Object Attributes"
+     ],
+     "impact": "LOW",
+     "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+     "likelihood": "MEDIUM",
+     "owasp": [
+      "A08:2021 - Software and Data Integrity Failures",
+      "A08:2025 - Software or Data Integrity Failures"
+     ],
+     "references": [
+      "https://docs.djangoproject.com/en/3.0/topics/security/#sql-injection-protection"
+     ],
+     "shortlink": "https://sg.run/PbZp",
+     "source": "https://semgrep.dev/r/python.django.security.injection.tainted-sql-string.tainted-sql-string",
+     "subcategory": [
+      "audit"
+     ],
+     "technology": [
+      "django"
+     ],
+     "vulnerability_class": [
+      "Mass Assignment"
+     ]
+    },
+    "severity": "ERROR",
+    "validation_state": "NO_VALIDATOR"
+   },
+   "path": "crapi/shop/views.py",
+   "start": {
+    "col": 21,
+    "line": 389,
+    "offset": 14781
+   }
+  },
+  {
+   "check_id": "python.django.security.audit.django-rest-framework.missing-throttle-config.missing-throttle-config",
+   "end": {
+    "col": 15,
+    "line": 128,
+    "offset": 3828
+   },
+   "extra": {
+    "engine_kind": "OSS",
+    "fingerprint": "requires login",
+    "lines": "requires login",
+    "message": "Django REST framework configuration is missing default rate- limiting options. This could inadvertently allow resource starvation or Denial of Service (DoS) attacks. Add 'DEFAULT_THROTTLE_CLASSES' and 'DEFAULT_THROTTLE_RATES' to add rate-limiting to your application.",
+    "metadata": {
+     "category": "security",
+     "confidence": "LOW",
+     "cwe": [
+      "CWE-770: Allocation of Resources Without Limits or Throttling"
+     ],
+     "cwe2022-top25": true,
+     "impact": "HIGH",
+     "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+     "likelihood": "LOW",
+     "owasp": [
+      "A05:2021 - Security Misconfiguration",
+      "A06:2017 - Security Misconfiguration",
+      "A02:2025 - Security Misconfiguration"
+     ],
+     "references": [
+      "https://www.django-rest-framework.org/api-guide/throttling/#setting-the-throttling-policy"
+     ],
+     "shortlink": "https://sg.run/vzBY",
+     "source": "https://semgrep.dev/r/python.django.security.audit.django-rest-framework.missing-throttle-config.missing-throttle-config",
+     "subcategory": [
+      "audit"
+     ],
+     "technology": [
+      "django"
+     ],
+     "vulnerability_class": [
+      "Other"
+     ]
+    },
+    "severity": "WARNING",
+    "validation_state": "NO_VALIDATOR"
+   },
+   "path": "crapi_site/settings.py",
+   "start": {
+    "col": 1,
+    "line": 128,
+    "offset": 3814
+   }
+  },
+  {
+   "check_id": "python.requests.security.disabled-cert-validation.disabled-cert-validation",
+   "end": {
+    "col": 18,
+    "line": 55,
+    "offset": 1890
+   },
+   "extra": {
+    "engine_kind": "OSS",
+    "fingerprint": "requires login",
+    "fix": "requests.post(\n                    identity_url, json=tokenJson, verify=True\n                )",
+    "lines": "requires login",
+    "message": "Certificate verification has been explicitly disabled. This permits insecure connections to insecure servers. Re-enable certification validation.",
+    "metadata": {
+     "category": "security",
+     "confidence": "LOW",
+     "cwe": [
+      "CWE-295: Improper Certificate Validation"
+     ],
+     "impact": "LOW",
+     "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+     "likelihood": "LOW",
+     "owasp": [
+      "A03:2017 - Sensitive Data Exposure",
+      "A07:2021 - Identification and Authentication Failures",
+      "A07:2025 - Authentication Failures"
+     ],
+     "references": [
+      "https://stackoverflow.com/questions/41740361/is-it-safe-to-disable-ssl-certificate-verification-in-pythonss-requests-lib"
+     ],
+     "shortlink": "https://sg.run/AlYp",
+     "source": "https://semgrep.dev/r/python.requests.security.disabled-cert-validation.disabled-cert-validation",
+     "subcategory": [
+      "audit"
+     ],
+     "technology": [
+      "requests"
+     ],
+     "vulnerability_class": [
+      "Improper Authentication"
+     ]
+    },
+    "severity": "ERROR",
+    "validation_state": "NO_VALIDATOR"
+   },
+   "path": "utils/jwt.py",
+   "start": {
+    "col": 41,
+    "line": 53,
+    "offset": 1795
+   }
+  },
+  {
+   "check_id": "python.jwt.security.unverified-jwt-decode.unverified-jwt-decode",
+   "end": {
+    "col": 83,
+    "line": 61,
+    "offset": 2257
+   },
+   "extra": {
+    "engine_kind": "OSS",
+    "fingerprint": "requires login",
+    "fix": "True",
+    "lines": "requires login",
+    "message": "Detected JWT token decoded with 'verify=False'. This bypasses any integrity checks for the token which means the token could be tampered with by malicious actors. Ensure that the JWT token is verified.",
+    "metadata": {
+     "category": "security",
+     "confidence": "MEDIUM",
+     "cwe": [
+      "CWE-287: Improper Authentication"
+     ],
+     "cwe2021-top25": true,
+     "cwe2022-top25": true,
+     "impact": "MEDIUM",
+     "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+     "likelihood": "MEDIUM",
+     "owasp": [
+      "A02:2017 - Broken Authentication",
+      "A07:2021 - Identification and Authentication Failures",
+      "A07:2025 - Authentication Failures"
+     ],
+     "references": [
+      "https://github.com/we45/Vulnerable-Flask-App/blob/752ee16087c0bfb79073f68802d907569a1f0df7/app/app.py#L96"
+     ],
+     "shortlink": "https://sg.run/6nyB",
+     "source": "https://semgrep.dev/r/python.jwt.security.unverified-jwt-decode.unverified-jwt-decode",
+     "subcategory": [
+      "audit"
+     ],
+     "technology": [
+      "jwt"
+     ],
+     "vulnerability_class": [
+      "Improper Authentication"
+     ]
+    },
+    "severity": "ERROR",
+    "validation_state": "NO_VALIDATOR"
+   },
+   "path": "utils/jwt.py",
+   "start": {
+    "col": 78,
+    "line": 61,
+    "offset": 2252
+   }
+  }
+ ],
+ "skipped_rules": [],
+ "version": "1.166.0"
+}
