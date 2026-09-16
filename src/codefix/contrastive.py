@@ -93,7 +93,8 @@ def mine_pairs(mem):
     succeeded on two fingerprints -> positive; succeeded on one and regressed on
     another -> negative. (Slice helper; the demo also constructs pairs directly.)"""
     rows = mem.conn.execute(
-        "SELECT l.template_id, l.fingerprint_id, l.successes, l.regressions FROM links l"
+        "SELECT l.template_id, l.fingerprint_id, l.successes,"
+        " l.regressions + l.reverts AS regressions FROM template_fingerprint_links l"
     ).fetchall()
     by_t: dict[int, list] = {}
     for r in rows:

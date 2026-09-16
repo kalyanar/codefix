@@ -90,7 +90,7 @@ def test_store_invariant_to_structure(tmp_path):
         run_once(str(BENCH.parent / app), db, seed=0)
     c = sqlite3.connect(db)
     rows = c.execute("SELECT COUNT(*) FROM fingerprints").fetchone()[0]
-    succ = c.execute("SELECT successes FROM links").fetchone()[0]
+    succ = c.execute("SELECT successes FROM template_fingerprint_links").fetchone()[0]
     assert rows == 1          # one row for 3 different-structure apps
     assert succ == 3          # all fed the same posterior
 
@@ -280,7 +280,7 @@ def test_m7_fuzzy_recall_on_exact_miss(tmp_path):
     assert rb.status == "success"            # exploit-verified
     c = sqlite3.connect(db)
     promoted = c.execute(
-        "SELECT COUNT(*) FROM links l JOIN fingerprints f ON f.id=l.fingerprint_id"
+        "SELECT COUNT(*) FROM template_fingerprint_links l JOIN fingerprints f ON f.id=l.fingerprint_id"
         " WHERE f.framework='fastapi'").fetchone()[0]
     assert promoted > 0                      # promoted to exact for next time
 
@@ -301,6 +301,7 @@ def test_m8_hierarchical_prior_patternise(tmp_path):
     fp = mem.upsert_fingerprint(key)
     pa, pb = _hierarchical_prior(mem, key, fp)
     assert pa / (pa + pb) > 0.5                                       # inherits the pattern
+    assert round(pa / (pa + pb), 2) == 0.65                           # from 2 prior BOLA successes
     ek = FingerprintKey("SSRF", "param", "url_fetch", "url_validation", "sink_local", "none")
     fe = mem.upsert_fingerprint(ek)
     pa2, pb2 = _hierarchical_prior(mem, ek, fe)
@@ -319,6 +320,8 @@ def test_m9_contrastive_separates_regressed_pair(tmp_path):
     e.train([(flask, fastapi, +1), (base, nested, -1)], epochs=40)
     assert e.cosine(flask, fastapi) >= 0.95     # transferred pair: close
     assert e.cosine(base, nested) < 0.95        # regressed pair: pushed apart
+    assert round(e.cosine(flask, fastapi), 2) == 1.0 and round(e.cosine(base, nested), 2) == 0.13
+    assert e.weight("fw:flask") == 0.0 and e.weight("ctx:nested") > 1.0   # framework irrelevant
 
 
 def test_m9_feature_flag_off_by_default(tmp_path):
@@ -377,9 +380,14 @@ def test_m11_pr_output(tmp_path):
     draft = make_pr_draft(rep.app, rep.results[0])
     assert draft is not None
     assert "fix(security): BOLA" in draft.title
-    assert "Exploit-verified evidence" in draft.body
-    assert "[x] exploit-blocked" in draft.body
+    assert draft.body.startswith("## exploit-verified fix · BOLA · ownership guard")
+    for box in ("exploit blocked on patched endpoint",
+                "legitimate path preserved (differential)",
+                "response contract holds", "adversarial variant blocked"):
+        assert f"- [x] {box}" in draft.body
     assert "```diff" in draft.body
+    assert rep.results[0].rendered_diff in draft.body          # the diff that was applied
+    assert "> verified by codefix · fingerprint: bola/" in draft.body
     # an unverified result produces no PR
     from dataclasses import replace
     bad = replace(rep.results[0], status="regression")
@@ -414,12 +422,18 @@ def test_m13_extensible_catalog_lifecycle(tmp_path):
     from codefix.detect import DetectorSpec
     from codefix.authoring import admit_if_passes
     from codefix import graph, detect
+    import importlib.util
     fx = str(BENCH.parent / "new_issue_idor_note")
     db = str(tmp_path / "cat.db")
     assert "IDOR_NOTE" not in detect.ALL_CLASSES               # not a built-in
 
-    good = DetectorSpec("IDOR_NOTE", "param_to_sink", "insert_ownership_guard",
-                        "param", "data_access_by_id", "ownership", "sink_local")
+    # the developer's whole contribution: one declarative literal in new_detector.py
+    mod_spec = importlib.util.spec_from_file_location("new_detector", fx + "/new_detector.py")
+    new_detector = importlib.util.module_from_spec(mod_spec)
+    mod_spec.loader.exec_module(new_detector)
+    good = new_detector.SPEC
+    src = (BENCH.parent / "new_issue_idor_note" / "new_detector.py").read_text()
+    assert len(src.splitlines()) <= 30
     m1 = PatchMemory(db)
     assert admit_if_passes(good, fx, m1).admitted               # gate passes -> persisted
     m1.close()
@@ -427,6 +441,7 @@ def test_m13_extensible_catalog_lifecycle(tmp_path):
     m2 = PatchMemory(db)                                        # fresh instance
     specs = m2.load_specs()
     assert [s.issue_class for s in specs] == ["IDOR_NOTE"]      # persisted across runs
+    assert specs[0].sink.names == frozenset({"get_note"}) and specs[0].direction == detect.UP
     g = graph.build(fx + "/vuln/app.py")
     found = detect.detect_registered(g, specs)
     assert [(f.issue_class, f.func) for f in found] == [("IDOR_NOTE", "read_note")]
@@ -437,3 +452,221 @@ def test_m13_extensible_catalog_lifecycle(tmp_path):
     m3 = PatchMemory(str(tmp_path / "cat2.db"))
     assert not admit_if_passes(bad, fx, m3).admitted
     assert m3.load_specs() == []
+
+
+# --- M13b: the spec language is a real predicate, not a relabelling -----------
+
+BUILTIN_AS_SPEC = {
+    "BOLA":            ("data_access_by_id",   "ownership",       "insert_ownership_guard"),
+    "BFLA":            ("privileged_mutation", "role",            "insert_role_guard_at_start"),
+    "MISSING_AUTH":    ("sensitive_op",        "authn",           "insert_authn_guard_at_start"),
+    "SSRF":            ("url_fetch",           "url_validation",  "insert_url_validation_before_sink"),
+    "MASS_ASSIGNMENT": ("model_write",         "field_allowlist", "insert_field_allowlist"),
+}
+
+
+def _bench_apps():
+    root = BENCH.parent
+    return [p for p in sorted(root.rglob("app.py"))
+            if "vendor" not in str(p) and "__pycache__" not in str(p)]
+
+
+def test_m13b_spec_language_subsumes_builtins():
+    """Every built-in detector is expressible as a (sink x guard) spec cell, and
+    the spec reproduces it EXACTLY on every bench app. This is what earns the
+    claim that a defect class is data: the built-ins are five cells of the same
+    language, not a privileged parallel implementation."""
+    from codefix import graph, detect
+    from codefix.detect import DetectorSpec
+    apps = _bench_apps()
+    assert apps, "no bench apps found"
+    for app in apps:
+        g = graph.build(str(app))
+        for cls, (sink_cat, guard_cls, tid) in BUILTIN_AS_SPEC.items():
+            builtin = {(f.func, f.sink_lineno) for f in detect.DETECTORS[cls](g)}
+            spec = DetectorSpec(cls, "param_to_sink", tid, "param",
+                                sink_cat, guard_cls, "sink_local")
+            viaspec = {(f.func, f.sink_lineno) for f in detect.detect_with_spec(spec, g)}
+            assert builtin == viaspec, f"{app.parent.name}/{cls}: {builtin} != {viaspec}"
+
+
+def test_m13b_spec_language_exceeds_builtins():
+    """The cross-product reaches predicates NO built-in expresses — otherwise the
+    catalog could only ever relabel an existing finding. At least one off-diagonal
+    cell must flag a location the full built-in sweep misses."""
+    from codefix import graph, detect
+    from codefix.detect import DetectorSpec, SINK_MATCHERS, GUARD_MATCHERS
+    assert len(SINK_MATCHERS) * len(GUARD_MATCHERS) > len(detect.ALL_CLASSES)
+    novel = set()
+    for app in _bench_apps():
+        g = graph.build(str(app))
+        seen = {(f.func, f.sink_lineno) for f in detect.detect_all(g)}
+        for sink_cat in SINK_MATCHERS:
+            for guard_cls in GUARD_MATCHERS:
+                spec = DetectorSpec("X", "param_to_sink", "insert_ownership_guard",
+                                    "param", sink_cat, guard_cls, "sink_local")
+                hits = {(f.func, f.sink_lineno) for f in detect.detect_with_spec(spec, g)}
+                if hits - seen:
+                    novel.add((sink_cat, guard_cls))
+    assert novel, "spec language is coextensive with the built-ins"
+
+
+# --- M13c: Alg. 2 search parameters are live, not decorative ------------------
+
+def _bfla_spec(**kw):
+    from codefix.detect import DetectorSpec
+    base = dict(decorator_anchors=None, call_anchors=None, direction="both", depth=2)
+    base.update(kw)
+    return DetectorSpec("BFLA_X", "privileged_op", "insert_role_guard_at_start",
+                        "param", "privileged_mutation", "role", "entry_local",
+                        base["decorator_anchors"], base["call_anchors"],
+                        base["direction"], base["depth"])
+
+
+def test_m13c_direction_narrows_the_search():
+    """`direction` is a real Alg. 2 parameter: the decorator-guarded function is
+    cleared by the UP arm, so disabling it ("down") must flag it. If direction
+    were decorative both runs would agree."""
+    from codefix import graph, detect
+    g = graph.build(str(BENCH.parent / "bfla_decorated" / "app.py"))
+    both = {f.func for f in detect.detect_with_spec(_bfla_spec(direction="both"), g)}
+    down = {f.func for f in detect.detect_with_spec(_bfla_spec(direction="down"), g)}
+    assert "delete_account_unsafe" in both      # no guard either way
+    assert "delete_account_safe" not in both    # decorator dominates
+    assert "delete_account_safe" in down        # up-arm disabled -> now flagged
+    assert down > both
+
+
+def test_m13c_decorator_anchors_clear_an_opaque_guard():
+    """A spec may name framework guard decorators whose body the engine cannot
+    read. Naming the fixture's decorator clears the sink under a call-anchor set
+    that otherwise matches nothing."""
+    from codefix import graph, detect
+    g = graph.build(str(BENCH.parent / "bfla_decorated" / "app.py"))
+    blind = _bfla_spec(call_anchors=frozenset({"no_such_symbol"}),
+                       decorator_anchors=frozenset())   # explicitly no anchors
+    assert "delete_account_safe" in {f.func for f in detect.detect_with_spec(blind, g)}
+    named = _bfla_spec(call_anchors=frozenset({"no_such_symbol"}),
+                       decorator_anchors=frozenset({"admin_required"}))
+    assert "delete_account_safe" not in {f.func for f in detect.detect_with_spec(named, g)}
+
+
+def test_m13c_gate_rejects_bad_search_parameters():
+    """The gate validates the Alg. 2 parameters too — a spec is untrusted input,
+    and an unbounded search depth is a denial of service on a large repo."""
+    from codefix.authoring import _schema_errors, MAX_DEPTH
+    assert _schema_errors(_bfla_spec(direction="sideways"))
+    assert _schema_errors(_bfla_spec(depth=0))
+    assert _schema_errors(_bfla_spec(depth=MAX_DEPTH + 1))
+    assert _schema_errors(_bfla_spec(call_anchors=frozenset({"not an identifier"})))
+    assert not _schema_errors(_bfla_spec())          # defaults are valid
+
+
+def test_m13c_search_parameters_round_trip_through_the_catalog(tmp_path):
+    """Alg. 2 parameters survive persistence — otherwise a spec would silently
+    revert to engine defaults on the next run."""
+    from codefix import detect
+    from codefix.memory import PatchMemory
+    m = PatchMemory(str(tmp_path / "rt.db"))
+    spec = _bfla_spec(direction="down", depth=4,
+                      decorator_anchors=frozenset({"admin_required"}),
+                      call_anchors=frozenset({"is_admin"}))
+    m.admit_spec(spec, "test")
+    m.close()
+    got = PatchMemory(str(tmp_path / "rt.db")).load_specs()[0]
+    assert got.direction == detect.DOWN and got.depth == 4
+    assert got.decorator_anchors == frozenset({"admin_required"})
+    assert got.call_anchors == frozenset({"is_admin"})
+
+
+def test_safe_twins_of_all_five_classes_are_clean():
+    """Corpus safe/unsafe pairs: the guarded twin of each class is not flagged."""
+    from codefix import graph, detect
+    for cls in ("bola", "bfla", "mass_assignment", "ssrf", "missing_auth"):
+        fs = detect.detect_all(graph.build(str(BENCH.parent / "safe_pairs" / cls / "app.py")))
+        assert fs == [], f"{cls}: {[(f.issue_class, f.func) for f in fs]}"
+
+
+# --- site-listed demos, as tests ------------------------------------------------
+
+def test_decorator_demo_bfla_decorated():
+    """Guard in @admin_required, up the chain -> recognised by reading the decorator
+    body; the undecorated sibling is flagged."""
+    from codefix import graph, detect
+    g = graph.build(str(BENCH.parent / "bfla_decorated" / "app.py"))
+    assert [f.func for f in detect.detect_bfla(g)] == ["delete_account_unsafe"]
+
+
+def test_contract_demo_field_strip_is_caught(tmp_path):
+    """A fix that blocks the attack but strips a response field fails the contract stage."""
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent))
+    from test_mechanisms import test_contract_stage_rejects_a_fix_that_strips_a_response_field
+    test_contract_stage_rejects_a_fix_that_strips_a_response_field(tmp_path)
+
+
+def test_transfer_demo_cross_domain(tmp_path, capsys):
+    """shop (user_id, nested) -> library (owner_id, flat): same fingerprint, the fix
+    re-rendered for each codebase, verified there without the LLM."""
+    from codefix.cli import main
+    rc = main(["transfer-demo", "--db", str(tmp_path / "t.db")])
+    out = capsys.readouterr().out
+    assert rc == 0 and "TRANSFER CONFIRMED" in out
+    assert '["user_id"]' in out and '["owner_id"]' in out and "(re-rendered)" in out
+
+
+def test_greedy_and_thompson_share_the_beta_posterior():
+    """Greedy takes the posterior mean, Thompson samples the same Beta — the
+    ablation differs only in the exploration policy."""
+    import random
+    from codefix import learn
+    from codefix.propose import Candidate
+    a = Candidate(1, "a", "t", 1.0, 1.0, 8, 2, "template", "")
+    b = Candidate(2, "b", "t", 1.0, 1.0, 3, 3, "template", "")
+    assert learn.greedy([a, b]) is a
+    rng = random.Random(0)
+    draws = [learn.thompson([a, b], rng) for _ in range(2000)]
+    share_a = sum(d is a for d in draws) / len(draws)
+    # P(Beta(9,3) > Beta(4,4)) from the same parameters greedy used
+    assert 0.85 < share_a < 0.97
+
+
+import os as _os
+import pytest as _pytest
+
+_LIVE = _pytest.mark.skipif(_os.environ.get("CODEFIX_LIVE") != "1",
+                            reason="live docker apps: set CODEFIX_LIVE=1")
+
+
+@_LIVE
+def test_live_vampi_dockerized_http(tmp_path):
+    """codefix scans VAmPI, renders both BOLA fixes; exploit succeeds on :5002 and is
+    blocked on :5001 (codefix's tree, vulnerable=1), legit/contract/adversarial hold."""
+    import sys
+    sys.path.insert(0, str(BENCH.parents[1]))
+    import live_codefix
+    assert live_codefix.main(["vampi", "--out", str(tmp_path / "src"),
+                              "--json", str(tmp_path / "v.json")]) == 0
+
+
+@_LIVE
+def test_live_crapi_ten_container_app(tmp_path):
+    """crAPI shop-order BOLA (order + payment card record): exploit confirmed on the
+    stock workshop, blocked on codefix's rebuilt workshop, owner path preserved."""
+    import sys
+    sys.path.insert(0, str(BENCH.parents[1]))
+    import live_codefix
+    assert live_codefix.main(["crapi", "--out", str(tmp_path / "src"),
+                              "--json", str(tmp_path / "c.json")]) == 0
+
+
+def test_auto_selection_explores_until_a_template_is_proven(tmp_path):
+    from codefix.orchestrate import run_once
+    db = str(tmp_path / "auto.db")
+    first = run_once(str(BENCH), db, seed=0, select="auto")
+    assert any("thompson:" in e.detail for e in first.events if e.phase == "select")
+    from codefix.memory import PatchMemory, pac_min_observations
+    for i in range(pac_min_observations()):
+        run_once(str(BENCH), db, seed=i + 1)
+    later = run_once(str(BENCH), db, seed=99, select="auto")
+    assert any("greedy:" in e.detail for e in later.events if e.phase == "select")

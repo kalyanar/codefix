@@ -1,0 +1,31 @@
+{
+  "app": "vampi",
+  "patched_tree": "<scratch>/vampi/src",
+  "missed": [],
+  "results": [
+    {
+      "name": "books-read",
+      "status": "success",
+      "stages": {
+        "exploit-blocked": true,
+        "differential-legit": true,
+        "contract-conformance": true,
+        "adversarial-bypass": true
+      },
+      "fingerprint": "b172f1fb4fdbcea9",
+      "diff": "--- a/api_views/books.py\n+++ b/api_views/books.py\n@@ -7,6 +7,7 @@\n from models.user_model import User\n from models.books_model import Book\n from app import vuln\n+from flask import abort\n \n \n def get_all_books():\n@@ -49,6 +50,8 @@\n     else:\n         if vuln:  # Broken Object Level Authorization\n             book = Book.query.filter_by(book_title=str(book_title)).first()\n+            if book is not None and book.user.username != resp['sub']:\n+                abort(403)\n             if book:\n                 responseObject = {\n                     'book_title': book.book_title,\n"
+    },
+    {
+      "name": "pw-takeover",
+      "status": "success",
+      "stages": {
+        "exploit-blocked": true,
+        "differential-legit": true,
+        "contract-conformance": true,
+        "adversarial-bypass": true
+      },
+      "fingerprint": "b172f1fb4fdbcea9",
+      "diff": "--- a/api_views/users.py\n+++ b/api_views/users.py\n@@ -7,6 +7,7 @@\n from flask import jsonify, Response, request, json\n from models.user_model import User\n from app import vuln\n+from flask import abort\n \n \n def error_message_helper(msg):\n@@ -185,6 +186,8 @@\n         if request_data.get('password'):\n             if vuln:  # Unauthorized update of password of another user\n                 user = User.query.filter_by(username=username).first()\n+                if user is not None and user.username != resp['sub']:\n+                    abort(403)\n                 if user:\n                     user.password = request_data.get('password')\n                     db.session.commit()\n"
+    }
+  ]
+}

@@ -50,9 +50,10 @@
       "classes": [
         "BOLA"
       ],
-      "runner": "run_vampi.py",
+      "runner": "run_vampi.py --patched-src DIR --json OUT",
       "defects": 2,
-      "note": "2 exploit-verified BOLAs (books-read + pw-takeover)"
+      "stages": ["exploit", "differential", "contract", "adversarial"],
+      "note": "2 exploit-verified BOLAs (books-read + pw-takeover); live before/after-patch differential -- both containers run vulnerable=1 (before=vendor/ on :5002, after=--patched-src on :5001), so only the code differs"
     },
     {
       "name": "crapi",
@@ -63,9 +64,10 @@
       "classes": [
         "BOLA"
       ],
-      "runner": "run_crapi.py",
+      "runner": "run_crapi.py --patched-src DIR --json OUT",
       "defects": 1,
-      "note": "real OWASP API app; shop-order BOLA exploit-confirmed (card-data exposure); multi-container/multi-language"
+      "stages": ["exploit", "differential", "contract", "adversarial"],
+      "note": "real OWASP API app; shop-order BOLA exploit-confirmed (payment card record exposure); live before/after-patch differential -- stock stack from published multi-arch images, only the Python workshop service is rebuilt from vendor/ and swapped in"
     },
     {
       "name": "mass_assign",

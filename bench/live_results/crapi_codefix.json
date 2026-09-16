@@ -1,0 +1,19 @@
+{
+  "app": "crapi",
+  "patched_tree": "<scratch>/crapi/src",
+  "missed": [],
+  "results": [
+    {
+      "name": "shop-order",
+      "status": "success",
+      "stages": {
+        "exploit-blocked": true,
+        "differential-legit": true,
+        "contract-conformance": true,
+        "adversarial-bypass": true
+      },
+      "fingerprint": "06aa1d74503da1e0",
+      "diff": "--- a/crapi/shop/views.py\n+++ b/crapi/shop/views.py\n@@ -106,6 +106,7 @@\n     Order Controller View\n     \"\"\"\n \n+    @jwt_auth_required\n     def get(self, request, order_id=None, user=None):\n         \"\"\"\n         order view for fetching  a particular order\n@@ -120,6 +121,10 @@\n             message and corresponding status if error\n         \"\"\"\n         order = Order.objects.get(id=order_id)\n+        if user != order.user:\n+            return Response(\n+                {\"message\": messages.RESTRICTED}, status=status.HTTP_403_FORBIDDEN\n+            )\n         order_serializer = OrderSerializer(order)\n         user = order.user\n         # email user.email, number user.number\n"
+    }
+  ]
+}

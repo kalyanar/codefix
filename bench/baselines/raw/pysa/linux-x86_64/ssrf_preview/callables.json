@@ -1,0 +1,6 @@
+[
+ "app.$toplevel",
+ "app.fetch_url",
+ "app.get_preview",
+ "app.is_safe_url"
+]

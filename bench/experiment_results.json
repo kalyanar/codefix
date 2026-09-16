@@ -1,0 +1,199 @@
+{
+  "F1": {
+    "n": 42,
+    "cum_llm_rate": [
+      1.0,
+      1.0,
+      0.6666666666666666,
+      0.5,
+      0.6,
+      0.6666666666666666,
+      0.7142857142857143,
+      0.625,
+      0.5555555555555556,
+      0.5,
+      0.45454545454545453,
+      0.4166666666666667,
+      0.38461538461538464,
+      0.35714285714285715,
+      0.3333333333333333,
+      0.3125,
+      0.29411764705882354,
+      0.2777777777777778,
+      0.2631578947368421,
+      0.25,
+      0.23809523809523808,
+      0.22727272727272727,
+      0.21739130434782608,
+      0.20833333333333334,
+      0.2,
+      0.19230769230769232,
+      0.18518518518518517,
+      0.17857142857142858,
+      0.1724137931034483,
+      0.16666666666666666,
+      0.16129032258064516,
+      0.15625,
+      0.15151515151515152,
+      0.14705882352941177,
+      0.14285714285714285,
+      0.1388888888888889,
+      0.13513513513513514,
+      0.13157894736842105,
+      0.1282051282051282,
+      0.125,
+      0.12195121951219512,
+      0.11904761904761904
+    ],
+    "cum_success": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "final_llm_rate": 0.11904761904761904,
+    "final_success": 1.0
+  },
+  "F2": {
+    "B_size": 2,
+    "cold_start_LLM_calls": 1,
+    "warm_start_LLM_calls": 0,
+    "warm_started_verified": 2
+  },
+  "greedy_vs_thompson": {
+    "greedy_regret_mean": 10.978333333333348,
+    "thompson_regret_mean": 4.281666666666666,
+    "greedy_regret_max": 69.65000000000009,
+    "thompson_regret_max": 19.950000000000006,
+    "seeds": 30,
+    "rounds": 200,
+    "pA": 0.8,
+    "pB": 0.45
+  },
+  "fuzzy_ablation": {
+    "fuzzy_on": {
+      "provenance": "fuzzy",
+      "llm_used": false
+    },
+    "fuzzy_off": {
+      "provenance": "llm_cold",
+      "llm_used": true
+    }
+  },
+  "triage": {
+    "rows": [
+      {
+        "app": "shop_bola",
+        "cost_full": 1,
+        "cost_triage": 1,
+        "recall_equal": true
+      },
+      {
+        "app": "admin_bfla",
+        "cost_full": 2,
+        "cost_triage": 1,
+        "recall_equal": true
+      },
+      {
+        "app": "mass_assign",
+        "cost_full": 3,
+        "cost_triage": 1,
+        "recall_equal": true
+      },
+      {
+        "app": "ssrf_preview",
+        "cost_full": 4,
+        "cost_triage": 1,
+        "recall_equal": true
+      },
+      {
+        "app": "missing_auth",
+        "cost_full": 5,
+        "cost_triage": 1,
+        "recall_equal": true
+      }
+    ],
+    "max_cost_full": 5,
+    "max_cost_triage": 1,
+    "all_recall_equal": true,
+    "wrong_tags_still_find_ssrf": true
+  },
+  "contrastive": {
+    "mined_transferred_pair": [
+      "none",
+      "fastapi"
+    ],
+    "cos_before": [
+      0.75,
+      0.866
+    ],
+    "cos_transferred": 1.0,
+    "cos_regressed": 0.132,
+    "weights": {
+      "ctx:nested": 13.0,
+      "fw:fastapi": 0.0,
+      "fw:none": 0.0
+    }
+  },
+  "build_time": [
+    {
+      "repo": "VAmPI",
+      "files": 11,
+      "functions": 33,
+      "edges": 199,
+      "median_ms": 5.7
+    },
+    {
+      "repo": "crAPI workshop",
+      "files": 41,
+      "functions": 66,
+      "edges": 494,
+      "median_ms": 20.7
+    },
+    {
+      "repo": "pygoat",
+      "files": 50,
+      "functions": 180,
+      "edges": 881,
+      "median_ms": 33.7
+    }
+  ]
+}

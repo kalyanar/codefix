@@ -27,53 +27,63 @@ transfer result, and the selection-regret ablation).
 
 ```
 src/codefix/
-  graph.py        cross-file call graph + decorator + parameter-flow edges
-  taint.py        def-use taint propagation to a fixpoint
-  detect.py       5 OWASP detectors + DetectorSpec + guard-dominance check
+  graph.py        CodeMap: three-pass cross-file call graph (functions, imports incl.
+                  relative, resolved call edges), def-use + decorator edges, and a
+                  per-function statement IR with a control-flow graph
+  ir.py           language-neutral statement IR, CFG dominators, guard dominance
+  scip.py         SCIP index decoding (stdlib) + symbol parsing
+  scipgraph.py    SCIP-derived CallGraphProvider (TypeScript and other brace languages)
+  taint.py        def-use taint (with source roles) and principal closures
+  detect.py       the generic engine: DetectorSpec (sink matcher x missing guard x
+                  search direction), Alg. 1 detection, Alg. 2 bounded mitigation walk
   fingerprint.py  path-semantic facet fingerprint + embedding + precondition mask
-  memory.py       SQLite PatchMemory: fingerprints, templates, outcomes, fuzzy recall
-  propose.py      parameterized fix templates + candidate generation
+  templates.py    TemplateSpec + render_patch: fixes rendered from the target's own AST
+  memory.py       PatchMemory: eight FK-linked SQLite tables, posteriors, fuzzy recall
+  propose.py      candidate generation (templates, fuzzy recall, LLM cold path)
   validate.py     four-stage validator: exploit · differential · contract · adversarial
-  learn.py        greedy / Thompson selection on Beta posteriors (hierarchical prior)
-  contrastive.py  feature-flagged contrastive embedding (learns facet relevance)
+  learn.py        greedy / Thompson selection on shared Beta posteriors
+  contrastive.py  feature-flagged contrastive embedding
   triage.py       non-gating detector prioritization
-  authoring.py    self-test-gated developer-extensible detector catalog
+  authoring.py    self-test-gated developer-extensible catalog
   providers.py    LLM cold path (mock + Anthropic)
-  orchestrate.py  the observable Perceive→Detect→…→Learn loop
-  pr.py           pull-request draft with exploit evidence
-  cli.py          codefix CLI (scan-bench, transfer-demo, coldstart-demo, author-demo)
+  orchestrate.py  the observable Perceive -> ... -> Learn loop
+  pr.py           pull-request draft with the executed-stage evidence and applied diff
+  cli.py          codefix scan (+ scan-bench, transfer-demo, coldstart-demo, author-demo)
 
 bench/
-  apps/           in-process fixtures (5 classes, safe/unsafe + structural variants)
-  apps/vampi/     vendored OWASP VAmPI + live HTTP exploit/legit reproducers
-  apps/crapi/     vendored OWASP crAPI runner (10-container reference app)
-  experiments.py  F1 / F2 / ablation figures
-  baselines.py    Bandit / Semgrep / Pysa / CodeQL head-to-head
-  repro/          pinned linux/amd64 Docker image + reproduce.sh
+  apps/               fixtures: five classes with safe twins, structural variants,
+                      a three-module package, a TypeScript/SCIP app
+  apps/vampi/         vendored OWASP VAmPI + live before/after harness
+  apps/crapi/         vendored crAPI workshop service + live before/after harness
+  live_codefix.py     codefix's own fixes on live VAmPI / crAPI
+  live_results/       verdicts and PR drafts from those runs
+  experiments.py      F1 / F2 / selection ablation / fuzzy / triage / contrastive / build time
+  baselines.py        Bandit / Semgrep / Pysa / CodeQL head-to-head
+  repro/              pinned linux/amd64 Docker image + reproduce.sh
 
-tests/test_slice.py   the 29 mechanism tests (all green)
+tests/                mechanism tests (python3 -m pytest)
+CLAIMS.md             every paper and site claim, and the code / test / run that backs it
 ```
 
 ## Run it
 
 ```bash
-pip install -e ".[dev]"           # protobuf + pytest; the anthropic SDK is only needed for the real LLM cold path
-python3 -m pytest                 # the full suite (29 tests); pythonpath=src is set in pyproject.toml
+python3 -m pytest                          # no runtime dependencies; pytest only
+CODEFIX_LIVE=1 python3 -m pytest -k live   # + live VAmPI / crAPI (Docker)
 
-# CLI (no install needed):
-PYTHONPATH=src python3 -m codefix.cli scan-bench --runs 3       # F1 data points
-PYTHONPATH=src python3 -m codefix.cli transfer-demo             # learn on one codebase, reuse on another
+PYTHONPATH=src python3 -m codefix.cli scan bench/apps/shop_multifile --detect-only
+PYTHONPATH=src python3 -m codefix.cli scan bench/apps/shop_multifile --dry-run
+PYTHONPATH=src python3 -m codefix.cli scan bench/apps/shop_multifile --db /tmp/cf.db --pr /tmp/pr
+PYTHONPATH=src python3 -m codefix.cli transfer-demo
 
-# Live VAmPI (needs Docker + requests):
-cd bench/apps/vampi && python3 run_vampi.py
-
-# Paper figures / baselines:
+python3 bench/live_codefix.py vampi        # Docker; codefix patch served on :5001
+python3 bench/live_codefix.py crapi        # Docker; codefix-patched workshop swapped in
 python3 bench/experiments.py
 python3 bench/baselines.py
 ```
 
 Tests and demos use a **mock LLM**, so no API key is required. The real cold path uses
-`ANTHROPIC_API_KEY`.
+`ANTHROPIC_API_KEY` (`--provider anthropic`).
 
 ## Reproducibility
 
@@ -83,5 +93,5 @@ The full suite and all figures run from a pinned `linux/amd64` Docker image in
 
 ## Note on vendored applications
 
-`bench/apps/vampi` and `bench/apps/pygoat` vendor third-party OWASP projects, used solely
+`bench/apps/vampi`, `bench/apps/crapi/vendor` and `bench/apps/pygoat` vendor third-party OWASP projects, used solely
 as evaluation targets and retained under their original upstream licenses.

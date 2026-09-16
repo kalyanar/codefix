@@ -1,0 +1,203 @@
+{
+ "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+ "runs": [
+  {
+   "artifacts": [
+    {
+     "location": {
+      "index": 0,
+      "uri": "vuln/app.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 1,
+      "uri": "flat/app.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    },
+    {
+     "location": {
+      "index": 2,
+      "uri": "safe/app.py",
+      "uriBaseId": "%SRCROOT%"
+     }
+    }
+   ],
+   "columnKind": "unicodeCodePoints",
+   "properties": {
+    "semmle.formatSpecifier": "sarif-latest"
+   },
+   "results": [],
+   "tool": {
+    "driver": {
+     "name": "CodeQL",
+     "notifications": [
+      {
+       "defaultConfiguration": {
+        "enabled": true
+       },
+       "fullDescription": {
+        "text": "Files appearing in the source archive that are expected to be extracted."
+       },
+       "id": "py/baseline/expected-extracted-files",
+       "name": "py/baseline/expected-extracted-files",
+       "properties": {
+        "tags": [
+         "expected-extracted-files",
+         "telemetry"
+        ]
+       },
+       "shortDescription": {
+        "text": "Expected extracted files"
+       }
+      },
+      {
+       "defaultConfiguration": {
+        "enabled": true
+       },
+       "fullDescription": {
+        "text": "File coverage baseline telemetry"
+       },
+       "id": "cli/file-coverage-baseline",
+       "name": "cli/file-coverage-baseline",
+       "shortDescription": {
+        "text": "File coverage baseline telemetry"
+       }
+      },
+      {
+       "defaultConfiguration": {
+        "enabled": true
+       },
+       "fullDescription": {
+        "text": "Platform"
+       },
+       "id": "cli/platform",
+       "name": "cli/platform",
+       "shortDescription": {
+        "text": "Platform"
+       }
+      }
+     ],
+     "organization": "GitHub",
+     "rules": [
+      {
+       "defaultConfiguration": {
+        "enabled": true,
+        "level": "error"
+       },
+       "fullDescription": {
+        "text": "A best-effort, hand-authored attempt to find Broken Object Level Authorization with CodeQL's standard building blocks: global taint tracking from a RemoteFlowSource (the library's own notion of a routed request parameter / request data) into the key of an object lookup, where an ownership comparison acts as a BarrierGuard. This is NOT part of any CodeQL suite: it is the \"CodeQL can express guard dominance via BarrierGuard\" experiment for the codefix baselines (bench/baselines.py). It was written once, before looking at its results, and is not tuned per app."
+       },
+       "id": "codefix-baseline/py/bola-barrierguard",
+       "name": "codefix-baseline/py/bola-barrierguard",
+       "properties": {
+        "description": "A best-effort, hand-authored attempt to find Broken Object Level\n              Authorization with CodeQL's standard building blocks: global taint\n              tracking from a RemoteFlowSource (the library's own notion of a\n              routed request parameter / request data) into the key of an\n              object lookup, where an ownership comparison acts as a\n              BarrierGuard. This is NOT part of any CodeQL suite: it is the\n              \"CodeQL can express guard dominance via BarrierGuard\" experiment\n              for the codefix baselines (bench/baselines.py). It was written\n              once, before looking at its results, and is not tuned per app.",
+        "id": "codefix-baseline/py/bola-barrierguard",
+        "kind": "problem",
+        "name": "Object lookup keyed by user input without an ownership check (BOLA attempt)",
+        "problem.severity": "error",
+        "tags": [
+         "security",
+         "external/cwe/cwe-639"
+        ]
+       },
+       "shortDescription": {
+        "text": "Object lookup keyed by user input without an ownership check (BOLA attempt)"
+       }
+      }
+     ],
+     "semanticVersion": "2.27.0"
+    },
+    "extensions": [
+     {
+      "locations": [
+       {
+        "description": {
+         "text": "The QL pack root directory."
+        },
+        "properties": {
+         "tags": [
+          "CodeQL/LocalPackRoot"
+         ]
+        },
+        "uri": "file:///codefix/bench/baselines/codeql/"
+       },
+       {
+        "description": {
+         "text": "The QL pack definition file."
+        },
+        "properties": {
+         "tags": [
+          "CodeQL/LocalPackDefinitionFile"
+         ]
+        },
+        "uri": "file:///codefix/bench/baselines/codeql/qlpack.yml"
+       }
+      ],
+      "name": "codefix/baseline-authz-queries",
+      "semanticVersion": "0.0.1"
+     },
+     {
+      "locations": [
+       {
+        "description": {
+         "text": "The QL pack root directory."
+        },
+        "properties": {
+         "tags": [
+          "CodeQL/LocalPackRoot"
+         ]
+        },
+        "uri": "file:///opt/codeql-packs/codeql/python-all/7.2.5/"
+       },
+       {
+        "description": {
+         "text": "The QL pack definition file."
+        },
+        "properties": {
+         "tags": [
+          "CodeQL/LocalPackDefinitionFile"
+         ]
+        },
+        "uri": "file:///opt/codeql-packs/codeql/python-all/7.2.5/qlpack.yml"
+       }
+      ],
+      "name": "codeql/python-all",
+      "semanticVersion": "7.2.5+c6baf479093fafc81d4655dc2014dc583360308e"
+     },
+     {
+      "locations": [
+       {
+        "description": {
+         "text": "The QL pack root directory."
+        },
+        "properties": {
+         "tags": [
+          "CodeQL/LocalPackRoot"
+         ]
+        },
+        "uri": "file:///opt/codeql-packs/codeql/threat-models/1.0.57/"
+       },
+       {
+        "description": {
+         "text": "The QL pack definition file."
+        },
+        "properties": {
+         "tags": [
+          "CodeQL/LocalPackDefinitionFile"
+         ]
+        },
+        "uri": "file:///opt/codeql-packs/codeql/threat-models/1.0.57/qlpack.yml"
+       }
+      ],
+      "name": "codeql/threat-models",
+      "semanticVersion": "1.0.57+c6baf479093fafc81d4655dc2014dc583360308e"
+     }
+    ]
+   }
+  }
+ ],
+ "version": "2.1.0"
+}

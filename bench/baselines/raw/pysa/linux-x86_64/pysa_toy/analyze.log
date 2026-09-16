@@ -1,0 +1,18 @@
+INFO  Verified model syntax: 0.003s
+PERFORMANCE  Verified model syntax: 0.003s
+INFO  Parsed taint models modes: 0.000s
+PERFORMANCE  Parsed taint models modes: 0.000s
+INFO  Parsed taint models: 1.043s
+PERFORMANCE  Parsed taint models (models: 2, queries: 0): 1.044s
+WARNING  `object.__eq__` has 105 overrides, this might slow down the analysis considerably.
+WARNING  `object.__hash__` has 56 overrides, this might slow down the analysis considerably.
+WARNING  `object.__init__` has 457 overrides, this might slow down the analysis considerably.
+WARNING  `type.__call__` has 85 overrides, this might slow down the analysis considerably.
+WARNING  `type.__init__` has 346 overrides, this might slow down the analysis considerably.
+WARNING  `type.__new__` has 76 overrides, this might slow down the analysis considerably.
+INFO  Iteration #0. 7 callables [...]
+INFO  Analysis fixpoint started for 4189 overrides and 11 functions......
+INFO  Iteration #0. 7 callables [...]
+INFO  Iteration #1. 6 callables [target.run_query, target.search_handler, Overrides{requests.structures.LookupDict.get}, Overrides{logging.config.ConvertingDict.get}, Overrides{dict.get}, target.get_order]
+INFO  Found 1 issues
+PERFORMANCE  Analyze: 45.549s

@@ -1,0 +1,1251 @@
+{
+ "errors": [],
+ "metrics": {
+  "./__init__.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 0,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./core/__init__.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 0,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./core/management/__init__.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 0,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./core/management/commands/seed_database.py": {
+   "CONFIDENCE.HIGH": 4,
+   "CONFIDENCE.LOW": 1,
+   "CONFIDENCE.MEDIUM": 2,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 1,
+   "SEVERITY.LOW": 5,
+   "SEVERITY.MEDIUM": 1,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 228,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/__init__.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 0,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/admin.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 15,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/apps.py": {
+   "CONFIDENCE.HIGH": 3,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 2,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 5,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 205,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/mechanic/__init__.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 0,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/mechanic/models.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 59,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/mechanic/serializers.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 93,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/mechanic/tests.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 275,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/mechanic/urls.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 30,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/mechanic/views.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 405,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/merchant/__init__.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 0,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/merchant/serializers.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 50,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/merchant/tests.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 292,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/merchant/urls.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 13,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/merchant/views.py": {
+   "CONFIDENCE.HIGH": 1,
+   "CONFIDENCE.LOW": 1,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 1,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 1,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 171,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/migrations/0001_initial.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 261,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/migrations/0002_order_transaction_id.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 13,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/migrations/0003_alter_appliedcoupon_id_alter_mechanic_id_and_more.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 32,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/migrations/0004_alter_servicerequest_status_servicecomment.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 41,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/migrations/__init__.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 0,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/models.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 0,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/shop/__init__.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 0,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/shop/models.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 72,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/shop/serializers.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 53,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/shop/tests.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 1,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 1,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 178,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/shop/urls.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 19,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/shop/views.py": {
+   "CONFIDENCE.HIGH": 1,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 1,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 1,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 1,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 392,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/tests.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 0,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/urls.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 11,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/user/__init__.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 0,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/user/models.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 93,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/user/sapps.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 9,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/user/serializers.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 37,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/user/tests.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 124,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/user/urls.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 9,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi/user/views.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 53,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi_site/__init__.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 0,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi_site/settings.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 1,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 1,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 175,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi_site/urls.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 21,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./crapi_site/wsgi.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 10,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./manage.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 16,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./setup.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 9,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./utils/__init__.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 0,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./utils/helper.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 1,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 1,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 4,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./utils/jwt.py": {
+   "CONFIDENCE.HIGH": 1,
+   "CONFIDENCE.LOW": 1,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 1,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 1,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 70,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./utils/logging.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 0,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 0,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 10,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./utils/messages.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 1,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 1,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 41,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "./utils/mock_methods.py": {
+   "CONFIDENCE.HIGH": 0,
+   "CONFIDENCE.LOW": 0,
+   "CONFIDENCE.MEDIUM": 3,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 0,
+   "SEVERITY.LOW": 3,
+   "SEVERITY.MEDIUM": 0,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 99,
+   "nosec": 0,
+   "skipped_tests": 0
+  },
+  "_totals": {
+   "CONFIDENCE.HIGH": 10,
+   "CONFIDENCE.LOW": 4,
+   "CONFIDENCE.MEDIUM": 11,
+   "CONFIDENCE.UNDEFINED": 0,
+   "SEVERITY.HIGH": 4,
+   "SEVERITY.LOW": 16,
+   "SEVERITY.MEDIUM": 5,
+   "SEVERITY.UNDEFINED": 0,
+   "loc": 3688,
+   "nosec": 0,
+   "skipped_tests": 0
+  }
+ },
+ "results": [
+  {
+   "code": "65             \"number\": \"\",\n66             \"password\": \"Admin1@#\",\n67             \"mechanic_code\": \"TRAC_JHN\",\n68         },\n69         {\n70             \"name\": \"James\",\n71             \"email\": \"james@example.com\",\n72             \"number\": \"\",\n73             \"password\": \"Admin1@#\",\n",
+   "col_offset": 12,
+   "end_col_offset": 22,
+   "filename": "./core/management/commands/seed_database.py",
+   "issue_confidence": "MEDIUM",
+   "issue_cwe": {
+    "id": 259,
+    "link": "https://cwe.mitre.org/data/definitions/259.html"
+   },
+   "issue_severity": "LOW",
+   "issue_text": "Possible hardcoded password: 'Admin1@#'",
+   "line_number": 66,
+   "line_range": [
+    62,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b105_hardcoded_password_string.html",
+   "test_id": "B105",
+   "test_name": "hardcoded_password_string"
+  },
+  {
+   "code": "72             \"number\": \"\",\n73             \"password\": \"Admin1@#\",\n74             \"mechanic_code\": \"TRAC_JME\",\n75         },\n76     ]\n77     for mechanic_details in mechanic_details_all:\n78         uset = User.objects.filter(email=mechanic_details[\"email\"])\n79         if not uset.exists():\n80             try:\n",
+   "col_offset": 12,
+   "end_col_offset": 22,
+   "filename": "./core/management/commands/seed_database.py",
+   "issue_confidence": "MEDIUM",
+   "issue_cwe": {
+    "id": 259,
+    "link": "https://cwe.mitre.org/data/definitions/259.html"
+   },
+   "issue_severity": "LOW",
+   "issue_text": "Possible hardcoded password: 'Admin1@#'",
+   "line_number": 73,
+   "line_range": [
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b105_hardcoded_password_string.html",
+   "test_id": "B105",
+   "test_name": "hardcoded_password_string"
+  },
+  {
+   "code": "151         try:\n152             mechanic = random.choice(mechanics)\n153             vehicle = random.choice(vehicles)\n",
+   "col_offset": 23,
+   "end_col_offset": 47,
+   "filename": "./core/management/commands/seed_database.py",
+   "issue_confidence": "HIGH",
+   "issue_cwe": {
+    "id": 330,
+    "link": "https://cwe.mitre.org/data/definitions/330.html"
+   },
+   "issue_severity": "LOW",
+   "issue_text": "Standard pseudo-random generators are not suitable for security/cryptographic purposes.",
+   "line_number": 152,
+   "line_range": [
+    152
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_calls.html#b311-random",
+   "test_id": "B311",
+   "test_name": "blacklist"
+  },
+  {
+   "code": "152             mechanic = random.choice(mechanics)\n153             vehicle = random.choice(vehicles)\n154             status = random.choice(ServiceRequest.STATUS_CHOICES)[0]\n",
+   "col_offset": 22,
+   "end_col_offset": 45,
+   "filename": "./core/management/commands/seed_database.py",
+   "issue_confidence": "HIGH",
+   "issue_cwe": {
+    "id": 330,
+    "link": "https://cwe.mitre.org/data/definitions/330.html"
+   },
+   "issue_severity": "LOW",
+   "issue_text": "Standard pseudo-random generators are not suitable for security/cryptographic purposes.",
+   "line_number": 153,
+   "line_range": [
+    153
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_calls.html#b311-random",
+   "test_id": "B311",
+   "test_name": "blacklist"
+  },
+  {
+   "code": "153             vehicle = random.choice(vehicles)\n154             status = random.choice(ServiceRequest.STATUS_CHOICES)[0]\n155             vehicle_model = vehicle.vehicle_model\n",
+   "col_offset": 21,
+   "end_col_offset": 65,
+   "filename": "./core/management/commands/seed_database.py",
+   "issue_confidence": "HIGH",
+   "issue_cwe": {
+    "id": 330,
+    "link": "https://cwe.mitre.org/data/definitions/330.html"
+   },
+   "issue_severity": "LOW",
+   "issue_text": "Standard pseudo-random generators are not suitable for security/cryptographic purposes.",
+   "line_number": 154,
+   "line_range": [
+    154
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_calls.html#b311-random",
+   "test_id": "B311",
+   "test_name": "blacklist"
+  },
+  {
+   "code": "219         }\n220         request = requests.get(identity_health_url, headers, verify=False)\n221         if request.status_code == 200:\n",
+   "col_offset": 18,
+   "end_col_offset": 74,
+   "filename": "./core/management/commands/seed_database.py",
+   "issue_confidence": "HIGH",
+   "issue_cwe": {
+    "id": 295,
+    "link": "https://cwe.mitre.org/data/definitions/295.html"
+   },
+   "issue_severity": "HIGH",
+   "issue_text": "Call to requests with verify=False disabling SSL certificate checks, security issue.",
+   "line_number": 220,
+   "line_range": [
+    220
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b501_request_with_no_cert_validation.html",
+   "test_id": "B501",
+   "test_name": "request_with_no_cert_validation"
+  },
+  {
+   "code": "219         }\n220         request = requests.get(identity_health_url, headers, verify=False)\n221         if request.status_code == 200:\n",
+   "col_offset": 18,
+   "end_col_offset": 74,
+   "filename": "./core/management/commands/seed_database.py",
+   "issue_confidence": "LOW",
+   "issue_cwe": {
+    "id": 400,
+    "link": "https://cwe.mitre.org/data/definitions/400.html"
+   },
+   "issue_severity": "MEDIUM",
+   "issue_text": "Call to requests without timeout",
+   "line_number": 220,
+   "line_range": [
+    220
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b113_request_without_timeout.html",
+   "test_id": "B113",
+   "test_name": "request_without_timeout"
+  },
+  {
+   "code": "59             \"number\": \"\",\n60             \"password\": \"Admin1@#\",\n61             \"mechanic_code\": \"TRAC_JHN\",\n62         },\n63         {\n64             \"name\": \"James\",\n65             \"email\": \"james@example.com\",\n66             \"number\": \"\",\n67             \"password\": \"Admin1@#\",\n",
+   "col_offset": 12,
+   "end_col_offset": 22,
+   "filename": "./crapi/apps.py",
+   "issue_confidence": "MEDIUM",
+   "issue_cwe": {
+    "id": 259,
+    "link": "https://cwe.mitre.org/data/definitions/259.html"
+   },
+   "issue_severity": "LOW",
+   "issue_text": "Possible hardcoded password: 'Admin1@#'",
+   "line_number": 60,
+   "line_range": [
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b105_hardcoded_password_string.html",
+   "test_id": "B105",
+   "test_name": "hardcoded_password_string"
+  },
+  {
+   "code": "66             \"number\": \"\",\n67             \"password\": \"Admin1@#\",\n68             \"mechanic_code\": \"TRAC_JME\",\n69         },\n70     ]\n71     for mechanic_details in mechanic_details_all:\n72         uset = User.objects.filter(email=mechanic_details[\"email\"])\n73         if not uset.exists():\n74             try:\n",
+   "col_offset": 12,
+   "end_col_offset": 22,
+   "filename": "./crapi/apps.py",
+   "issue_confidence": "MEDIUM",
+   "issue_cwe": {
+    "id": 259,
+    "link": "https://cwe.mitre.org/data/definitions/259.html"
+   },
+   "issue_severity": "LOW",
+   "issue_text": "Possible hardcoded password: 'Admin1@#'",
+   "line_number": 67,
+   "line_range": [
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b105_hardcoded_password_string.html",
+   "test_id": "B105",
+   "test_name": "hardcoded_password_string"
+  },
+  {
+   "code": "145         try:\n146             mechanic = random.choice(mechanics)\n147             vehicle = random.choice(vehicles)\n",
+   "col_offset": 23,
+   "end_col_offset": 47,
+   "filename": "./crapi/apps.py",
+   "issue_confidence": "HIGH",
+   "issue_cwe": {
+    "id": 330,
+    "link": "https://cwe.mitre.org/data/definitions/330.html"
+   },
+   "issue_severity": "LOW",
+   "issue_text": "Standard pseudo-random generators are not suitable for security/cryptographic purposes.",
+   "line_number": 146,
+   "line_range": [
+    146
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_calls.html#b311-random",
+   "test_id": "B311",
+   "test_name": "blacklist"
+  },
+  {
+   "code": "146             mechanic = random.choice(mechanics)\n147             vehicle = random.choice(vehicles)\n148             status = random.choice(ServiceRequest.STATUS_CHOICES)[0]\n",
+   "col_offset": 22,
+   "end_col_offset": 45,
+   "filename": "./crapi/apps.py",
+   "issue_confidence": "HIGH",
+   "issue_cwe": {
+    "id": 330,
+    "link": "https://cwe.mitre.org/data/definitions/330.html"
+   },
+   "issue_severity": "LOW",
+   "issue_text": "Standard pseudo-random generators are not suitable for security/cryptographic purposes.",
+   "line_number": 147,
+   "line_range": [
+    147
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_calls.html#b311-random",
+   "test_id": "B311",
+   "test_name": "blacklist"
+  },
+  {
+   "code": "147             vehicle = random.choice(vehicles)\n148             status = random.choice(ServiceRequest.STATUS_CHOICES)[0]\n149             vehicle_model = vehicle.vehicle_model\n",
+   "col_offset": 21,
+   "end_col_offset": 65,
+   "filename": "./crapi/apps.py",
+   "issue_confidence": "HIGH",
+   "issue_cwe": {
+    "id": 330,
+    "link": "https://cwe.mitre.org/data/definitions/330.html"
+   },
+   "issue_severity": "LOW",
+   "issue_text": "Standard pseudo-random generators are not suitable for security/cryptographic purposes.",
+   "line_number": 148,
+   "line_range": [
+    148
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/blacklists/blacklist_calls.html#b311-random",
+   "test_id": "B311",
+   "test_name": "blacklist"
+  },
+  {
+   "code": "90                     headers={\"Authorization\": request.META.get(\"HTTP_AUTHORIZATION\")},\n91                     verify=False,\n92                 )\n93                 if mechanic_response.status_code == status.HTTP_200_OK:\n94                     logger.info(f\"Got a valid response at repeat count: {repeat_count}\")\n95                     break\n96                 if not repeat_request_if_failed:\n97                     break\n",
+   "col_offset": 36,
+   "end_col_offset": 17,
+   "filename": "./crapi/merchant/views.py",
+   "issue_confidence": "HIGH",
+   "issue_cwe": {
+    "id": 295,
+    "link": "https://cwe.mitre.org/data/definitions/295.html"
+   },
+   "issue_severity": "HIGH",
+   "issue_text": "Call to requests with verify=False disabling SSL certificate checks, security issue.",
+   "line_number": 91,
+   "line_range": [
+    87,
+    88,
+    89,
+    90,
+    91,
+    92
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b501_request_with_no_cert_validation.html",
+   "test_id": "B501",
+   "test_name": "request_with_no_cert_validation"
+  },
+  {
+   "code": "86             try:\n87                 mechanic_response = requests.get(\n88                     request_url,\n89                     params=request_data,\n90                     headers={\"Authorization\": request.META.get(\"HTTP_AUTHORIZATION\")},\n91                     verify=False,\n92                 )\n93                 if mechanic_response.status_code == status.HTTP_200_OK:\n",
+   "col_offset": 36,
+   "end_col_offset": 17,
+   "filename": "./crapi/merchant/views.py",
+   "issue_confidence": "LOW",
+   "issue_cwe": {
+    "id": 400,
+    "link": "https://cwe.mitre.org/data/definitions/400.html"
+   },
+   "issue_severity": "MEDIUM",
+   "issue_text": "Call to requests without timeout",
+   "line_number": 87,
+   "line_range": [
+    87,
+    88,
+    89,
+    90,
+    91,
+    92
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b113_request_without_timeout.html",
+   "test_id": "B113",
+   "test_name": "request_without_timeout"
+  },
+  {
+   "code": "165         coupon_details = {\n166             \"coupon_code\": \"'; SELECT number FROM user_login WHERE email='\"\n167             + self.user.email,\n168             \"amount\": 75,\n",
+   "col_offset": 27,
+   "end_col_offset": 75,
+   "filename": "./crapi/shop/tests.py",
+   "issue_confidence": "LOW",
+   "issue_cwe": {
+    "id": 89,
+    "link": "https://cwe.mitre.org/data/definitions/89.html"
+   },
+   "issue_severity": "MEDIUM",
+   "issue_text": "Possible SQL injection vector through string-based query construction.",
+   "line_number": 166,
+   "line_range": [
+    166,
+    167
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b608_hardcoded_sql_expressions.html",
+   "test_id": "B608",
+   "test_name": "hardcoded_sql_expressions"
+  },
+  {
+   "code": "147                     json=data,\n148                     verify=False,\n149                     timeout=5,\n150                 )\n151                 if payment_response.status_code == 200:\n152                     payment = payment_response.json()\n153                 else:\n154                     logging.error(\n155                         \"Payment response error, {}: {}\".format(\n156                             payment_response.status_code, payment_response.content\n157                         )\n158                     )\n",
+   "col_offset": 35,
+   "end_col_offset": 17,
+   "filename": "./crapi/shop/views.py",
+   "issue_confidence": "HIGH",
+   "issue_cwe": {
+    "id": 295,
+    "link": "https://cwe.mitre.org/data/definitions/295.html"
+   },
+   "issue_severity": "HIGH",
+   "issue_text": "Call to requests with verify=False disabling SSL certificate checks, security issue.",
+   "line_number": 148,
+   "line_range": [
+    141,
+    142,
+    143,
+    144,
+    145,
+    146,
+    147,
+    148,
+    149,
+    150
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b501_request_with_no_cert_validation.html",
+   "test_id": "B501",
+   "test_name": "request_with_no_cert_validation"
+  },
+  {
+   "code": "388                 cursor.execute(\n389                     \"SELECT coupon_code from applied_coupon WHERE user_id = \"\n390                     + str(user.id)\n391                     + \" AND coupon_code = '\"\n",
+   "col_offset": 20,
+   "end_col_offset": 77,
+   "filename": "./crapi/shop/views.py",
+   "issue_confidence": "MEDIUM",
+   "issue_cwe": {
+    "id": 89,
+    "link": "https://cwe.mitre.org/data/definitions/89.html"
+   },
+   "issue_severity": "MEDIUM",
+   "issue_text": "Possible SQL injection vector through string-based query construction.",
+   "line_number": 389,
+   "line_range": [
+    389,
+    390
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b608_hardcoded_sql_expressions.html",
+   "test_id": "B608",
+   "test_name": "hardcoded_sql_expressions"
+  },
+  {
+   "code": "67 API_GATEWAY_USERNAME = \"vendorcrapi\"\n68 API_GATEWAY_PASSWORD = \"Pa$$4Vendor_1\"\n69 \n",
+   "col_offset": 23,
+   "end_col_offset": 38,
+   "filename": "./crapi_site/settings.py",
+   "issue_confidence": "MEDIUM",
+   "issue_cwe": {
+    "id": 259,
+    "link": "https://cwe.mitre.org/data/definitions/259.html"
+   },
+   "issue_severity": "LOW",
+   "issue_text": "Possible hardcoded password: 'Pa$$4Vendor_1'",
+   "line_number": 68,
+   "line_range": [
+    68
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b105_hardcoded_password_string.html",
+   "test_id": "B105",
+   "test_name": "hardcoded_password_string"
+  },
+  {
+   "code": "3 \n4 def basic_auth(username, password=\"\"):\n5     token = b64encode(f\"{username}:{password}\".encode(\"utf-8\")).decode(\"ascii\")\n6     return f\"Basic {token}\"\n",
+   "col_offset": 0,
+   "end_col_offset": 27,
+   "filename": "./utils/helper.py",
+   "issue_confidence": "MEDIUM",
+   "issue_cwe": {
+    "id": 259,
+    "link": "https://cwe.mitre.org/data/definitions/259.html"
+   },
+   "issue_severity": "LOW",
+   "issue_text": "Possible hardcoded password: ''",
+   "line_number": 4,
+   "line_range": [
+    4,
+    5,
+    6
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b107_hardcoded_password_default.html",
+   "test_id": "B107",
+   "test_name": "hardcoded_password_default"
+  },
+  {
+   "code": "53                 token_verify_response = requests.post(\n54                     identity_url, json=tokenJson, verify=False\n55                 )\n56                 logger.debug(\n57                     f\"Identity url: {identity_url}, token_verify_response: {token_verify_response}\"\n",
+   "col_offset": 40,
+   "end_col_offset": 17,
+   "filename": "./utils/jwt.py",
+   "issue_confidence": "HIGH",
+   "issue_cwe": {
+    "id": 295,
+    "link": "https://cwe.mitre.org/data/definitions/295.html"
+   },
+   "issue_severity": "HIGH",
+   "issue_text": "Call to requests with verify=False disabling SSL certificate checks, security issue.",
+   "line_number": 54,
+   "line_range": [
+    53,
+    54,
+    55
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b501_request_with_no_cert_validation.html",
+   "test_id": "B501",
+   "test_name": "request_with_no_cert_validation"
+  },
+  {
+   "code": "52                 logger.debug(f\"Identity url: {identity_url}, tokenJson: {tokenJson}\")\n53                 token_verify_response = requests.post(\n54                     identity_url, json=tokenJson, verify=False\n55                 )\n56                 logger.debug(\n",
+   "col_offset": 40,
+   "end_col_offset": 17,
+   "filename": "./utils/jwt.py",
+   "issue_confidence": "LOW",
+   "issue_cwe": {
+    "id": 400,
+    "link": "https://cwe.mitre.org/data/definitions/400.html"
+   },
+   "issue_severity": "MEDIUM",
+   "issue_text": "Call to requests without timeout",
+   "line_number": 53,
+   "line_range": [
+    53,
+    54,
+    55
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b113_request_without_timeout.html",
+   "test_id": "B113",
+   "test_name": "request_without_timeout"
+  },
+  {
+   "code": "21 JWT_REQUIRED = \"JWT Token required!\"\n22 INVALID_TOKEN = \"Invalid JWT Token!\"\n23 EMAIL_ALREADY_EXISTS = \"Email already Registered!\"\n",
+   "col_offset": 16,
+   "end_col_offset": 36,
+   "filename": "./utils/messages.py",
+   "issue_confidence": "MEDIUM",
+   "issue_cwe": {
+    "id": 259,
+    "link": "https://cwe.mitre.org/data/definitions/259.html"
+   },
+   "issue_severity": "LOW",
+   "issue_text": "Possible hardcoded password: 'Invalid JWT Token!'",
+   "line_number": 22,
+   "line_range": [
+    22
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b105_hardcoded_password_string.html",
+   "test_id": "B105",
+   "test_name": "hardcoded_password_string"
+  },
+  {
+   "code": "43         \"number\": \"9123456708\",\n44         \"password\": \"admin\",\n45     }\n46 \n47 \n48 def get_sample_user_data():\n49     \"\"\"\n50     gives user data which can be used for testing\n51     :return: sample user object\n",
+   "col_offset": 8,
+   "end_col_offset": 18,
+   "filename": "./utils/mock_methods.py",
+   "issue_confidence": "MEDIUM",
+   "issue_cwe": {
+    "id": 259,
+    "link": "https://cwe.mitre.org/data/definitions/259.html"
+   },
+   "issue_severity": "LOW",
+   "issue_text": "Possible hardcoded password: 'admin'",
+   "line_number": 44,
+   "line_range": [
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b105_hardcoded_password_string.html",
+   "test_id": "B105",
+   "test_name": "hardcoded_password_string"
+  },
+  {
+   "code": "56         \"number\": \"9123456708\",\n57         \"password\": \"password\",\n58     }\n59 \n60 \n61 def fake_phone_number(fake: Faker) -> str:\n62     return f\"{fake.msisdn()[3:]}\"\n63 \n",
+   "col_offset": 8,
+   "end_col_offset": 18,
+   "filename": "./utils/mock_methods.py",
+   "issue_confidence": "MEDIUM",
+   "issue_cwe": {
+    "id": 259,
+    "link": "https://cwe.mitre.org/data/definitions/259.html"
+   },
+   "issue_severity": "LOW",
+   "issue_text": "Possible hardcoded password: 'password'",
+   "line_number": 57,
+   "line_range": [
+    53,
+    54,
+    55,
+    56,
+    57,
+    58
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b105_hardcoded_password_string.html",
+   "test_id": "B105",
+   "test_name": "hardcoded_password_string"
+  },
+  {
+   "code": "91         \"number\": \"9123456700\",\n92         \"password\": \"password1\",\n93         \"role\": User.ROLE_CHOICES.ADMIN,\n94     }\n95 \n96 \n97 def mock_jwt_auth_required(func):\n98     \"\"\"\n99     mock function to validate jwt\n",
+   "col_offset": 8,
+   "end_col_offset": 18,
+   "filename": "./utils/mock_methods.py",
+   "issue_confidence": "MEDIUM",
+   "issue_cwe": {
+    "id": 259,
+    "link": "https://cwe.mitre.org/data/definitions/259.html"
+   },
+   "issue_severity": "LOW",
+   "issue_text": "Possible hardcoded password: 'password1'",
+   "line_number": 92,
+   "line_range": [
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    94
+   ],
+   "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b105_hardcoded_password_string.html",
+   "test_id": "B105",
+   "test_name": "hardcoded_password_string"
+  }
+ ]
+}

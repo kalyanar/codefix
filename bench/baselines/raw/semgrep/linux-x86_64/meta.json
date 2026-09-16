@@ -1,0 +1,12 @@
+{
+  "tool": "semgrep",
+  "version": "1.166.0",
+  "config": "https://semgrep.dev/c/p/default",
+  "config_sha256": "9bd3706d75878fecafaa0057c96089546e28874f92b766ee906d62f8885ed7c6",
+  "config_rules": 1073,
+  "equivalent_to": "--config=auto (no project context)",
+  "command": "semgrep scan --metrics=off --config <p/default snapshot> --json .  (cwd = staged app root)",
+  "platform": "linux-x86_64",
+  "host_note": "linux/amd64 container under qemu-user, host arch aarch64",
+  "run_at": "2026-09-15T16:09:58+00:00"
+}

@@ -1,0 +1,27 @@
+{
+  "tool": "pysa",
+  "version": "pyre-check 0.9.25",
+  "models_corpus": [
+    "<pyre_check>/taint",
+    "<pyre_check>/third_party_taint"
+  ],
+  "models_toy": "bench/baselines/pysa_ws/{models.pysa,taint.config}",
+  "app_dependencies_on_search_path": {
+    "admin_bfla": false,
+    "bfla_decorated": false,
+    "library_bola": false,
+    "library_bola_fastapi": false,
+    "library_flat_bola": false,
+    "mass_assign": false,
+    "missing_auth": false,
+    "new_issue_idor_note": false,
+    "shop_bola": false,
+    "ssrf_preview": false,
+    "vampi": true,
+    "crapi": true
+  },
+  "command": "pyre --noninteractive analyze --save-results-to <dir> (--no-verify for the corpus runs with shipped models)",
+  "platform": "linux-x86_64",
+  "host_note": "linux/amd64 container under qemu-user, host arch aarch64",
+  "run_at": "2026-09-15T17:02:59+00:00"
+}

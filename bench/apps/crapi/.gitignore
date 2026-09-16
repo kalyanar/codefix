@@ -1,0 +1,4 @@
+# transient file written by run_crapi.py during a run
+.workshop_patched.override.yml
+__pycache__/
+*.pyc

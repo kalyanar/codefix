@@ -1,48 +1,39 @@
-# Reproducibility — runs anywhere
+# Reproducibility
 
-The aarch64-vs-x86_64 pain we hit (Pysa/CodeQL ship x86_64-only binaries) is
-*exactly* why the evaluation is dockerized with a **pinned `linux/amd64`
-platform**: the image runs natively on x86_64 and on arm64/aarch64 via qemu, so
-the paper's results reproduce on any machine from one artifact.
+Pysa's analysis binary (`pyre.bin`) ships for x86-64 only, so the evaluation
+images are pinned to `linux/amd64`. They run natively on x86_64 and on
+arm64/aarch64 through qemu-user.
 
-## One command (core results)
+## On arm64/aarch64 hosts
 
-```bash
-docker build  --platform linux/amd64 -t codefix-repro -f bench/repro/Dockerfile .
-docker run    --platform linux/amd64 --rm codefix-repro
-```
-
-Reproduces, in one image:
-1. **codefix mechanism tests** — exploit-verified repair, cross-codebase + cross-
-   structure transfer, up/down-chain dominance, def-use taint, the 4-stage
-   validator, the authoring gate (the full slice test suite).
-2. **F1/F2 corpus harness** — in-process apps, A/B partition, exploit-verified
-   success + warm-start transfer metrics.
-3. **SAST baselines** — Bandit + Semgrep over the corpus (0 cross-function authz;
-   they *do* find single-function SQLi/secrets — complementary).
-4. **Pysa baseline** — interprocedural taint; finds the injection flow, **not**
-   the BOLA (BOLA isn't a taint-to-sink flow).
-
-## On arm64/aarch64 hosts (one-time)
-
-Enable amd64 emulation once, then the commands above just work:
+Register amd64 emulation (privileged, not persistent across reboots):
 ```bash
 docker run --privileged --rm tonistiigi/binfmt --install amd64
 ```
-(We verified this on aarch64: Pysa and CodeQL — both x86_64-only — run fine under it.)
 
-## Heavier stacks (separate, documented)
+## Commands
 
-Kept out of the core image to keep it small; each is its own dockerized step:
-- **CodeQL baseline** — `bench/baselines/RESULTS_pysa_codeql.md`. Mount the CodeQL
-  bundle into an amd64 container; `database create` + `analyze`. (~773 MB bundle.)
-- **VAmPI** (real Flask app, 2 exploit-verified BOLAs) — `bench/apps/vampi/run_vampi.py`.
-- **crAPI** (real OWASP API app, order BOLA) — `bench/apps/crapi/run_crapi.py`
-  (10-container compose).
+| Command | What it runs | Output |
+|---|---|---|
+| `bench/repro/pysa.sh` | Bandit 1.9.4, Semgrep 1.166.0, Pysa (pyre-check 0.9.25) over the corpus, in the `codefix-repro` image | `bench/baselines/raw/{bandit,semgrep,pysa}/linux-x86_64/` |
+| `bench/repro/codeql.sh` | CodeQL CLI 2.27.0 + python-queries 1.8.10: `python-security-extended.qls` and `bench/baselines/codeql/BolaBarrierGuard.ql`, in the `codefix-codeql` image | `bench/baselines/raw/codeql/linux-x86_64/` |
+| `python bench/baselines.py report` | classifies the saved raw output (no tools needed) | `bench/RESULTS_baselines.md`, `bench/baselines/RESULTS_pysa_codeql.md`, `bench/baseline_results.json` |
+| `docker run --platform linux/amd64 --rm codefix-repro` | test suite, corpus harness, then Bandit/Semgrep/Pysa and the report, inside the container | stdout |
 
-## Why this satisfies the reviewers
+Both images take the vendored real apps from a named build context
+(`--build-context apps=bench/apps`), because the root `.dockerignore` drops
+every `vendor/` directory. The scripts pass it; by hand:
+```bash
+docker build --platform linux/amd64 --build-context apps=bench/apps -t codefix-repro -f bench/repro/Dockerfile .
+```
 
-"Reproducible from one artifact" was a stated requirement. The pinned-platform
-image makes every *runnable* result (mechanism + F1/F2 + Bandit/Semgrep/Pysa)
-reproduce identically regardless of host architecture; the real-app and CodeQL
-stacks are one dockerized command each. No "works on my machine."
+CodeQL also runs natively on arm64 (CodeQL 2.27.0 ships a `linux-arm64` build):
+```bash
+CODEQL=/path/to/codeql/codeql CODEQL_PACKS=/path/to/packs python bench/baselines.py run --tools codeql
+```
+The report compares native and amd64 raw output finding by finding.
+
+## Other stacks
+
+- VAmPI (real Flask app, two exploit-verified BOLAs): `bench/apps/vampi/run_vampi.py`.
+- crAPI (real OWASP API app, shop-order BOLA): `bench/apps/crapi/run_crapi.py` (10-container compose).

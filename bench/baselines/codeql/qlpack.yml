@@ -1,0 +1,7 @@
+---
+name: codefix/baseline-authz-queries
+version: 0.0.1
+library: false
+extractor: python
+dependencies:
+  codeql/python-all: 7.2.5

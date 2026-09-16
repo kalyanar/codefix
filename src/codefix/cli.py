@@ -1,9 +1,22 @@
-"""codefix v2 CLI — slice entrypoint.
+"""codefix CLI.
 
-  codefix scan-bench [--app DIR] [--db PATH] [--explore] [--runs N]
+  codefix scan REPO [--db PATH] [--explore] [--pr DIR] [--detect-only | --dry-run] [--apply]
 
-Running the bundled BOLA app end-to-end produces F1's first data point:
-provenance, LLM-call rate, and exploit-verified success rate.
+Three operating modes:
+  --detect-only  report findings as PR review comments; change nothing; exit 1 when
+                 anything is found (CI gating)
+  --dry-run      show which fixes would be applied and whether each exploit-verifies
+                 (sandbox only); the repository and the memory file are left untouched
+  default        render, apply in a sandbox, run all four validator stages, learn, and
+                 write a PR draft (evidence checkboxes + the applied diff) per verified
+                 fix; --apply also writes verified fixes into the working tree
+
+Reproducers for a real repository are declared in REPO/.codefix/codefix.json (or a
+label.json) as {"defects": [{"issue_class", "function", "exploit", "legit", "bypass"}]};
+a finding without all four stages is reported as unverified and never applied.
+
+Nightly learning loop (shared memory across repositories):
+  0 2 * * * codefix scan /repo --db /shared/codefix.db --explore --pr ./out
 """
 from __future__ import annotations
 
@@ -29,9 +42,105 @@ def _print_run(rep, header):
           f"exploit-verified-success-rate={rep.success_rate:.2f}")
 
 
+def _review_comment(f) -> str:
+    chain = " -> ".join(lv.fqname for lv in f.path)
+    return (f"**codefix · {f.issue_class}** in `{f.func}` "
+            f"({Path(f.sink_file).name}:{f.sink_lineno})\n\n"
+            f"User-controlled `{', '.join(f.tainted_args) or 'input'}` reaches "
+            f"`{f.sink_src}` along `{chain}` with no dominating "
+            f"{f.missing_guard_class} check. Suggested fix: `{f.transform_id}`.")
+
+
+def _scan(args) -> int:
+    import json
+    import shutil
+    import tempfile
+    from . import detect, graph as graphmod
+    from .pr import make_pr_draft
+    repo = Path(args.repo).resolve()
+    out = Path(args.pr) if args.pr else None
+    if out:
+        out.mkdir(parents=True, exist_ok=True)
+
+    if args.detect_only:
+        g = graphmod.build(str(repo), exclude=graphmod.harness_excluder)
+        findings = detect.detect_all(g)
+        print(f"codefix: {len(g.sources)} files, {len(g.functions)} functions, "
+              f"{len(findings)} finding(s) [{g.build_seconds * 1000:.0f} ms]")
+        for i, f in enumerate(findings, 1):
+            text = _review_comment(f)
+            print(f"\n--- {i}. {Path(f.file_path).relative_to(repo)}:{f.entry_lineno}\n{text}")
+            if out:
+                (out / f"review_{i}_{f.issue_class}_{f.func}.md").write_text(text + "\n")
+        return 1 if findings else 0
+
+    db = args.db
+    tmpdir = None
+    if args.dry_run:                       # never touch the real memory file
+        tmpdir = tempfile.mkdtemp(prefix="codefix_dry_")
+        db = str(Path(tmpdir, "memory.db"))
+        if Path(args.db).exists():
+            shutil.copy(args.db, db)
+    try:
+        # with --apply, each round applies at most one fix per file and rescans,
+        # so later fixes are rendered against the already-patched code
+        apply = args.apply and not args.dry_run
+        applied, all_results = [], []
+        for rnd in range(20):
+            rep = run_once(str(repo), db, explore=args.explore, seed=rnd,
+                           provider=args.provider, model=args.model, apply=apply,
+                           select=args.select)
+            if args.events:
+                for e in rep.events:
+                    print(f"  [{e.phase:11}] {e.target:18} {e.detail}")
+            applied += [r for r in rep.results if r.applied]
+            all_results = applied + [r for r in rep.results if not r.applied]
+            if not apply or not any(r.applied for r in rep.results):
+                break
+        verified = [r for r in all_results if r.status == "success"]
+        print(f"codefix: {len(all_results)} issue(s), {len(verified)} exploit-verified"
+              f"{' (dry run: nothing written)' if args.dry_run else ''}")
+        for r in all_results:
+            verb = ("would apply" if args.dry_run else "applied" if r.applied else "verified") \
+                if r.status == "success" else "not applied"
+            print(f"  [{r.issue_class}] {r.func}: {r.status} ({r.detail}) — {verb}")
+            if r.guard:
+                print(f"      fix: {r.guard}")
+            if r.status == "success" and out and not args.dry_run:
+                draft = make_pr_draft(rep.app, r)
+                path = out / f"{rep.app}_{r.issue_class}_{r.func}.md"
+                draft.write(str(path))
+                print(f"      PR draft -> {path}")
+        if out and not args.dry_run:
+            (out / "summary.json").write_text(json.dumps([
+                {"issue_class": r.issue_class, "function": r.func, "status": r.status,
+                 "fingerprint": r.fp_hex, "provenance": r.provenance, "applied": r.applied}
+                for r in all_results], indent=2))
+        return 0
+    finally:
+        if tmpdir:
+            shutil.rmtree(tmpdir, ignore_errors=True)
+
+
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(prog="codefix")
     sub = p.add_subparsers(dest="cmd", required=True)
+
+    sc = sub.add_parser("scan", help="scan a repository: detect, fix, exploit-verify, learn")
+    sc.add_argument("repo")
+    sc.add_argument("--db", default=".codefix.db", help="PatchMemory file (share it across repos)")
+    sc.add_argument("--explore", action="store_true",
+                    help="Thompson sampling (use while fingerprints are young)")
+    sc.add_argument("--pr", metavar="DIR", help="write PR drafts / review comments to DIR")
+    mode = sc.add_mutually_exclusive_group()
+    mode.add_argument("--detect-only", action="store_true")
+    mode.add_argument("--dry-run", action="store_true")
+    sc.add_argument("--apply", action="store_true", help="write verified fixes into the repo")
+    sc.add_argument("--select", choices=("greedy", "thompson", "auto"), default=None,
+                    help="auto = Thompson while a fingerprint is young, greedy once a template is proven")
+    sc.add_argument("--provider", default="mock", help="mock | anthropic")
+    sc.add_argument("--model", default=None)
+    sc.add_argument("--events", action="store_true")
 
     s = sub.add_parser("scan-bench", help="run the loop over a benchmark app")
     s.add_argument("--app", default=str(DEFAULT_APP))
@@ -45,7 +154,7 @@ def main(argv=None) -> int:
                        help="learn on app A, then warm-start + re-render on app B (F2)")
     t.add_argument("--db", default=".codefixv2_transfer.db")
     t.add_argument("--app-a", default=str(APPS / "shop_bola"))
-    t.add_argument("--app-b", default=str(APPS / "library_bola"))
+    t.add_argument("--app-b", default=str(APPS / "library_flat_bola"))
 
     c = sub.add_parser("coldstart-demo",
                        help="LLM strategy proposes a fix (no template), verified, "
@@ -61,12 +170,18 @@ def main(argv=None) -> int:
 
     args = p.parse_args(argv)
 
+    if args.cmd == "scan":
+        return _scan(args)
+
     if args.cmd == "author-demo":
         from .detect import DetectorSpec
         from .authoring import run_gate
         fx = str(APPS / "new_issue_idor_note")
-        good = DetectorSpec("IDOR_NOTE", "param_to_sink", "insert_ownership_guard",
-                            "param", "data_access_by_id", "ownership", "sink_local")
+        import importlib.util
+        spec_file = importlib.util.spec_from_file_location("new_detector", fx + "/new_detector.py")
+        mod = importlib.util.module_from_spec(spec_file)
+        spec_file.loader.exec_module(mod)
+        good = mod.SPEC
         bad_enum = DetectorSpec("IDOR_NOTE", "param_to_sink", "insert_ownership_guard",
                                 "param", "data_access_by_id", "owner_check", "sink_local")
         bad_flow = DetectorSpec("IDOR_NOTE", "privileged_op", "insert_role_guard_at_start",
@@ -83,7 +198,7 @@ def main(argv=None) -> int:
         from pathlib import Path as _P
         from .pr import make_pr_draft
         for i in range(args.runs):
-            rep = run_once(args.app, args.db, seed=i)
+            rep = run_once(args.app, args.db, seed=i, explore=args.explore)
             _print_run(rep, f"run {i + 1}/{args.runs}")
             if args.events:
                 print("  events:")

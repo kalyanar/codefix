@@ -1,0 +1,15 @@
+{
+ "engine_requested": "OSS",
+ "errors": [],
+ "paths": {
+  "scanned": [
+   "flat/app.py",
+   "safe/app.py",
+   "vuln/app.py"
+  ]
+ },
+ "profiling_results": [],
+ "results": [],
+ "skipped_rules": [],
+ "version": "1.166.0"
+}

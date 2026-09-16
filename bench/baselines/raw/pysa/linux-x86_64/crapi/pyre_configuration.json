@@ -1,0 +1,13 @@
+{
+ "source_directories": [
+  "."
+ ],
+ "taint_models_path": [
+  "<pyre_check>/taint",
+  "<pyre_check>/third_party_taint"
+ ],
+ "typeshed": "<pyre_check>/typeshed",
+ "search_path": [
+  "$PYSA_DEPS/crapi"
+ ]
+}

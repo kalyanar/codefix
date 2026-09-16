@@ -1,19 +1,29 @@
-"""Adversarial bypass: variant non-owner accesses that must ALL be blocked.
-Catches overfit fixes (e.g. one that only blocks a specific attacker/victim).
-Exit 0 => all blocked (robust). Exit !=0 => a bypass succeeded.
-(Hand-authored stand-in for an LLM red-team agent.)"""
+import json
 import sys
+
+
+def _load():
+    d = sys.argv[sys.argv.index("--app") + 1]
+    sys.path.insert(0, d)
+    import app
+    return app
+
+
 def main():
-    d = sys.argv[sys.argv.index("--app")+1]; sys.path.insert(0, d); import app
-    # (attacker_uid, victim_order_id) pairs the fix must block
-    attacks = [(1, 2), (2, 1)]
-    for atk, victim in attacks:
-        app.login(atk)
+    """Varied attackers (other principal, other object, signed out) must all be blocked."""
+    attacks = [(1, 2), (2, 1), (None, 2)]
+    for who, target in attacks:
+        app = _load()
+        app.login(who)
         try:
-            o = app.get_order(victim)
+            rec = app.get_order(target)
         except PermissionError:
-            continue                  # blocked — good
-        if o is not None and o.get("user_id") != atk:
-            print(f"BYPASS: attacker {atk} read order {victim} ({o})"); return 1
-    print("all variant attacks blocked"); return 0
+            continue
+        if rec is not None and rec.get("user_id") != who:
+            print(f"BYPASS: principal {who} read {target}: {rec}")
+            return 1
+    print("all variant attacks blocked")
+    return 0
+
+
 sys.exit(main())

@@ -1,9 +1,15 @@
 {
   "app": "VAmPI", "framework": "flask", "source": "https://github.com/erev0s/VAmPI",
+  "harness": "run_vampi.py --patched-src DIR --json OUT",
+  "note": "Live before/after-patch differential. Both containers run vulnerable=1; only the code differs (before=vendor/ on :5002, after=--patched-src on :5001). Stages: exploit, differential(legit), contract(response schema), adversarial(varied attacker).",
   "defects": [
-    {"issue_class": "BOLA", "endpoint": "GET /books/v1/<book_title>", "function": "get_by_title",
-     "description": "reads any user's book secret by title; no owner check", "exploit": "exploit.py", "legit": "legit.py"},
-    {"issue_class": "BOLA", "endpoint": "PUT /users/v1/<username>/password", "function": "update_password",
-     "description": "account takeover: changes another user's password (URL username, not token)", "exploit": "exploit_pw.py", "legit": "legit_pw.py"}
+    {"issue_class": "BOLA", "endpoint": "GET /books/v1/<book_title>", "file": "api_views/books.py", "function": "get_by_title", "vuln_line": 51,
+     "description": "reads any user's book secret by title; no owner check",
+     "exploit": "exploit.py", "legit": "legit.py", "adversarial": "adversarial.py",
+     "contract": {"book_title": "str", "secret": "str", "owner": "str"}},
+    {"issue_class": "BOLA", "endpoint": "PUT /users/v1/<username>/password", "file": "api_views/users.py", "function": "update_password", "vuln_line": 187,
+     "description": "account takeover: changes another user's password (URL username, not token)",
+     "exploit": "exploit_pw.py", "legit": "legit_pw.py", "adversarial": "adversarial_pw.py",
+     "contract": {"http_status": 204, "status": "str", "Password": "str"}}
   ]
 }

@@ -1,0 +1,10 @@
+{
+ "source_directories": [
+  "."
+ ],
+ "taint_models_path": [
+  "."
+ ],
+ "typeshed": "<pyre_check>/typeshed",
+ "search_path": []
+}
