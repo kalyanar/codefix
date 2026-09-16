@@ -307,9 +307,14 @@ class _Hit:
     src: str
 
 
+COLLECT_LEAVES = frozenset({"append", "add", "extend", "insert", "update", "setdefault",
+                            "put", "write", "push"})
+
+
 def _exposed(body, s, bound) -> bool:
     """An object read matters when the object — or a value built from it (a
-    response dict) — is returned, written through, or handed to a helper."""
+    response dict, or a collection it was appended to) — is returned, written
+    through, or handed to a helper."""
     if s.kind == "return":
         return True
     if not bound:
@@ -322,6 +327,13 @@ def _exposed(body, s, bound) -> bool:
             if t.id != s.id and t.reads & derived and t.writes - derived:
                 derived |= t.writes
                 changed = True
+            # ``out.append(order)`` puts the object inside ``out``
+            for c in t.calls:
+                base = c.receiver.split(".")[0] if c.receiver else ""
+                if base and base not in derived and c.leaf in COLLECT_LEAVES \
+                        and c.all_reads() & derived:
+                    derived.add(base)
+                    changed = True
     return any(t.returns_value_reads & derived or t.store_bases & derived
                or any(c.all_reads() & derived for c in t.calls if c.callee_fqname)
                for t in body.real() if t.id != s.id)

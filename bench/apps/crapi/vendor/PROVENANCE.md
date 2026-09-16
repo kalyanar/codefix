@@ -9,5 +9,6 @@
 - Used by: the SAST baselines (`bench/baselines.py`), codefix's scan
   (`bench/live_codefix.py crapi`) and the live harness (`run_crapi.py`), which
   rebuilds the workshop image from codefix's patched copy of this tree.
-- `certs/` is upstream's demo TLS material used to build the workshop image;
-  it is not a real credential.
+- Omitted: upstream's `certs/` (a demo TLS private key). The workshop Dockerfile
+  copies `./certs`, so `run_crapi.py` generates a throwaway self-signed pair
+  before building; no private key is committed.

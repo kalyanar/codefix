@@ -328,3 +328,124 @@ def test_patch_memory_has_eight_linked_tables_and_outcome_statuses(tmp_path):
     assert (stat.successes, stat.regressions) == (1, 1)
     assert not m.is_proven(tid, fid)                         # 1/2 over a tiny sample
     assert pac_min_observations() > 2
+
+
+# --- one defect, many shapes (site: "recognizes the same flaw even when the code
+# looks different — different names, split across more functions, flatter or deeper") ---
+
+_SHAPE_PRE = """
+ORDERS = {1: {"id": 1, "user_id": 1}, 2: {"id": 2, "user_id": 2}}
+_S = {"uid": None}
+def current_user_id():
+    return _S["uid"]
+"""
+
+SHAPES = {
+    "flat": """
+def get_order(order_id):
+    order = ORDERS.get(order_id)
+    return order
+""",
+    "renamed_helper": """
+def zz9(k):
+    return ORDERS.get(k)
+def h(q):
+    x = zz9(q)
+    return x
+""",
+    "class_method_sink": """
+class Repo:
+    def load(self, i):
+        return ORDERS.get(i)
+def handler(order_id):
+    o = Repo().load(order_id)
+    return o
+""",
+    "subscript_sink": """
+def handler(order_id):
+    o = ORDERS[order_id]
+    return o
+""",
+    "sink_in_loop_escaping_via_list": """
+def handler(ids):
+    out = []
+    for i in ids:
+        o = ORDERS.get(i)
+        out.append(o)
+    return out
+""",
+    "sink_in_try": """
+def handler(order_id):
+    try:
+        o = ORDERS.get(order_id)
+    except KeyError:
+        return None
+    return o
+""",
+    "taint_through_dict_and_fstring": """
+def handler(order_id):
+    ctx = {"key": order_id}
+    k = f"{ctx['key']}"
+    o = ORDERS.get(k)
+    return o
+""",
+    "async_handler": """
+async def handler(order_id):
+    o = ORDERS.get(order_id)
+    return o
+""",
+}
+
+
+def _shape_graph(tmp_path, name, body):
+    d = tmp_path / name
+    d.mkdir()
+    (d / "app.py").write_text(textwrap.dedent(_SHAPE_PRE + body))
+    return graph.build(str(d / "app.py"))
+
+
+@pytest.mark.parametrize("name", sorted(SHAPES))
+def test_one_defect_many_shapes_one_fingerprint(tmp_path, name):
+    flat = _shape_graph(tmp_path, "flat_ref", SHAPES["flat"])
+    ref = fingerprint.compute(detect.detect_all(flat)[0], flat, "none").hex()
+    g = _shape_graph(tmp_path, name, SHAPES[name])
+    (f,) = detect.detect_all(g)
+    assert f.issue_class == "BOLA"
+    assert fingerprint.compute(f, g, "none").hex() == ref
+
+
+def test_a_guard_deep_in_a_helper_still_clears_every_shape(tmp_path):
+    g = _shape_graph(tmp_path, "guarded", """
+def check(o):
+    if o is not None and o["user_id"] != current_user_id():
+        raise PermissionError("no")
+def get_order(order_id):
+    order = ORDERS.get(order_id)
+    check(order)
+    return order
+""")
+    assert detect.detect_all(g) == []
+
+
+def test_chains_deeper_than_the_default_need_the_spec_depth(tmp_path):
+    """Alg. 2's search depth defaults to 2; a deeper codebase raises it in the
+    spec (data, not engine code) and lands on the same fingerprint."""
+    g = _shape_graph(tmp_path, "deep", """
+def l4(a):
+    return ORDERS.get(a)
+def l3(a):
+    return l4(a)
+def l2(a):
+    return l3(a)
+def handler(order_id):
+    o = l2(order_id)
+    return o
+""")
+    assert detect.detect_all(g) == []                      # 4 hops, default depth 2
+    deep = detect.DetectorSpec("BOLA", sink=detect.SinkMatcher("object_read"),
+                               missing_guard="ownership", search=detect.BOTH,
+                               fix_template="insert_ownership_guard", depth=4)
+    (f,) = detect.detect_with_spec(deep, g)
+    flat = _shape_graph(tmp_path, "flat_ref2", SHAPES["flat"])
+    ref = fingerprint.compute(detect.detect_all(flat)[0], flat, "none").hex()
+    assert f.func == "handler" and fingerprint.compute(f, g, "none").hex() == ref

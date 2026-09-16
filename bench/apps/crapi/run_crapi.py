@@ -120,6 +120,21 @@ def check_contract(legit: dict):
     return (not problems), detail
 
 
+def ensure_demo_certs(src: Path):
+    """crAPI's workshop Dockerfile copies ./certs. Upstream ships a demo TLS key
+    there; we do not vendor a private key, so generate a throwaway self-signed
+    pair for the build if it is missing."""
+    certs = src / "certs"
+    if (certs / "server.key").exists() and (certs / "server.crt").exists():
+        return
+    certs.mkdir(parents=True, exist_ok=True)
+    r = sh("openssl", "req", "-x509", "-newkey", "rsa:2048", "-nodes", "-days", "365",
+           "-keyout", str(certs / "server.key"), "-out", str(certs / "server.crt"),
+           "-subj", "/CN=localhost")
+    if r.returncode != 0:
+        print("  could not generate demo certs:", r.stderr[-400:])
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--patched-src", default=None,
@@ -138,6 +153,7 @@ def main() -> int:
     print("== crAPI live before/after harness (workshop shop-order BOLA) ==")
     try:
         print("\n== building patched workshop image from source ==")
+        ensure_demo_certs(patched_src)
         b = sh("docker", "build", "-t", PATCHED_TAG, str(patched_src))
         if b.returncode != 0:
             print(b.stdout[-1200:]); print(b.stderr[-1600:]); return 2
