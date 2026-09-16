@@ -255,6 +255,28 @@ def test_template_renders_in_the_target_codebases_idiom(tmp_path):
     assert "+from flask import abort" in patch.diff
 
 
+def test_principal_import_in_a_src_layout_drops_the_source_root(tmp_path):
+    root = _pkg(tmp_path, {
+        "src/shop/__init__.py": "",
+        "src/shop/auth.py": """
+        def current_user_id():
+            return 1
+        """,
+        "src/shop/views.py": """
+        ORDERS = {}
+
+        def show_order(order_id):
+            order = ORDERS.get(order_id)
+            return order
+        """})
+    from codefix.templates import render_patch
+    g = graph.build(str(root))
+    (f,) = detect.detect_bola(g)
+    patch = render_patch(f.transform_id, f, g)
+    assert "+from shop.auth import current_user_id" in patch.diff
+    assert "src.shop" not in patch.diff
+
+
 # --- §III.G validator -----------------------------------------------------------------
 
 def _shop_candidate(transform_text):
