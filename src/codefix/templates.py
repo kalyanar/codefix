@@ -86,6 +86,15 @@ def _module_names(graph, file) -> set[str]:
     return names
 
 
+def _importable(graph, module: str) -> str:
+    """The name a module is imported by. CodeMap names modules from the scan root, so a src
+    layout yields `src.pkg.mod`; `src/` is a source root, not a package, so drop it."""
+    root = Path(graph.root)
+    if module.startswith("src.") and (root / "src").is_dir() and not (root / "src" / "__init__.py").exists():
+        return module[len("src."):]
+    return module
+
+
 def _imported_symbol(graph, file, local):
     return graph.imports.get(_module_of(graph, file), {}).get(local)
 
@@ -144,7 +153,7 @@ def discover(graph, finding, overrides=None) -> dict:
         for fn in graph.functions.values():
             if fn.name in pool and fn.enclosing is None and fn.parent_class is None \
                     and fn.module != _module_of(graph, file):
-                p["principal_imports"].append(f"from {fn.module} import {fn.name}")
+                p["principal_imports"].append(f"from {_importable(graph, fn.module)} import {fn.name}")
                 if want == "id":
                     id_func = fn.name
                 else:
@@ -430,7 +439,7 @@ def _t_ownership(graph, f, p, lines):
                 if head not in names:
                     sym = graph.imports.get(idiom["module"], {}).get(head)
                     if sym:
-                        imports.append(f"from {sym.rsplit('.', 1)[0]} import {head}")
+                        imports.append(f"from {_importable(graph, sym.rsplit('.', 1)[0])} import {head}")
         if after is not None:
             edits.append(("insert_after", after, after, guard))
         else:
